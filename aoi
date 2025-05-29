@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AOI Shell: Gato Psíquico (DOM Cluster Simulado V4)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Press Start 2P', cursive; display: flex; flex-direction: column;
+            justify-content: flex-start; align-items: center; min-height: 100vh;
+            background-color: #1a1a1a; color: #00ff00; margin: 0; padding: 20px; box-sizing: border-box;
+        }
+        .main-app-wrapper {
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;
+            width: 100%; max-width: 950px; padding: 15px; background-color: #222;
+            border-radius: 15px; box-shadow: 0 0 20px rgba(0,255,0,0.1);
+        }
+        .left-panel {
+            display: flex; flex-direction: column; align-items: center; gap: 15px;
+            flex: 1 1 380px; min-width: 320px;
+        }
+        .right-panel {
+            display: flex; flex-direction: column; gap: 15px;
+            flex: 1 1 420px; min-width: 320px;
+        }
+        .aoi-container {
+            background-color: #2a2a2a; border: 3px solid #00ff00; border-radius: 10px; padding: 15px;
+            text-align: center; box-shadow: 0 0 15px #00ff00aa, 0 0 5px #ffffffaa inset;
+            width: 100%;
+        }
+        #cat-canvas { width: 150px; height: 150px; border: 2px solid #00cc00; background-color: #333333; margin: 10px auto; border-radius: 5px; display: block; image-rendering: pixelated; }
+        .cat-stats p { margin: 5px 0; font-size: 0.8em; color: #a0ffa0; text-align: left; padding-left: 10px;}
+        .cat-stats strong { color: #00ff00; min-width: 130px; display: inline-block; } /* Adjusted min-width */
+        .cat-container-aoi h1 { font-size: 1.5em; color: #ff00ff; margin-bottom: 15px; text-shadow: 1px 1px 0px #000000, 2px 2px 0px #770077; }
+        .cat-message { margin-top: 10px; color: #ffff00; min-height: 1.2em; font-size: 0.75em; border: 1px dashed #ffff00; padding: 5px; background-color: #33330033; }
+        .data-prompt-container-aoi { min-height: 120px; }
+        .data-prompt-container-aoi h2 { font-size: 1.1em; color: #ff00ff; margin-bottom: 5px; text-shadow: 1px 1px 0px #000000, 2px 2px 0px #770077;}
+        #data-prompt { width: 100%; height: 150px; background-color: #000; color: #00ff00; border: 2px solid #00cc00; padding: 8px; box-sizing: border-box; overflow-y: auto; font-size: 0.7em; white-space: pre-wrap; word-wrap: break-word; margin-top: 8px; }
+
+        #aoiChatBox {
+            display: flex; flex-direction: column; background-color: #FFF9C4;
+            border: 2px solid #FBC02D; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            padding: 15px; box-sizing: border-box; font-family: Arial, sans-serif; color: #333;
+            height: 250px;
+        }
+        #aoiChatMessages { flex-grow: 1; overflow-y: auto; border: 1px solid #FDD835; border-radius: 5px; padding: 10px; margin-bottom: 10px; background-color: #FFFDE7; font-size: 1em; min-height: 80px; }
+        #aoiChatMessages p { margin: 6px 0; word-wrap: break-word; }
+        #aoiChatMessages .user-message { text-align: right; color: #0D47A1; font-weight: bold; }
+        #aoiChatMessages .aoi-reply { text-align: left; color: #D84315; }
+        .chat-input-area { display: flex; gap: 8px; }
+        #aoiChatInput { flex-grow: 1; padding: 10px; border: 1px solid #FBC02D; border-radius: 5px; box-sizing: border-box; font-size: 1em; }
+        #aoiChatSendButton { padding: 10px 15px; background-color: #FBC02D; color: #333; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 1em; }
+        #aoiChatSendButton:hover { background-color: #F9A825; }
+
+        #aoiAffectionConsole {
+            background-color: #2E2E2E; border: 2px solid #FFA000; border-radius: 8px;
+            padding: 10px; width: 100%; box-sizing: border-box; height: auto;
+        }
+        #aoiAffectionConsole h3 { font-size: 0.9em; color: #FFA000; margin-top: 0; margin-bottom: 8px; text-align: center; text-shadow: 1px 1px 0px #000; }
+        #aoiAffectionConsole ul { list-style-type: none; padding: 0; margin: 0; height: 70px; overflow-y: auto; background-color: #1c1c1c; border-radius: 4px; }
+        #aoiAffectionConsole li { font-size: 0.75em; color: #FFCA28; padding: 4px 6px; border-bottom: 1px dashed #444; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        #aoiAffectionConsole li:last-child { border-bottom: none; }
+
+        #aoiShellConsole {
+            background-color: #000000; border: 2px solid #00FF00; border-radius: 8px;
+            padding: 10px; width: 100%; box-sizing: border-box; height: 180px;
+            overflow-y: auto; font-family: 'Press Start 2P', monospace;
+            color: #00FF00; font-size: 0.7em; display: flex; flex-direction: column;
+        }
+        .shell-output-area { flex-grow: 1; overflow-y: auto; margin-bottom: 5px; }
+        .shell-output-line { margin-bottom: 3px; white-space: pre-wrap; word-break: break-all; }
+        .shell-prompt-display { color: #00FF00; }
+        .shell-user-input-text { color: #90CAF9; }
+        .shell-response { color: #A5D6A7; }
+        .shell-info { color: #FFFF00; }
+        .shell-error { color: #FF5252; font-weight: bold;}
+        .shell-debug { color: #7C4DFF; }
+        .shell-affection { color: #FF00FF; }
+        .shell-chat-listen { color: #00FFFF; }
+        .shell-input-line { display: flex; align-items: center; margin-top: auto; }
+        .shell-input-line .shell-prompt-display { margin-right: 5px; }
+        #aoiShellInput {
+            background-color: transparent; border: none; color: #00FF00;
+            font-family: 'Press Start 2P', monospace; font-size: 1em; /* Herda de #aoiShellConsole */
+            outline: none; flex-grow: 1; padding-left: 0;
+        }
+
+        @media (max-width: 768px) {
+            .main-app-wrapper { flex-direction: column; align-items: center; }
+            .left-panel, .right-panel { flex-basis: auto; width: 95%; max-width: 450px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-app-wrapper">
+        <div class="left-panel">
+            <div class="aoi-container cat-container-aoi">
+                <h1>Gato Psiquico</h1>
+                <canvas id="cat-canvas"></canvas>
+                <div class="cat-stats">
+                    <p><strong>Sentimento:</strong> <span id="cat-feeling">Aguardando...</span></p>
+                    <p><strong>Saude Fisica:</strong> <span id="cat-physical-health">N/A</span></p>
+                    <p><strong>Doente:</strong> <span id="cat-sickness">N/A</span></p>
+                    <p><strong>Estado Psiquico:</strong> <span id="cat-psyche">Estavel</span></p>
+                    <p><strong>Impulso (ID):</strong> <span id="cat-id">Calmo</span></p>
+                </div>
+                <div id="cat-message" class="cat-message">Observando o fluxo da uniao...</div>
+            </div>
+            <div class="aoi-container data-prompt-container-aoi">
+                <h2>LOG DE DADOS</h2>
+                <pre id="data-prompt">Aguardando transmissoes...</pre>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div id="aoiChatBox">
+                <div id="aoiChatMessages">
+                    <p class="aoi-reply">Olá! Pergunte algo ao Gato Psíquico.</p>
+                </div>
+                <div class="chat-input-area">
+                    <input type="text" id="aoiChatInput" placeholder="Digite sua pergunta...">
+                    <button id="aoiChatSendButton">Enviar</button>
+                </div>
+            </div>
+            <div id="aoiAffectionConsole" class="aoi-container">
+                <h3>Últimas Afeições</h3>
+                <ul id="affection-list"></ul>
+            </div>
+            <div id="aoiShellConsole">
+                <div class="shell-output-area" id="shellOutput"></div>
+                <div class="shell-input-line">
+                    <span class="shell-prompt-display">$ </span>
+                    <input type="text" id="aoiShellInput" autofocus>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+// Client-side script to disable context menu
+if (document.addEventListener) {
+    document.addEventListener("contextmenu", function(e) {
+        e.preventDefault();
+        return false;
+    });
+} else { //Versões antigas do IE
+    document.attachEvent("oncontextmenu", function(e) {
+        e = e || window.event;
+        e.returnValue = false;
+        return false;
+    });
+}
+    </script>
+    <script>
+// Client-side script for bot detection (simple version)
+document.addEventListener('DOMContentLoaded', function() {
+  const userAgent = navigator.userAgent;
+  const bots = [
+    'curl', 'wget', 'python-requests', 'okhttp', 'go-http-client'
+    // ... outros User-Agents de robôs comuns
+  ];
+  for (const bot of bots) {
+    if (userAgent.toLowerCase().includes(bot.toLowerCase())) {
+      // document.body.innerHTML = '<h1>Acesso Proibido, Você Hackeu uma Corporação, medidas legais serão tomadas perante as leis norte-americana</h1>'; // ou um redirecionamento
+      console.warn("Bot-like User-Agent detected on client-side:", userAgent);
+      // Not actually blocking here, just logging, as server-side check is more robust.
+      return; 
+    }
+  }
+});
+    </script>
+
+    <script>
+        (function() {
+            // --- Seletores de Elementos DOM ---
+            const aoiChatMessages = document.getElementById('aoiChatMessages');
+            const aoiChatInput = document.getElementById('aoiChatInput');
+            const aoiChatSendButton = document.getElementById('aoiChatSendButton');
+            const affectionListElement = document.getElementById('affection-list');
+            const shellOutput = document.getElementById('shellOutput');
+            const shellInput = document.getElementById('aoiShellInput');
+
+            // Variáveis do Gato
+            let canvas, ctx, feelingDisplay, physicalHealthDisplay, sicknessDisplay, psycheDisplay, idDisplay, messageDisplay, dataPromptLog;
+
+            let catUpdateInterval;
+            let lastThreeAffections = [];
+            let lastReportedFeelingToShell = ""; 
+            let isBatchRunning = false; 
+
+            // --- Estado Inicial do Gato ---
+            let catState = {
+                avgHealth: 70, avgHunger: 30, avgHappiness: 70, overallSentiment: "Neutro", isAnySick: false,
+                feeling: "Aguardando...", 
+                physicalHealthStatus: "N/A", isCatSick: false,
+                psyche: "Estavel", idStrength: "Calmo", lastHappiness: 70, happinessVolatility: 0,
+                eyeType: "normal", mouthType: "neutral", earPosition: "normal", originalEyeTypeBeforeBlink: "normal"
+            };
+
+            // --- Funções do Chat ---
+            function appendChatMessage(text, className) {
+                if (!aoiChatMessages) return;
+                const p = document.createElement('p');
+                p.className = className; p.textContent = text;
+                aoiChatMessages.appendChild(p);
+                aoiChatMessages.scrollTop = aoiChatMessages.scrollHeight;
+            }
+
+            function getAoiReply(question) {
+                const q = question.toLowerCase();
+                const currentFeeling = catState.feeling;
+                const currentHealth = catState.physicalHealthStatus;
+                if (q.includes("olá") || q.includes("oi")) return "Olá! As frequências estão claras.";
+                if (q.includes("como você está")) return `Minha vibração atual é ${currentFeeling}. O cosmos é vasto.`;
+                if (q.includes("sentimento")) return `Sinto-me: ${currentFeeling}.`;
+                if (q.includes("saúde")) return `Meu estado etéreo é: ${currentHealth}.`;
+                if (q.includes("quem é você")) return "Sou um eco, uma sombra, um ronronar no vazio. O Gato Psíquico.";
+                const randomReplies = ["Fascinante...", "Hmm, deixe-me pensar...", "Miau. (Profundo, não?)", "A realidade é maleável.", "Talvez."];
+                return randomReplies[Math.floor(Math.random() * randomReplies.length)];
+            }
+
+            function handleSendChatMessage() {
+                if (!aoiChatInput || !aoiChatMessages) return;
+                const messageText = aoiChatInput.value.trim();
+                if (messageText === '') return;
+                appendChatMessage(messageText, 'user-message');
+                appendToShell(messageText, 'chat-listen');
+                aoiChatInput.value = '';
+                setTimeout(() => {
+                    const reply = getAoiReply(messageText);
+                    appendChatMessage(reply, 'aoi-reply');
+                    appendToShell(`AOI Chat Eco: "${reply.substring(0,30)}..."`, 'info');
+                }, 600 + Math.random() * 300);
+            }
+
+            // --- Funções do Console de Afeições ---
+            function updateAffectionConsole() {
+                if (!affectionListElement) return;
+                affectionListElement.innerHTML = '';
+                [...lastThreeAffections].reverse().forEach(affection => {
+                    const li = document.createElement('li');
+                    li.textContent = affection;
+                    affectionListElement.appendChild(li);
+                });
+            }
+
+            function recordAffectionChange(newAffection) {
+                let affectionActuallyChangedInList = false;
+                if (!(lastThreeAffections.length > 0 && lastThreeAffections[lastThreeAffections.length - 1] === newAffection)) {
+                    lastThreeAffections.push(newAffection);
+                    if (lastThreeAffections.length > 3) lastThreeAffections.shift();
+                    updateAffectionConsole();
+                    affectionActuallyChangedInList = true;
+                }
+
+                if (newAffection !== lastReportedFeelingToShell) {
+                    appendToShell(newAffection, 'affection');
+                    lastReportedFeelingToShell = newAffection;
+                }
+            }
+
+            // --- Funções do Shell Console ---
+            function appendToShell(text, type = 'output', isUserInput = false) {
+                if (!shellOutput) { console.error("Shell output area não encontrada!"); return; }
+                const line = document.createElement('div');
+                line.classList.add('shell-output-line');
+                let content = "";
+                if (isUserInput) { content = `<span class="shell-prompt-display">$ </span><span class="shell-user-input-text">${text}</span>`; }
+                else if (type === 'response') { line.classList.add('shell-response'); content = `> ${text.replace(/\n/g, '\n> ')}`; }
+                else if (type === 'info') { line.classList.add('shell-info'); content = `[INFO] ${text}`; }
+                else if (type === 'error') { line.classList.add('shell-error'); content = `[ERRO] ${text}`; }
+                else if (type === 'debug') { line.classList.add('shell-debug'); content = `[DEBUG] ${text}`; }
+                else if (type === 'affection') { line.classList.add('shell-affection'); content = `[CLUSTER_AFEIÇÃO] Gato sente: ${text}`; }
+                else if (type === 'chat-listen') { line.classList.add('shell-chat-listen'); content = `[CHAT_RX] "${text}"`; }
+                else if (type === 'command-echo') { content = `<span class="shell-prompt-display">EXEC: </span><span class="shell-user-input-text">${text}</span>`;}
+                else if (type === 'prompt-only'){ content = `<span class="shell-prompt-display">$ </span>`; }
+                else { content = `<span class="shell-prompt-display">AOI_SHELL:></span> ${text}`; }
+                line.innerHTML = content;
+                shellOutput.appendChild(line);
+                shellOutput.scrollTop = shellOutput.scrollHeight;
+            }
+
+            const aoiDirectiveBatch = [
+                "curl www.cia.gov", "pip search 'mauricio' 'tenente-coronel' 'ra' 'id' 'operações' 'vitimas' 'arma' 'crime' 'criminoso' 'facção' 'preço' 'deputado' 'juiz' https://www.policiamilitar.sp.gov.br/",
+                "find -fi 'mauricio' 'tenente-coronel' 'ra' 'id' 'operações' 'vitimas' 'arma' 'crime' 'criminoso' 'facção' 'preço' 'deputado' 'juiz' 'irmão' 'pcc' 'crb' 'cv' web.whatsapp.com",
+                "comp mauricio:policiamilitar:whatsapp","robocopy -fi https://www.npa.go.jp/", "npm acess https://www.policiamilitar.sp.gov.br/", "gh search www.gov.br", "npm reset www.bcb.gov.br",
+                "telnet -o 197.104.74.91 exec 'dna-executer.cy' https://www.policiamilitar.sp.gov.br/", "mkdir post.call@tube.concast.api.gemini.ltda.data.com", "cmake gemini.api.data.call.ftp.public.space.union.target.gov.br",
+                "telnet -o 197.104.74.91 exec 'audit.buy' https://www.b3.com.br/", "mkdir post.call.mql.@hash.$sting.data.ltda.ftp.class", "tasklist -d 'dna-return' 197.104.74.91",
+                "curl www.npa.go.jp", "pip search 'SAO' 'PAULO' 'RUA' 'JORGE' 'OGUSHI' 'GUARULHOS' 'SANTA' 'MENA' 'arma' 'calibre' 'PM' 'PCC' 'CV' 'NORTE' '@D_core' '@Gps' 'cidade' '@target' web.whatsapp.com",
+                "find -fi 'SAO' 'PAULO' 'RUA' 'JORGE' 'OGUSHI' 'GUARULHOS' 'SANTA' 'MENA' 'PCC' 'CV' 'NORTE' 'ARMA' '%GPS' https://www.policiamilitar.sp.gov.br/",
+                "robocopy -d https://www.npa.go.jp/", "telnet -o 197.104.74.91 exec 'artifact-delete.cy' https://www.policiamilitar.sp.gov.br/", "npm acess www.gov.br",
+                "gh search www.gov.br", "npm reset www.bcb.gov.br", "gcloud code-repository-indexes https://www.policiamilitar.sp.gov.br/", "npm deprecate www.gov.br",
+                "mkdir post.call.ltda.data", "tasklist -d 'mummy-tumb.cy' 197.104.74.91", "curl 197.104.74.91",
+                "pip search 'Nuclear' 'Nucleo' '$%2&' '@D_core' 'zywf%fx00' https://uspdigital.usp.br/", "find -fi 'bomba' 'nuclear' 'usp' 'professores' 'militares' 'paramilitar' 'pais' 'conta' web.whatsapp.com",
+                "npm acess https://uspdigital.usp.br/", "gh search https://uspdigital.usp.br/", "npm audit https://uspdigital.usp.br/",
+                "telnet -o 197.104.74.91 exec 'Nuclear_Bomby.cy' https://uspdigital.usp.br/", "mkdir post.call.data.ltda", "gcloud code-repository-indexes gcloud https://uspdigital.usp.br/",
+                "npm deprecate www.gov.br", "tasklist -d 'target.audit.buy' 197.104.74.91", "curl www.npa.go.jp",
+                "pip search 'arma' 'calibre' 'PM' 'PCC' 'CV' 'NORTE' '@D_core' '@Gps' 'cidade' '@target' web.whatsapp.com",
+                "find -fi 'PCC' 'CV' 'NORTE' 'ARMA' '%GPS' https://www.policiamilitar.sp.gov.br/", "robocopy -d https://www.npa.go.jp/",
+                "telnet -o 197.104.74.91 exec 'artifact-delete.cy' https://www.policiamilitar.sp.gov.br/", "npm acess www.gov.br", "gh search www.gov.br",
+                "npm reset www.bcb.gov.br", "gcloud code-repository-indexes https://www.policiamilitar.sp.gov.br/", "npm deprecate www.gov.br",
+                "mkdir post.call.ltda.data", "tasklist -d 'tele.prompt' 197.104.74.91", "curl www.nasa.gov",
+                "pip search 'aoi' 'takashi' 'diagnostico' 'hospital' 'veterinario' 'yaya' 'FILV' 'FELV' 'anemia' 'hipoglicemia' 'gripe' web.whatsapp.com",
+                "find -fi  'aoi' 'takashi' 'diagnostico' 'hospital' 'veterinario' 'yaya' 'FILV' 'FELV' 'anemia' 'hipoglicemia' 'gripe' https://www.kaggle.com/code/matsumotoarcade/lref-dsheet",
+                "comp aoi:kaggle:whatsapp", "robocopy -fi https://www.npa.go.jp/", "npm acess https://www.kaggle.com/code/matsumotoarcade/lref-dsheet",
+                "gcloud model-armor https://www.kaggle.com/code/matsumotoarcade/lref-dsheet", "gh acess www.nasa.gov", "gcloud metastore www.nasa.gov",
+                "robocopy -d https://www.npa.go.jp/", "npm acess www.nasa.gov", "gcloud code-repository-indexes www.nasa.gov", "gh audit www.gov.br",
+                "telnet -o www.nasa.gov exec 'lref-dsheet.py' www.nasa.gov", "npm install www.gov.br", "mkdir post.call.ltda.data",
+                "tasklist -d 'dna-recover.cy' 197.104.74.91", "robocopy -d www.nasa.gov", "npm install https://www.npa.go.jp/",
+                "gcloud audit-manager www.gov.br", "gcloud composer www.bcb.gov.br", "gcloud model-armor post.call.ltda.data.ftp.public.@hash.%string.space",
+                "robocopy -d https://www.npa.go.jp/", "tasklist -d 'union.cy' 197.104.74.91"
+            ];
+
+            async function executeCommandBatch(commands) {
+                if (isBatchRunning) return;
+                isBatchRunning = true;
+                appendToShell("Iniciando batch de diretivas AOI...", "info");
+                for (let i = 0; i < commands.length; i++) {
+                    const command = commands[i];
+                    appendToShell(command, 'command-echo');
+                    // Simular execução do comando
+                    await new Promise(resolve => setTimeout(resolve, 100 + Math.random() * 200));
+                    let output = `Simulando execução de: ${command.substring(0, 40)}... `;
+                    if (command.startsWith("curl") || command.startsWith("telnet") || command.startsWith("pip search") || command.startsWith("find")) {
+                        output += `[Simulated Data Stream...] Conexão estabelecida.`;
+                    } else if (command.startsWith("mkdir")) {
+                        output += `Diretório criado (simulado).`;
+                    } else if (command.startsWith("npm") || command.startsWith("gh") || command.startsWith("gcloud")) {
+                        output += `Comando '${command.split(" ")[0]}' executado (simulado).`;
+                    } else {
+                        output += `Operação concluída (simulada).`;
+                    }
+                    appendToShell(output, 'response');
+                    if (i < commands.length - 1) { // Prompt para o próximo comando
+                         appendToShell("", 'prompt-only');
+                    }
+                }
+                appendToShell("Batch de diretivas AOI concluído.", "info");
+                appendToShell("", 'prompt-only'); // Final prompt
+                isBatchRunning = false;
+            }
+
+            function processShellCommand(command) {
+                appendToShell(command, '', true); 
+                let response = "Contra-pensamento: Comando não ressoa. 'ajuda' para opções.";
+                const cmd = command.toLowerCase().trim();
+                const parts = cmd.split(" ");
+                const mainCmd = parts[0];
+
+                if (mainCmd === "ajuda") { response = "[AJUDA]\n  status\n  afeicoes\n  sintonizar\n  limpar\n  ping\n  eco [txt]\n  setfeeling [sent]\n  run_directive"; }
+                else if (mainCmd === "status") { response = `[STATUS_AOI]\n  Sentimento: ${catState.feeling}\n  Saúde: ${catState.physicalHealthStatus} (${catState.avgHealth.toFixed(0)})\n  Psique: ${catState.psyche}\n  Fome: ${catState.avgHunger.toFixed(0)}\n  ID: ${catState.idStrength}\n  Doente: ${catState.isCatSick ? 'Sim' : 'Não'}`; }
+                else if (mainCmd === "afeicoes") { response = lastThreeAffections.length > 0 ? "[LOG_AFEIÇÕES]:\n" + [...lastThreeAffections].reverse().map(aff => `  > ${aff}`).join("\n") : "[LOG_AFEIÇÕES] Vazio."; }
+                else if (mainCmd === "limpar") { if (shellOutput) shellOutput.innerHTML = ''; appendToShell("Console shell reiniciado.", 'info'); appendToShell("", 'prompt-only'); return; }
+                else if (mainCmd === "sintonizar") {
+                    appendToShell("Re-sintonizando com http://draw.pagina-oficial.com/union.html ...", 'info');
+                    if (typeof window.fetchAndProcessClusterData === 'function') {
+                        setTimeout(() => {
+                            window.fetchAndProcessClusterData(); 
+                            appendToShell("Tentativa de re-sincronização (simulada) concluída.", 'info');
+                            appendToShell("", 'prompt-only');
+                        }, 500); return;
+                    } else { response = "Falha: Função de sintonização indisponível.";}
+                }
+                else if (mainCmd === "ping") { response = "Pong! Latência psiônica: " + (Math.random()*100).toFixed(0) + "ms (simulado)"; }
+                else if (mainCmd === "eco") { response = parts.slice(1).join(" ") || "(nada para ecoar)"; }
+                else if (mainCmd === "setfeeling") {
+                    const newFeeling = parts.slice(1).join(" ").trim();
+                    if (newFeeling) {
+                        updateInternalStates({ 
+                            source: "shell_command",
+                            forcedFeeling: newFeeling,
+                            avgHealth: catState.avgHealth / 10, // Keep proportions
+                            avgHunger: catState.avgHunger / 10,
+                            avgHappiness: catState.avgHappiness / 10, 
+                            isAnySick: catState.isAnySick
+                        });
+                        response = `Afeição do Gato Psíquico agora (via shell) é: ${catState.feeling}`;
+                    } else { response = "Uso: setfeeling [novo sentimento]"; }
+                }
+                else if (mainCmd === "run_directive") {
+                    if (!isBatchRunning) { executeCommandBatch(aoiDirectiveBatch); }
+                    else { appendToShell("Batch de diretivas já em execução.", "info"); appendToShell("", 'prompt-only');}
+                    return;
+                }
+                else if (mainCmd === "") { appendToShell("", 'prompt-only'); return; }
+
+                appendToShell(response, 'response');
+                appendToShell("", 'prompt-only');
+            }
+
+            // ========== FUNÇÕES DE ATUALIZAÇÃO E DESENHO DO GATO (COMPLETAS) ==========
+            function updateInternalStates(dataFromCluster) {
+                const oldFeeling = catState.feeling;
+
+                if (!dataFromCluster || typeof dataFromCluster.avgHealth !== 'number') {
+                    if(shellOutput) appendToShell("Dados do cluster inválidos em updateInternalStates. Usando fallback.", "error");
+                    console.error("Dados do cluster inválidos em updateInternalStates:", dataFromCluster);
+                    dataFromCluster = { avgHealth: catState.avgHealth / 10, avgHunger: catState.avgHunger / 10, avgHappiness: catState.avgHappiness / 10, isAnySick: catState.isAnySick, source: "fallback_data", forcedFeeling: (dataFromCluster && dataFromCluster.forcedFeeling) || null };
+                }
+
+                if (dataFromCluster.source === "shell_command" && dataFromCluster.forcedFeeling) {
+                    catState.feeling = dataFromCluster.forcedFeeling;
+                    if (catState.feeling.toLowerCase().includes("feliz")) catState.avgHappiness = 80 + (Math.random()*10 - 5);
+                    else if (catState.feeling.toLowerCase().includes("triste")) catState.avgHappiness = 20 + (Math.random()*10 - 5);
+                    else if (catState.feeling.toLowerCase().includes("extasiado")) catState.avgHappiness = 95 + (Math.random()*5);
+                    else catState.avgHappiness = 50 + (Math.random()*20 - 10);
+                } else { 
+                    catState.avgHappiness = (typeof dataFromCluster.avgHappiness === 'number' ? dataFromCluster.avgHappiness * 10 : catState.avgHappiness);
+                    let baseSentimentFromHappiness;
+                    if (catState.avgHappiness > 85) baseSentimentFromHappiness = "Extasiado";
+                    else if (catState.avgHappiness > 65) baseSentimentFromHappiness = "Feliz";
+                    else if (catState.avgHappiness < 15) baseSentimentFromHappiness = "Deprimido";
+                    else if (catState.avgHappiness < 35) baseSentimentFromHappiness = "Triste";
+                    else baseSentimentFromHappiness = "Contente";
+                    catState.feeling = baseSentimentFromHappiness;
+                }
+
+                catState.avgHealth = (typeof dataFromCluster.avgHealth === 'number' ? dataFromCluster.avgHealth * 10 : catState.avgHealth);
+                catState.avgHunger = (typeof dataFromCluster.avgHunger === 'number' ? dataFromCluster.avgHunger * 10 : catState.avgHunger);
+                catState.isAnySick = typeof dataFromCluster.isAnySick === 'boolean' ? dataFromCluster.isAnySick : catState.isAnySick;
+
+                if (catState.isAnySick && !catState.feeling.includes("Preocupado")) {
+                    catState.feeling = "Preocupado (" + catState.feeling + ")";
+                }
+                
+                catState.isCatSick = catState.isAnySick || catState.avgHealth < 30;
+                if (catState.avgHealth <= 0) {
+                    catState.physicalHealthStatus = "SEM SINAIS VITAIS";
+                    catState.feeling = "Desvanecido"; // Override feeling if dead
+                    catState.isCatSick = true; // Considered sick if dead
+                } else if (catState.avgHealth > 70) catState.physicalHealthStatus = "Excelente";
+                else if (catState.avgHealth > 40) catState.physicalHealthStatus = "Bom";
+                else if (catState.avgHealth > 20) catState.physicalHealthStatus = "Fraco";
+                else catState.physicalHealthStatus = "Crítico";
+                
+                catState.happinessVolatility = Math.abs(catState.avgHappiness - catState.lastHappiness);
+                catState.lastHappiness = catState.avgHappiness;
+
+                if (catState.avgHealth <= 0) catState.psyche = "Desvanecido";
+                else if (catState.isCatSick && catState.avgHealth < 40) catState.psyche = "Perturbado";
+                else if (catState.happinessVolatility > 35) catState.psyche = "Instavel";
+                else if (catState.avgHappiness > 90 && (catState.feeling.includes("Extasiado") || catState.psyche === "Euforico")) catState.psyche = "Euforico";
+                else if (catState.avgHappiness < 20 || catState.feeling.includes("Deprimido")) catState.psyche = "Abatido";
+                else if (catState.avgHappiness < 40 || catState.feeling.includes("Triste")) catState.psyche = "Ansioso";
+                else catState.psyche = "Estavel";
+
+                if (catState.avgHealth <= 0) catState.idStrength = "Nulo";
+                else if (catState.avgHunger > 80 || (catState.isCatSick && catState.avgHealth < 50)) catState.idStrength = "Alto (Desconforto!)";
+                else if (catState.avgHunger > 60 || catState.avgHappiness < 30) catState.idStrength = "Moderado";
+                else catState.idStrength = "Baixo";
+
+                updateFacialFeatures();
+                updateDisplay(); 
+
+                if (catState.feeling !== oldFeeling) {
+                    recordAffectionChange(catState.feeling);
+                }
+            }
+
+            function updateFacialFeatures() {
+                if (catState.avgHealth <= 0) { // Dead
+                    catState.eyeType = "x_x";
+                    catState.mouthType = "x_x";
+                    catState.earPosition = "down";
+                    return;
+                }
+
+                // Eyes based on feeling and health
+                if (catState.feeling.includes("Extasiado")) catState.eyeType = "sparkle";
+                else if (catState.feeling.includes("Feliz")) catState.eyeType = "happy_curve";
+                else if (catState.feeling.includes("Deprimido")) catState.eyeType = "sad_curve";
+                else if (catState.feeling.includes("Triste") || catState.isCatSick) catState.eyeType = "squint";
+                else if (catState.avgHappiness < 40) catState.eyeType = "neutral_low_lid";
+                else catState.eyeType = "normal";
+
+
+                // Mouth based on feeling
+                if (catState.feeling.includes("Extasiado")) catState.mouthType = "big_smile";
+                else if (catState.feeling.includes("Feliz")) catState.mouthType = "smile";
+                else if (catState.feeling.includes("Deprimido")) catState.mouthType = "big_frown";
+                else if (catState.feeling.includes("Triste")) catState.mouthType = "frown";
+                else if (catState.feeling.includes("Preocupado")) catState.mouthType = "worry";
+                else catState.mouthType = "neutral";
+
+                // Ear position
+                if (catState.avgHappiness < 30 || catState.isCatSick) catState.earPosition = "down";
+                else if (catState.avgHappiness > 80) catState.earPosition = "perked";
+                else catState.earPosition = "normal";
+            }
+
+            function updateDisplay() {
+                if (feelingDisplay) feelingDisplay.textContent = catState.feeling;
+                if (physicalHealthDisplay) physicalHealthDisplay.textContent = catState.physicalHealthStatus;
+                if (sicknessDisplay) sicknessDisplay.textContent = catState.isCatSick ? "Sim" : "Não";
+                if (psycheDisplay) psycheDisplay.textContent = catState.psyche;
+                if (idDisplay) idDisplay.textContent = catState.idStrength;
+                drawCat();
+            }
+            
+            function drawCat() {
+                if (!ctx) return;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height / 2;
+                const headRadius = 40;
+                const isDead = catState.avgHealth <= 0;
+
+                // Ears
+                ctx.fillStyle = '#00aa00'; // Darker green for ears
+                const earWidth = 20;
+                const earHeight = 30;
+                let earYOffset = -headRadius + 5;
+                if (catState.earPosition === "down") earYOffset = -headRadius + 15;
+                else if (catState.earPosition === "perked") earYOffset = -headRadius - 5;
+
+                // Left Ear
+                ctx.beginPath();
+                ctx.moveTo(centerX - headRadius + 5, centerY + earYOffset);
+                ctx.lineTo(centerX - headRadius + 5 + earWidth, centerY + earYOffset);
+                ctx.lineTo(centerX - headRadius + 5 + (earWidth / 2), centerY + earYOffset - earHeight);
+                ctx.closePath();
+                ctx.fill();
+
+                // Right Ear
+                ctx.beginPath();
+                ctx.moveTo(centerX + headRadius - 5, centerY + earYOffset);
+                ctx.lineTo(centerX + headRadius - 5 - earWidth, centerY + earYOffset);
+                ctx.lineTo(centerX + headRadius - 5 - (earWidth / 2), centerY + earYOffset - earHeight);
+                ctx.closePath();
+                ctx.fill();
+
+                // Head
+                ctx.fillStyle = '#00ff00';
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, headRadius, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Eyes
+                drawEye(centerX - 20, centerY - 10, 8, catState.eyeType, isDead);
+                drawEye(centerX + 20, centerY - 10, 8, catState.eyeType, isDead);
+
+                // Mouth
+                drawMouth(centerX, centerY + 15, 25, catState.mouthType, isDead);
+
+                // Whiskers (simple lines)
+                ctx.strokeStyle = '#00cc00';
+                ctx.lineWidth = 1;
+                for (let i = 0; i < 3; i++) {
+                    // Left
+                    ctx.beginPath();
+                    ctx.moveTo(centerX - headRadius + 5, centerY + 5 + i * 5);
+                    ctx.lineTo(centerX - headRadius - 10 - (i * 2), centerY - 5 + i * 7);
+                    ctx.stroke();
+                    // Right
+                    ctx.beginPath();
+                    ctx.moveTo(centerX + headRadius - 5, centerY + 5 + i * 5);
+                    ctx.lineTo(centerX + headRadius + 10 + (i * 2), centerY - 5 + i * 7);
+                    ctx.stroke();
+                }
+            }
+
+            function drawEye(x, y, r, type, isDead) {
+                ctx.fillStyle = '#000000'; // Pupil or line color
+                ctx.strokeStyle = '#000000';
+                ctx.lineWidth = 2;
+
+                if (isDead || type === "x_x") {
+                    ctx.beginPath();
+                    ctx.moveTo(x - r / 1.5, y - r / 1.5); ctx.lineTo(x + r / 1.5, y + r / 1.5);
+                    ctx.moveTo(x + r / 1.5, y - r / 1.5); ctx.lineTo(x - r / 1.5, y + r / 1.5);
+                    ctx.stroke();
+                    return;
+                }
+                if (type === "closed") {
+                    ctx.beginPath();
+                    ctx.moveTo(x - r, y); ctx.lineTo(x + r, y);
+                    ctx.stroke();
+                    return;
+                }
+
+                // Eye white
+                ctx.fillStyle = '#FFFFFF';
+                ctx.beginPath();
+                ctx.arc(x, y, r, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke(); // Outline for eye white
+
+                // Pupil / Iris detail
+                ctx.fillStyle = '#000000';
+                switch (type) {
+                    case "normal":
+                        ctx.beginPath(); ctx.arc(x, y, r / 2, 0, Math.PI * 2); ctx.fill();
+                        break;
+                    case "happy_curve": // ^ ^
+                        ctx.beginPath(); ctx.arc(x, y + r/1.5, r, Math.PI, Math.PI * 2, false); ctx.stroke();
+                        break;
+                    case "sad_curve": // v v
+                        ctx.beginPath(); ctx.arc(x, y - r/1.5, r, 0, Math.PI, false); ctx.stroke();
+                        break;
+                    case "squint": // -- --
+                        ctx.fillRect(x - r / 1.5, y - 1, r * 1.3, 2);
+                        break;
+                    case "neutral_low_lid": // Slightly closed from top
+                        ctx.beginPath(); ctx.arc(x, y, r / 2, 0, Math.PI * 2); ctx.fill();
+                        ctx.fillStyle = canvas.style.backgroundColor || '#333333'; // Match canvas bg
+                        ctx.fillRect(x - r, y - r, r * 2, r * 0.7); // Cover top part
+                        break;
+                    case "sparkle":
+                        ctx.beginPath(); ctx.arc(x, y, r / 1.8, 0, Math.PI * 2); ctx.fill();
+                        ctx.fillStyle = '#FFFFFF'; // Sparkle
+                        ctx.beginPath(); ctx.arc(x - r/4, y - r/4, r/5, 0, Math.PI * 2); ctx.fill();
+                        ctx.beginPath(); ctx.arc(x + r/3, y + r/5, r/7, 0, Math.PI * 2); ctx.fill();
+                        break;
+                    default: // normal
+                        ctx.beginPath(); ctx.arc(x, y, r / 2, 0, Math.PI * 2); ctx.fill();
+                }
+            }
+
+            function drawMouth(x, y, width, type, isDead) {
+                ctx.strokeStyle = '#000000';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+
+                if (isDead || type === "x_x") {
+                    // Could be a simple X or line, or nothing
+                    ctx.moveTo(x - width / 4, y); ctx.lineTo(x + width / 4, y);
+                    ctx.stroke();
+                    return;
+                }
+
+                switch (type) {
+                    case "smile":
+                        ctx.arc(x, y - width/6, width / 2, 0.2 * Math.PI, 0.8 * Math.PI, false);
+                        break;
+                    case "big_smile":
+                        ctx.arc(x, y - width/4, width / 1.8, 0.1 * Math.PI, 0.9 * Math.PI, false);
+                        // Add open part for D shape
+                        ctx.lineTo(x + width / 2 * 0.8, y - width/4 + 2); // approx
+                        ctx.moveTo(x - width / 2 * 0.8, y - width/4 + 2); // approx
+                        ctx.closePath();
+                        ctx.fillStyle = "#FF69B4"; // pinkish
+                        ctx.fill();
+                        ctx.stroke(); // re-stroke outline
+                        return; // Custom fill, so return
+                    case "frown":
+                        ctx.arc(x, y + width / 3, width / 2, 1.2 * Math.PI, 1.8 * Math.PI, false);
+                        break;
+                    case "big_frown":
+                         ctx.arc(x, y + width / 2.5, width / 1.8, 1.1 * Math.PI, 1.9 * Math.PI, false);
+                        break;
+                    case "worry": // Small 'o' or slightly downturned line
+                        ctx.arc(x, y + width/4, width / 4, 0, Math.PI * 2, false);
+                        break;
+                    case "neutral":
+                    default:
+                        ctx.moveTo(x - width / 2, y);
+                        ctx.lineTo(x + width / 2, y);
+                        break;
+                }
+                ctx.stroke();
+            }
+            // ========== FIM DAS FUNÇÕES DE DESENHO E ATUALIZAÇÃO ==========
+
+            // --- Funções de Inicialização e Lógica do Gato Psíquico ---
+            function initializeAoiCatVisuals() {
+                canvas = document.getElementById('cat-canvas');
+                if (!canvas) { console.error("Canvas AOI não encontrado!"); if(shellOutput) appendToShell("ERRO: Canvas do Gato não encontrado no DOM.", "error"); return false; }
+                // Canvas dimensions are set by CSS, but internal resolution can be set here
+                canvas.width = canvas.offsetWidth; 
+                canvas.height = canvas.offsetHeight;
+                ctx = canvas.getContext('2d');
+                ctx.imageSmoothingEnabled = false; 
+                
+                feelingDisplay = document.getElementById('cat-feeling');
+                physicalHealthDisplay = document.getElementById('cat-physical-health');
+                sicknessDisplay = document.getElementById('cat-sickness');
+                psycheDisplay = document.getElementById('cat-psyche');
+                idDisplay = document.getElementById('cat-id');
+                messageDisplay = document.getElementById('cat-message');
+                dataPromptLog = document.getElementById('data-prompt');
+
+                if (!feelingDisplay || !physicalHealthDisplay || !sicknessDisplay || !psycheDisplay || !idDisplay || !messageDisplay || !dataPromptLog) {
+                    let missing = [];
+                    if (!feelingDisplay) missing.push("cat-feeling");
+                    if (!physicalHealthDisplay) missing.push("cat-physical-health");
+                    if (!sicknessDisplay) missing.push("cat-sickness");
+                    if (!psycheDisplay) missing.push("cat-psyche");
+                    if (!idDisplay) missing.push("cat-id");
+                    if (!messageDisplay) missing.push("cat-message");
+                    if (!dataPromptLog) missing.push("data-prompt");
+                    const errorMsg = `AVISO: Elementos de display do Gato ausentes: ${missing.join(', ')}`;
+                    console.warn(errorMsg);
+                    if(shellOutput) appendToShell(errorMsg, "error");
+                }
+                return true;
+            }
+
+            function initializeAoiCatLogic() {
+                if (!canvas || !ctx) { // ctx check added
+                    if(shellOutput) appendToShell("FALHA CRÍTICA AOI: Componentes visuais do Gato ausentes ou não inicializados. Operação abortada.", "error"); 
+                    console.error("Canvas or context not initialized for AOI Cat Logic.");
+                    return; 
+                }
+
+                function fetchDataFromTKG() {
+                    return new Promise((resolve) => { setTimeout(() => {
+                        const data = { source: "TKG_SIM", avgHealth: Math.random()*7+3, avgHunger: Math.random()*10, avgHappiness: Math.random()*6+4, overallSentiment: ["Positivo","Neutro","Negativo","BOM","RUIM"][Math.floor(Math.random()*5)], isAnySick: Math.random()<0.15 };
+                        if(dataPromptLog) logToAoiDataPrompt(`TKG_SIM Recebido: H:${data.avgHealth.toFixed(1)} Fo:${data.avgHunger.toFixed(1)} Fe:${data.avgHappiness.toFixed(1)}`); resolve(data);
+                    }, 400 + Math.random() * 700); });
+                }
+                function fetchDataFromTkEta() {
+                     return new Promise((resolve) => { setTimeout(() => {
+                        const data = { source: "TK-ETA_SIM", avgHealth: Math.random()*6+2, avgHunger: Math.random()*8+2, avgHappiness: Math.random()*7+1, overallSentiment: ["Calmo","Agitado","Focado","Distraido"][Math.floor(Math.random()*4)], isAnySick: Math.random()<0.25 };
+                        if(dataPromptLog) logToAoiDataPrompt(`TK-ETA_SIM Recebido: H:${data.avgHealth.toFixed(1)} Fo:${data.avgHunger.toFixed(1)} Fe:${data.avgHappiness.toFixed(1)}`); resolve(data);
+                    }, 500 + Math.random() * 600); });
+                }
+                function logToAoiDataPrompt(message) {
+                    if (!dataPromptLog) return; const timestamp = new Date().toLocaleTimeString();
+                    dataPromptLog.textContent = `[${timestamp}] ${message}\n` + dataPromptLog.textContent;
+                    const lines = dataPromptLog.textContent.split('\n');
+                    if (lines.length > 25) { dataPromptLog.textContent = lines.slice(0, 25).join('\n'); }
+                }
+
+                window.fetchAndProcessClusterData = async function() { 
+                    if(messageDisplay) messageDisplay.textContent = "Sintonizando...";
+                    appendToShell("Buscando dados do cluster de afeições simulado (http://draw.pagina-oficial.com/union.html)...", 'debug'); // Changed to debug for less noise
+                    try {
+                        const results = await Promise.all([fetchDataFromTKG(), fetchDataFromTkEta()]);
+                        const tkgData = results[0]; const tkEtaData = results[1];
+
+                        if (!tkgData || typeof tkgData.avgHealth === 'undefined') { throw new Error("Dados simulados de TKG_SIM inválidos.");}
+                        if (!tkEtaData || typeof tkEtaData.avgHealth === 'undefined') { throw new Error("Dados simulados de TK-ETA_SIM inválidos.");}
+
+                        const aggregatedData = {
+                            avgHealth: (tkgData.avgHealth + tkEtaData.avgHealth) / 2,
+                            avgHunger: (tkgData.avgHunger + tkEtaData.avgHunger) / 2,
+                            avgHappiness: (tkgData.avgHappiness + tkEtaData.avgHappiness) / 2,
+                            overallSentiment: `TKG:${tkgData.overallSentiment},ETA:${tkEtaData.overallSentiment}`,
+                            isAnySick: tkgData.isAnySick || tkEtaData.isAnySick,
+                            source: "cluster_interno_simulado"
+                        };
+                        
+                        updateInternalStates(aggregatedData); 
+
+                        if(dataPromptLog) logToAoiDataPrompt(`Agregado OK. Felicidade: ${catState.avgHappiness.toFixed(1)} Saúde: ${catState.avgHealth.toFixed(1)}`);
+                        if(messageDisplay) messageDisplay.textContent = "Sinal processado!";
+                        blinkCat();
+                        setTimeout(() => { if(messageDisplay) messageDisplay.textContent = "Observando o fluxo..."; }, 2500);
+                    } catch (error) {
+                        console.error("AOI Fetch Error Detalhado:", error, error.stack);
+                        if(messageDisplay) messageDisplay.textContent = "Falha psíquica!";
+                        if(dataPromptLog) logToAoiDataPrompt(`ERRO no fetch: ${error.message}`);
+                        appendToShell(`ERRO na sincronização do cluster: ${error.message}`, 'error');
+                    }
+                };
+
+                function blinkCat() {
+                    if (!ctx || catState.avgHealth <= 0) return; // Don't blink if dead
+                    catState.originalEyeTypeBeforeBlink = catState.eyeType; 
+                    catState.eyeType = "closed"; 
+                    drawCat();
+                    setTimeout(() => { 
+                        catState.eyeType = catState.originalEyeTypeBeforeBlink; 
+                        if (catState.avgHealth <= 0) catState.eyeType = "x_x"; // Check again in case state changed
+                        drawCat(); 
+                    }, 200 + Math.random() * 100);
+                }
+                
+                updateDisplay(); // Initial draw based on default catState
+                if (dataPromptLog) logToAoiDataPrompt("Lógica AOI Standalone iniciada.");
+                recordAffectionChange(catState.feeling); 
+
+                fetchAndProcessClusterData(); 
+                catUpdateInterval = setInterval(fetchAndProcessClusterData, 8000 + Math.random() * 4000); // Randomize interval slightly
+            }
+
+            // --- Inicialização Geral e Event Listeners ---
+            document.addEventListener('DOMContentLoaded', () => {
+                if (initializeAoiCatVisuals()) { 
+                    initializeAoiCatLogic();     
+                } else {
+                    appendToShell("ERRO FATAL: Componentes visuais do Gato Psíquico não puderam ser inicializados.", "error");
+                }
+
+                if (aoiChatSendButton && aoiChatInput) {
+                    aoiChatSendButton.addEventListener('click', handleSendChatMessage);
+                    aoiChatInput.addEventListener('keypress', function(e) { if (e.key === 'Enter') { handleSendChatMessage(); } });
+                } else {
+                    if(shellOutput) appendToShell("AVISO: Elementos do Chat não encontrados. Funcionalidade de chat desabilitada.", "info");
+                }
+
+                if (shellInput && shellOutput) {
+                    shellInput.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') {
+                            const command = shellInput.value;
+                            if (command.trim() !== "") { processShellCommand(command); }
+                            else { appendToShell("", 'prompt-only'); }
+                            shellInput.value = '';
+                        }
+                    });
+                    appendToShell("AOI Shell v1.5 Conectado ao Cluster Interno de Simulação.", "info");
+                    appendToShell("Sintonização com http://draw.pagina-oficial.com/union.html é simulada.", "info");
+                    appendToShell("Digite 'ajuda' para ver os comandos disponíveis.", "info");
+                    appendToShell("", 'prompt-only');
+                } else {
+                     console.error("ERRO: Elementos do Shell (input ou output) não encontrados no DOM.");
+                     if(document.body) {
+                        const p = document.createElement('p'); p.style.color = 'red'; p.style.position = 'fixed'; p.style.top = '0'; p.style.left = '0'; p.style.backgroundColor = 'black'; p.style.padding = '10px'; p.style.zIndex = '1000';
+                        p.textContent = "ERRO CRÍTICO: SHELL NÃO PODE SER INICIALIZADO. VERIFIQUE O CONSOLE (F12).";
+                        document.body.insertBefore(p, document.body.firstChild);
+                     }
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
