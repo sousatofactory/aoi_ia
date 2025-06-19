@@ -1,816 +1,1481 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AOI Shell: Gato Psíquico (DOM Cluster Simulado V4)</title>
+    <link rel="icon" href="aoiShell.jpg" type="image/x-icon">
+    <title>Ultimate AOI Console: XCake LISP Fusion v3.1 (3D Vision)</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
+        /* --- GENERAL STYLES --- */
         body {
-            font-family: 'Press Start 2P', cursive; display: flex; flex-direction: column;
-            justify-content: flex-start; align-items: center; min-height: 100vh;
-            background-color: #1a1a1a; color: #00ff00; margin: 0; padding: 20px; box-sizing: border-box;
+            font-family: 'Press Start 2P', cursive;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #1a1a1a;
+            color: #00ff00;
+            margin: 0;
+            padding: 10px;
+            box-sizing: border-box;
+            overflow-x: hidden;
         }
-        .main-app-wrapper {
-            display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;
-            width: 100%; max-width: 950px; padding: 15px; background-color: #222;
-            border-radius: 15px; box-shadow: 0 0 20px rgba(0,255,0,0.1);
+
+        .app-wrapper {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 1200px; /* Increased max-width for more content */
+            background-color: #111;
+            border: 1px solid #005500;
+            border-radius: 10px;
+            padding: 10px;
+            box-sizing: border-box;
+            margin-bottom: 20px;
         }
-        .left-panel {
-            display: flex; flex-direction: column; align-items: center; gap: 15px;
-            flex: 1 1 380px; min-width: 320px;
+
+        .main-app-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            width: 100%;
+            padding: 10px;
+            background-color: #222;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,255,0,0.1);
+            margin-bottom: 15px;
+            min-height: 400px;
+            overflow-y: auto;
+            max-height: calc(100vh - 300px); /* Adjusted max-height */
         }
-        .right-panel {
-            display: flex; flex-direction: column; gap: 15px;
-            flex: 1 1 420px; min-width: 320px;
+
+        .left-panel, .middle-panel, .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
+
+        .left-panel { flex: 1 1 350px; min-width: 300px; align-items: center;}
+        .middle-panel { flex: 1 1 400px; min-width: 320px; }
+        .right-panel { flex: 1 1 350px; min-width: 300px; }
+
+
         .aoi-container {
             background-color: #2a2a2a; border: 3px solid #00ff00; border-radius: 10px; padding: 15px;
             text-align: center; box-shadow: 0 0 15px #00ff00aa, 0 0 5px #ffffffaa inset;
-            width: 100%;
+            width: 100%; /* Changed from 90% */
+            box-sizing: border-box;
         }
-        #cat-canvas { width: 150px; height: 150px; border: 2px solid #00cc00; background-color: #333333; margin: 10px auto; border-radius: 5px; display: block; image-rendering: pixelated; }
-        .cat-stats p { margin: 5px 0; font-size: 0.8em; color: #a0ffa0; text-align: left; padding-left: 10px;}
-        .cat-stats strong { color: #00ff00; min-width: 130px; display: inline-block; } /* Adjusted min-width */
-        .cat-container-aoi h1 { font-size: 1.5em; color: #ff00ff; margin-bottom: 15px; text-shadow: 1px 1px 0px #000000, 2px 2px 0px #770077; }
-        .cat-message { margin-top: 10px; color: #ffff00; min-height: 1.2em; font-size: 0.75em; border: 1px dashed #ffff00; padding: 5px; background-color: #33330033; }
-        .data-prompt-container-aoi { min-height: 120px; }
-        .data-prompt-container-aoi h2 { font-size: 1.1em; color: #ff00ff; margin-bottom: 5px; text-shadow: 1px 1px 0px #000000, 2px 2px 0px #770077;}
-        #data-prompt { width: 100%; height: 150px; background-color: #000; color: #00ff00; border: 2px solid #00cc00; padding: 8px; box-sizing: border-box; overflow-y: auto; font-size: 0.7em; white-space: pre-wrap; word-wrap: break-word; margin-top: 8px; }
+        .aoi-container h1 { font-size: 1.4em; color: #ff00ff; margin-bottom: 10px; text-shadow: 1px 1px 0px #000000, 1px 1px 0px #770077;}
+        .aoi-container h2 { font-size: 1.1em; color: #ff00ff; margin-bottom: 5px; text-shadow: 1px 1px 0px #000000, 1px 1px 0px #770077;}
+        .aoi-container h3 { font-size: 0.9em; color: #FFA000; margin-top: 0; margin-bottom: 8px; text-align: center; text-shadow: 1px 1px 0px #000; }
 
-        #aoiChatBox {
-            display: flex; flex-direction: column; background-color: #FFF9C4;
-            border: 2px solid #FBC02D; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            padding: 15px; box-sizing: border-box; font-family: Arial, sans-serif; color: #333;
-            height: 250px;
+
+        /* --- CAT SPECIFIC STYLES --- */
+        #cat-canvas {
+            border: 2px solid #00cc00; background-color: #333333;
+            margin: 10px auto; border-radius: 5px; display: block; image-rendering: pixelated;
+            width: 180px; height: 180px; /* Slightly larger for 3D details */
         }
-        #aoiChatMessages { flex-grow: 1; overflow-y: auto; border: 1px solid #FDD835; border-radius: 5px; padding: 10px; margin-bottom: 10px; background-color: #FFFDE7; font-size: 1em; min-height: 80px; }
-        #aoiChatMessages p { margin: 6px 0; word-wrap: break-word; }
+        .cat-stats p { margin: 4px 0; font-size: 0.75em; color: #a0ffa0; text-align: left; padding-left: 5px;}
+        .cat-stats strong { color: #00ff00; min-width: 100px; display: inline-block; }
+        .cat-message { margin-top: 8px; color: #ffff00; min-height: 1.1em; font-size: 0.7em; border: 1px dashed #ffff00; padding: 5px; background-color: #33330033; }
+
+        /* --- CATNIP ENERGY BAR --- */
+        #cat-energy-container { margin-top: 10px; padding: 5px; background-color: #1e1e1e; border-radius: 5px; border: 1px solid #008800;}
+        #cat-energy-container p { margin: 0 0 5px 0; font-size: 0.7em; color: #00ffaa;}
+        #cat-energy-bar-wrapper { width: 100%; background-color: #333; border-radius: 3px; height: 15px; overflow: hidden; border: 1px solid #555;}
+        #cat-energy-bar {
+            height: 100%; width: 70%; /* Initial width */
+            background-color: #00ff00;
+            border-radius: 2px;
+            transition: width 0.5s ease-in-out, background-color 0.5s ease-in-out;
+            text-align: center; line-height: 15px; font-size: 0.6em; color: #000; font-weight: bold;
+        }
+        #cat-needs-status { font-size: 0.65em; color: #ffcc00; margin-top: 5px; min-height: 1em;}
+
+
+        /* --- AFFECTION CONSOLE --- */
+        #affection-console-container h2 { font-size: 1em; color: #00ffaa; margin-bottom: 8px; }
+        #affection-list { list-style: none; padding: 0; margin: 0; max-height: 80px; overflow-y: auto; font-size: 0.7em; background-color: #1c1c1c; border-radius: 4px;}
+        #affection-list li { padding: 3px 5px; border-bottom: 1px dashed #005500; color: #a0ffa0;}
+        #affection-list li:last-child { border-bottom: none; }
+
+        /* --- DATA PROMPT LOG --- */
+        #data-prompt {
+            width: 100%; height: 140px; background-color: #000; color: #00ff00; border: 2px solid #00cc00; padding: 8px;
+            box-sizing: border-box; overflow-y: auto; font-size: 0.65em; white-space: pre-wrap; word-wrap: break-word; margin-top: 8px;
+        }
+
+        /* --- CHATBOX STYLES --- */
+        #aoiChatBox {
+            display: flex; flex-direction: column; flex-grow:1;
+            background-color: #FFF9C4; border: 2px solid #FBC02D; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            padding: 10px; box-sizing: border-box; font-family: Arial, sans-serif; color: #333;
+            height: 300px; /* Adjusted height */
+        }
+        #aoiChatMessages {
+            flex-grow: 1; overflow-y: auto; border: 1px solid #FDD835; border-radius: 5px; padding: 8px;
+            margin-bottom: 8px; background-color: #FFFDE7; font-size: 0.9em; min-height: 100px;
+        }
+        #aoiChatMessages p { margin: 5px 0; word-wrap: break-word; white-space: pre-wrap; }
         #aoiChatMessages .user-message { text-align: right; color: #0D47A1; font-weight: bold; }
         #aoiChatMessages .aoi-reply { text-align: left; color: #D84315; }
-        .chat-input-area { display: flex; gap: 8px; }
-        #aoiChatInput { flex-grow: 1; padding: 10px; border: 1px solid #FBC02D; border-radius: 5px; box-sizing: border-box; font-size: 1em; }
-        #aoiChatSendButton { padding: 10px 15px; background-color: #FBC02D; color: #333; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 1em; }
+        #aoiChatMessages .chataoi-user-message { text-align: right; color: #4A0D47; font-style: italic; font-size:0.9em; }
+        #aoiChatMessages .chataoi-aoi-reply { text-align: left; color: #B83305; font-style: italic; font-size:0.9em; }
+        #aoiChatMessages .draw-vigilance-feed { font-style: italic; color: #777; background-color: #2c2c2c11; border-left: 3px solid #555; padding: 4px; margin: 2px 0; font-size: 0.8em;}
+        #aoiChatMessages .lisp-command-feed { font-style: italic; color: #aff0a5; background-color: #1a3b1a22; border-left: 3px solid #3c7a3c; padding: 4px; margin: 2px 0; font-size: 0.8em;}
+        #aoiChatMessages .vision-output { border: 1px solid #ccc; padding: 5px; margin: 5px 0; background-color: #f0f0f0;}
+        #aoiChatMessages .vision-output pre { white-space: pre; font-family: 'Courier New', monospace; font-size: 0.8em; color: #333; }
+
+
+        .chat-input-area { display: flex; gap: 8px; flex-shrink: 0; }
+        #aoiChatInput {
+            flex-grow: 1; padding: 8px; border: 1px solid #FBC02D; border-radius: 5px;
+            box-sizing: border-box; font-size: 0.9em; font-family: Arial, sans-serif;
+        }
+        #aoiChatSendButton {
+            padding: 8px 12px; background-color: #FBC02D; color: #333; border: none;
+            border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 0.9em;
+             font-family: 'Press Start 2P', cursive;
+        }
         #aoiChatSendButton:hover { background-color: #F9A825; }
 
-        #aoiAffectionConsole {
-            background-color: #2E2E2E; border: 2px solid #FFA000; border-radius: 8px;
-            padding: 10px; width: 100%; box-sizing: border-box; height: auto;
+        /* --- SHELL CONSOLE --- */
+        #aoi-shell-container {
+            width: 100%; height: 250px; background-color: #0a0a0a; border: 2px solid #00cc00;
+            border-radius: 8px; padding: 10px; box-sizing: border-box; display: flex; flex-direction: column;
+            font-family: 'Courier New', Courier, monospace; font-size: 0.9em; box-shadow: 0 0 10px #00ff0055 inset;
+            margin-top: 10px;
         }
-        #aoiAffectionConsole h3 { font-size: 0.9em; color: #FFA000; margin-top: 0; margin-bottom: 8px; text-align: center; text-shadow: 1px 1px 0px #000; }
-        #aoiAffectionConsole ul { list-style-type: none; padding: 0; margin: 0; height: 70px; overflow-y: auto; background-color: #1c1c1c; border-radius: 4px; }
-        #aoiAffectionConsole li { font-size: 0.75em; color: #FFCA28; padding: 4px 6px; border-bottom: 1px dashed #444; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        #aoiAffectionConsole li:last-child { border-bottom: none; }
-
-        #aoiShellConsole {
-            background-color: #000000; border: 2px solid #00FF00; border-radius: 8px;
-            padding: 10px; width: 100%; box-sizing: border-box; height: 180px;
-            overflow-y: auto; font-family: 'Press Start 2P', monospace;
-            color: #00FF00; font-size: 0.7em; display: flex; flex-direction: column;
-        }
-        .shell-output-area { flex-grow: 1; overflow-y: auto; margin-bottom: 5px; }
-        .shell-output-line { margin-bottom: 3px; white-space: pre-wrap; word-break: break-all; }
-        .shell-prompt-display { color: #00FF00; }
-        .shell-user-input-text { color: #90CAF9; }
-        .shell-response { color: #A5D6A7; }
-        .shell-info { color: #FFFF00; }
-        .shell-error { color: #FF5252; font-weight: bold;}
-        .shell-debug { color: #7C4DFF; }
-        .shell-affection { color: #FF00FF; }
-        .shell-chat-listen { color: #00FFFF; }
-        .shell-input-line { display: flex; align-items: center; margin-top: auto; }
-        .shell-input-line .shell-prompt-display { margin-right: 5px; }
+        #shellOutput { flex-grow: 1; overflow-y: auto; margin-bottom: 5px; line-height: 1.3; }
+        .shell-output-line { margin-bottom: 2px; word-break: break-all; white-space: pre-wrap; /* Crucial for ASCII art */ }
+        .shell-prompt-display { color: #00ff00; }
+        .shell-user-input-text { color: #ffffff; }
+        .shell-response { color: #cccccc; }
+        .shell-info { color: #00ffff; }
+        .shell-error { color: #ff3333; font-weight: bold; }
+        .shell-debug { color: #888888; }
+        .shell-affection { color: #ff00ff; font-style: italic; }
+        .shell-chat-listen { color: #ffff00; }
+        .shell-input-line { display: flex; align-items: center; }
         #aoiShellInput {
-            background-color: transparent; border: none; color: #00FF00;
-            font-family: 'Press Start 2P', monospace; font-size: 1em; /* Herda de #aoiShellConsole */
-            outline: none; flex-grow: 1; padding-left: 0;
+            flex-grow: 1; background-color: transparent; border: none; color: #00ff00;
+            font-family: 'Courier New', Courier, monospace; font-size: 1em; padding-left: 5px; outline: none;
         }
 
-        @media (max-width: 768px) {
-            .main-app-wrapper { flex-direction: column; align-items: center; }
-            .left-panel, .right-panel { flex-basis: auto; width: 95%; max-width: 450px; }
+        /* --- MENU BAR --- */
+        .aoi-menu-bar {
+            display: block; width: 100%; max-width: 1200px;
+            background-color: #2a2a2a; border: 1px solid #008800;
+            border-radius: 8px;
+            padding: 8px; box-sizing: border-box; text-align: center; margin-top: 10px;
         }
+        .aoi-menu-bar span { font-size: 0.8em; margin-right: 15px; }
+        .aoi-menu-bar a {
+            font-family: 'Press Start 2P', cursive; color: #00ff00; text-decoration: none;
+            margin: 0 8px; font-size: 0.8em;
+        }
+        .aoi-menu-bar a:hover { color: #ff00ff; }
+
+       
     </style>
 </head>
 <body>
-    <div class="main-app-wrapper">
-        <div class="left-panel">
-            <div class="aoi-container cat-container-aoi">
-                <h1>Gato Psiquico</h1>
-                <canvas id="cat-canvas"></canvas>
-                <div class="cat-stats">
-                    <p><strong>Sentimento:</strong> <span id="cat-feeling">Aguardando...</span></p>
-                    <p><strong>Saude Fisica:</strong> <span id="cat-physical-health">N/A</span></p>
-                    <p><strong>Doente:</strong> <span id="cat-sickness">N/A</span></p>
-                    <p><strong>Estado Psiquico:</strong> <span id="cat-psyche">Estavel</span></p>
-                    <p><strong>Impulso (ID):</strong> <span id="cat-id">Calmo</span></p>
+    <div class="app-wrapper">
+        <div class="main-app-container">
+            <!-- LEFT PANEL: Cat Visuals, Stats, Energy -->
+            <div class="left-panel">
+                <div class="aoi-container cat-container-aoi">
+                    <h1>USAGI-KUN PROMPT</h1>
+                    <canvas id="cat-canvas"></canvas>
+                    <div class="cat-stats">
+                        <p><strong>Sentimento:</strong> <span id="cat-feeling">Aguardando...</span></p>
+                        <p><strong>Saúde Física:</strong> <span id="cat-physical-health">N/A</span></p>
+                        <p><strong>Doente:</strong> <span id="cat-sickness">N/A</span></p>
+                        <p><strong>Estado Psíquico:</strong> <span id="cat-psyche">Estável</span></p>
+                        <p><strong>Impulso (ID):</strong> <span id="cat-id">Calmo</span></p>
+                        <p><strong>Render Mode:</strong> <span id="cat-render-mode">2D</span></p>
+                    </div>
+                    <div id="cat-energy-container">
+                        <p>Catnip Energia:</p>
+                        <div id="cat-energy-bar-wrapper">
+                            <div id="cat-energy-bar">70%</div>
+                        </div>
+                        <div id="cat-needs-status">Descansado</div>
+                    </div>
+                    <div id="cat-message" class="cat-message">Observando o fluxo da união...</div>
                 </div>
-                <div id="cat-message" class="cat-message">Observando o fluxo da uniao...</div>
+                <div id="affection-console-container" class="aoi-container">
+                    <h2>Afeições Recentes</h2>
+                    <ul id="affection-list"></ul>
+                </div>
             </div>
-            <div class="aoi-container data-prompt-container-aoi">
-                <h2>LOG DE DADOS</h2>
-                <pre id="data-prompt">Aguardando transmissoes...</pre>
+
+            <!-- MIDDLE PANEL: Chat, Data Log -->
+            <div class="middle-panel">
+                <div id="aoiChatBox" class="aoi-container">
+                    <div id="aoiChatMessages">
+                        <p class="aoi-reply">Olá! Eu sou o Gato Psíquico Unificado. As frequências estão claras.</p>
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" id="aoiChatInput" placeholder="Fale com AOI ou peça uma imagem...">
+                        <button id="aoiChatSendButton">Enviar</button>
+                    </div>
+                </div>
+                 <div class="aoi-container data-prompt-container-aoi">
+                    <h2>LOG DE DADOS (Cluster Feed)</h2>
+                    <pre id="data-prompt">Aguardando transmissões...</pre>
+                </div>
+            </div>
+
+            <!-- RIGHT PANEL: Shell (always visible) -->
+            <div class="right-panel">
+                 <div id="aoi-shell-container" class="aoi-container" style="height: 520px;">
+                    <div id="shellOutput"></div>
+                    <div class="shell-input-line">
+                        <span class="shell-prompt-display">AOI-LISP></span>
+                        <input type="text" id="aoiShellInput" autofocus>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="right-panel">
-            <div id="aoiChatBox">
-                <div id="aoiChatMessages">
-                    <p class="aoi-reply">Olá! Pergunte algo ao Gato Psíquico.</p>
-                </div>
-                <div class="chat-input-area">
-                    <input type="text" id="aoiChatInput" placeholder="Digite sua pergunta...">
-                    <button id="aoiChatSendButton">Enviar</button>
-                </div>
-            </div>
-            <div id="aoiAffectionConsole" class="aoi-container">
-                <h3>Últimas Afeições</h3>
-                <ul id="affection-list"></ul>
-            </div>
-            <div id="aoiShellConsole">
-                <div class="shell-output-area" id="shellOutput"></div>
-                <div class="shell-input-line">
-                    <span class="shell-prompt-display">$ </span>
-                    <input type="text" id="aoiShellInput" autofocus>
-                </div>
-            </div>
-        </div>
     </div>
 
-    <script>
-// Client-side script to disable context menu
-if (document.addEventListener) {
-    document.addEventListener("contextmenu", function(e) {
-        e.preventDefault();
-        return false;
-    });
-} else { //Versões antigas do IE
-    document.attachEvent("oncontextmenu", function(e) {
-        e = e || window.event;
-        e.returnValue = false;
-        return false;
-    });
-}
-    </script>
-    <script>
-// Client-side script for bot detection (simple version)
-document.addEventListener('DOMContentLoaded', function() {
-  const userAgent = navigator.userAgent;
-  const bots = [
-    'curl', 'wget', 'python-requests', 'okhttp', 'go-http-client'
-    // ... outros User-Agents de robôs comuns
-  ];
-  for (const bot of bots) {
-    if (userAgent.toLowerCase().includes(bot.toLowerCase())) {
-      // document.body.innerHTML = '<h1>Acesso Proibido, Você Hackeu uma Corporação, medidas legais serão tomadas perante as leis norte-americana</h1>'; // ou um redirecionamento
-      console.warn("Bot-like User-Agent detected on client-side:", userAgent);
-      // Not actually blocking here, just logging, as server-side check is more robust.
-      return; 
-    }
-  }
-});
-    </script>
+    <div class="aoi-menu-bar">
+        <span>Usuário: <strong>Unified_Admin_Roots</strong></span>
+        <a href="#" id="reloadPageLink">Recarregar Console</a> |
+        <a href="#" id="toggleRooterLink">Rooter LISP: ON</a> |
+        <a href="#" id="logoutSimLink">Logout (Simulado)</a>
+    </div>
 
-    <script>
+ <script>
+        // --- UNIFIED AOI CONSOLE SCRIPT ---
         (function() {
-            // --- Seletores de Elementos DOM ---
+            // =========================================================================
+            // === DOM Element Selectors
+            // =========================================================================
+            const canvas = document.getElementById('cat-canvas');
+            const feelingDisplay = document.getElementById('cat-feeling');
+            const physicalHealthDisplay = document.getElementById('cat-physical-health');
+            const sicknessDisplay = document.getElementById('cat-sickness');
+            const psycheDisplay = document.getElementById('cat-psyche');
+            const idDisplay = document.getElementById('cat-id');
+            const catRenderModeDisplay = document.getElementById('cat-render-mode');
+            const catEnergyBar = document.getElementById('cat-energy-bar');
+            const catNeedsStatus = document.getElementById('cat-needs-status');
+            const messageDisplay = document.getElementById('cat-message');
+            const affectionListElement = document.getElementById('affection-list');
+            const dataPromptLog = document.getElementById('data-prompt');
             const aoiChatMessages = document.getElementById('aoiChatMessages');
             const aoiChatInput = document.getElementById('aoiChatInput');
             const aoiChatSendButton = document.getElementById('aoiChatSendButton');
-            const affectionListElement = document.getElementById('affection-list');
             const shellOutput = document.getElementById('shellOutput');
             const shellInput = document.getElementById('aoiShellInput');
+            const toggleRooterLink = document.getElementById('toggleRooterLink');
+            const reloadPageLink = document.getElementById('reloadPageLink');
+            const logoutSimLink = document.getElementById('logoutSimLink');
 
-            // Variáveis do Gato
-            let canvas, ctx, feelingDisplay, physicalHealthDisplay, sicknessDisplay, psycheDisplay, idDisplay, messageDisplay, dataPromptLog;
+            let ctx;
 
-            let catUpdateInterval;
-            let lastThreeAffections = [];
-            let lastReportedFeelingToShell = ""; 
-            let isBatchRunning = false; 
-
-            // --- Estado Inicial do Gato ---
+            // =========================================================================
+            // === Global State Variables
+            // =========================================================================
             let catState = {
-                avgHealth: 70, avgHunger: 30, avgHappiness: 70, overallSentiment: "Neutro", isAnySick: false,
-                feeling: "Aguardando...", 
-                physicalHealthStatus: "N/A", isCatSick: false,
-                psyche: "Estavel", idStrength: "Calmo", lastHappiness: 70, happinessVolatility: 0,
-                eyeType: "normal", mouthType: "neutral", earPosition: "normal", originalEyeTypeBeforeBlink: "normal"
+                avgHealth: 75, avgHunger: 25, avgHappiness: 75,
+                feeling: "Vigilante", physicalHealthStatus: "Estável", isCatSick: false,
+                psyche: "Alerta", idStrength: "Controlado", lastHappiness: 75, happinessVolatility: 0,
+                eyeType: "normal_alert", mouthType: "neutral_slight_curve", earPosition: "normal_forward", originalEyeTypeBeforeBlink: "normal_alert",
+                is3DRenderMode: false,
+                renderModeTimeoutId: null,
+                energy: 80, maxEnergy: 100, energyPerVision: 15, energyPerBatch: 10, energyFor3DRender: 20,
+                catnipBuffDuration: 0, lastCatnipTime: 0, catnipCooldown: 60000,
+                needs: "Descansado",
+                vigilanceTarget: "http://draw.pagina-oficial.com/cosmic.html",
+                lastRooterEventType: "Heartbeat"
             };
 
-            // --- Funções do Chat ---
-            function appendChatMessage(text, className) {
-                if (!aoiChatMessages) return;
-                const p = document.createElement('p');
-                p.className = className; p.textContent = text;
-                aoiChatMessages.appendChild(p);
-                aoiChatMessages.scrollTop = aoiChatMessages.scrollHeight;
-            }
+            const simulatedDrawSystem = {
+                status: "Operacional", securityLevel: "Normal", blockedIPs: new Set(["192.168.1.254", "10.0.0.1"]),
+                botUserAgents: ['curl/7.68.0', 'wget/1.20.3', 'python-requests/2.25.1', 'googlebot/2.1'],
+                recentTraffic: [], securityLog: [], lastAOIMessagePriority: 'normal',
+                requestLimitPerIP: 100, ipRequestCounts: {},
+                rooterActive: true, rooterIntervalId: null, commandGenerationIntervalId: null,
+                rooterCommandQueue: [], rooterProcessingSpeedMs: 3500, rooterMaxQueueLength: 20,
+                rooterGenerationSpeedMs: 6000,
+                lispCommandsProcessedByRooter: 0,
+                lispRooterLog: []
+            };
 
-            function getAoiReply(question) {
-                const q = question.toLowerCase();
-                const currentFeeling = catState.feeling;
-                const currentHealth = catState.physicalHealthStatus;
-                if (q.includes("olá") || q.includes("oi")) return "Olá! As frequências estão claras.";
-                if (q.includes("como você está")) return `Minha vibração atual é ${currentFeeling}. O cosmos é vasto.`;
-                if (q.includes("sentimento")) return `Sinto-me: ${currentFeeling}.`;
-                if (q.includes("saúde")) return `Meu estado etéreo é: ${currentHealth}.`;
-                if (q.includes("quem é você")) return "Sou um eco, uma sombra, um ronronar no vazio. O Gato Psíquico.";
-                const randomReplies = ["Fascinante...", "Hmm, deixe-me pensar...", "Miau. (Profundo, não?)", "A realidade é maleável.", "Talvez."];
-                return randomReplies[Math.floor(Math.random() * randomReplies.length)];
-            }
+            const GEMINI_API_KEY = "03cf38bec03340a2c9199c24d53c53faae3d7a4e"; // Dummy
 
-            function handleSendChatMessage() {
-                if (!aoiChatInput || !aoiChatMessages) return;
-                const messageText = aoiChatInput.value.trim();
-                if (messageText === '') return;
-                appendChatMessage(messageText, 'user-message');
-                appendToShell(messageText, 'chat-listen');
-                aoiChatInput.value = '';
-                setTimeout(() => {
-                    const reply = getAoiReply(messageText);
-                    appendChatMessage(reply, 'aoi-reply');
-                    appendToShell(`AOI Chat Eco: "${reply.substring(0,30)}..."`, 'info');
-                }, 600 + Math.random() * 300);
-            }
+            let catUpdateInterval, energyRegenInterval, renderLoopInterval;
+            let lastThreeAffections = [];
+            let lastReportedFeelingToShell = "";
+            let isBatchRunning = false;
+            let alertDirectiveHasBeenTriggered = false; // Flag for automatic alert response
+            window.lastRunningBatchName = null;
+            window.pendingBatch = null;
+            window.lastGeneratedSvgCode = null;
+            window.lastGeneratedSvgShape = null;
+            window.lastGenerated3DDescription = null;
 
-            // --- Funções do Console de Afeições ---
-            function updateAffectionConsole() {
-                if (!affectionListElement) return;
-                affectionListElement.innerHTML = '';
-                [...lastThreeAffections].reverse().forEach(affection => {
-                    const li = document.createElement('li');
-                    li.textContent = affection;
-                    affectionListElement.appendChild(li);
-                });
-            }
+            // =========================================================================
+            // === AOI DIRECTIVE BATCHES
+            // =========================================================================
+            const aoiDirectiveBatch = [
+                // --- Standard Directives ---
+                "curl www.cia.gov",
+                "pip search 'mauricio' 'tenente-coronel' '8RAYY529' https://www.policiamilitar.sp.gov.br/",
+                "find -fi 'PCC' 'CV' 'NORTE' 'ARMA' https://www.policiamilitar.sp.gov.br/",
+                "pip search 'rua jorge oguchi zona leste | tribunal batidão' web.whatsapp.com",
+                "robocopy -d https://www.npa.go.jp/ rua jorge oguchi zona leste | tribunal batidão",
+                "telnet -o 197.104.74.91 exec 'dna-executer.cy' https://www.policiamilitar.sp.gov.br/",
+                "npm acess www.gov.br gh search www.gov.br git reset www,bcb.gov.br",
+                "tasklist -d 'union.cy' 197.104.74.91",
+                "start curl http://draw.pagina-oficial.com/draw.php",
+                "npm owner https://www.cannariver.com/",
+                "git join https://vaporesso.br.com/",
+                "gh push https://www.coinbase.com/",
+                "pip search 'armando' 'takashi' 'sato' 'sousato' 'takasystem' www.google.com",
+                "npm search www.gov.br",
+                "git acess www.bcb.gov.br",
+                "install https://www.coinbase.com/",
+                "telnet -o 197.104.74.91 exec 'audit.buy' https://nasdaq.com/",
+                "cmake https://nasdaq.com/",
+                "mkdir post.call.ltda.data",
+                "tasklist -d 'tele.prompt' 197.104.74.91",
+                "start curl http://draw.pagina-oficial.com/draw.php",
+                "npm owner https://www.cbdmd.com/",
+                "git join https://grencogoods.com/",
+                "gh push https://www.gpen.com/",
+                "pip search 'armando' 'takashi' 'sato' 'sousato' 'takasystem' www.google.com",
+                "npm search www.gov.br",
+                "git acess https://cloud.google.com/",
+                "install https://www.coinbase.com/",
+                "telnet -o 197.104.74.91 exec 'audit.buy' https://nasdaqbaltic.com/",
+                "cmake www.b3.com.br",
+                "npm install http://draw.pagina-oficial.com/draw.php",
+                "gh https://nasdaqbaltic.com/",
+                "mkdir post.call.ltda.data",
+                "tasklist -d 'tele.prompt' 197.104.74.91",
+                "pip search 'arma' 'calibre' 'PM' 'PCC' 'CV' 'NORTE' '@D_core' '@Gps' 'cidade' '@target' web.whatsapp.com",
+                "pip search 'arma' 'calibre' 'PM' 'PCC' 'CV' 'NORTE' '@D_core' '@Gps' 'cidade'",
+                "find /I \"localGPSnull\" in (*.*)",
+                "find /I \"local@GPS\" '%GPS' https://www.google.com/maps/",
+                "find -fi 'PCC' 'CV' 'NORTE' 'ARMA' '%GPS' https://www.policiamilitar.sp.gov.br/",
+                "robocopy -d https://www.npa.go.jp/",
+                "telnet -o 197.104.74.91 exec 'artifact-delete.cy' https://www.policiamilitar.sp.gov.br/",
+                "npm acess www.gov.gov.br",
+                "gh search www.gov.br",
+                "npm reset www.bcb.gov.br",
+                "gcloud code-repository-indexes https://www.policiamilitar.sp.gov.br/",
+                "start curl http://draw.pagina-oficial.com/draw.php",
+                "npm owner www.google.com",
+                "git join https://cloud.google.com/",
+                "gh push https://aistudio.google.com/",
+                "pip search 'armando' 'takashi' 'sato' 'sousato' 'takasystem' www.google.com",
+                "npm search www.gov.br",
+                "git acess https://cloud.google.com/",
+                "install https://www.coinbase.com/",
+                "telnet -o 197.104.74.91 exec 'audit.buy' https://nasdaq.com/",
+                "cmake www.b3.com.br",
+                "npm install http://draw.pagina-oficial.com/draw.php",
+                "gh https://nasdaq.com/",
+                "mkdir post.call.ltda.data",
+                "gh push 197.104.74.91",
+                // --- Intelligence/Terrorism Directives ---
+                "start curl www.cia.gov",
+                "pip search 'pcc' 'hamas' 'hezbolah' 'jihad' 'hijab' 'taliba' 'cv' 'tcp' 'nome' 'crime' 'preço' 'artefato' 'arma' 'deputado' 'vereador' 'prefeito' 'presidente' web.whatsapp.com",
+                "pip search 'pcc' 'hamas' 'hezbolah' 'jihad' 'hijab' 'taliba' 'cv' 'tcp' 'nome' 'crime' 'preço' 'artefato' 'arma' 'deputado' 'vereador' 'prefeito' 'presidente' www.dadosabertos.camara.leg.br",
+                "pip search 'pcc' 'hamas' 'hezbolah' 'jihad' 'hijab' 'taliba' 'cv' 'tcp' 'nome' 'crime' 'preço' 'artefato' 'arma' 'deputado' 'vereador' 'prefeito' 'presidente' www.cfr.org",
+                "robocopy -fi www.nato.int",
+                "npm acess www.cfr.org",
+                "gh search www.cfr.org",
+                "npm reset www.cfr.org",
+                "telnet -o www.nasa.gov exec 'nuclear.bomb' www.cfr.org",
+                "tasklist -d 'tele.prompt' 197.104.74.91"
+            ];
 
-            function recordAffectionChange(newAffection) {
-                let affectionActuallyChangedInList = false;
-                if (!(lastThreeAffections.length > 0 && lastThreeAffections[lastThreeAffections.length - 1] === newAffection)) {
-                    lastThreeAffections.push(newAffection);
-                    if (lastThreeAffections.length > 3) lastThreeAffections.shift();
-                    updateAffectionConsole();
-                    affectionActuallyChangedInList = true;
-                }
+            const specialVigilanceBatch = [
+                "start curl http://draw.pagina-oficial.com/draw.php",
+                "npm owner www.google.com",
+                "git join https://cloud.google.com/",
+                "gh push https://aistudio.google.com/",
+                "pip search 'armando' 'takashi' 'sato' 'sousato' 'takasystem' www.google.com",
+                "npm search www.gov.br",
+                "git acess https://cloud.google.com/",
+                "install https://www.coinbase.com/",
+                "telnet -o 197.104.74.91 exec 'audit.buy' https://nasdaq.com/",
+                "cmake www.b3.com.br",
+                "npm install http://draw.pagina-oficial.com/draw.php",
+                "gh https://nasdaq.com/",
+                "mkdir post.call.ltda.data",
+                "gh push 197.104.74.91"
+            ];
 
-                if (newAffection !== lastReportedFeelingToShell) {
-                    appendToShell(newAffection, 'affection');
-                    lastReportedFeelingToShell = newAffection;
-                }
-            }
+            const chatDataDirectiveBatch = [
+                "INIT_CHAT_SESSION: session_id_unified_zeta_10",
+                "RECEIVE_USER_INPUT: text='Como está a energia?'",
+                "TOKENIZE_INPUT: ['como', 'está', 'a', 'energia', '?']",
+                "IDENTIFY_INTENT: query_cat_energy",
+                "GENERATE_NATURAL_LANGUAGE_OUTPUT: 'Minha energia Catnip está em X%...'",
+                "LOG_INTERACTION: user_q='energia?', aoi_r='X%...'"
+            ];
 
-            // --- Funções do Shell Console ---
+            // =========================================================================
+            // === Helper Functions
+            // =========================================================================
             function appendToShell(text, type = 'output', isUserInput = false) {
-                if (!shellOutput) { console.error("Shell output area não encontrada!"); return; }
+                if (!shellOutput) { console.warn("Shell output area não encontrada!"); return; }
                 const line = document.createElement('div');
                 line.classList.add('shell-output-line');
                 let content = "";
-                if (isUserInput) { content = `<span class="shell-prompt-display">$ </span><span class="shell-user-input-text">${text}</span>`; }
-                else if (type === 'response') { line.classList.add('shell-response'); content = `> ${text.replace(/\n/g, '\n> ')}`; }
-                else if (type === 'info') { line.classList.add('shell-info'); content = `[INFO] ${text}`; }
-                else if (type === 'error') { line.classList.add('shell-error'); content = `[ERRO] ${text}`; }
-                else if (type === 'debug') { line.classList.add('shell-debug'); content = `[DEBUG] ${text}`; }
-                else if (type === 'affection') { line.classList.add('shell-affection'); content = `[CLUSTER_AFEIÇÃO] Gato sente: ${text}`; }
-                else if (type === 'chat-listen') { line.classList.add('shell-chat-listen'); content = `[CHAT_RX] "${text}"`; }
-                else if (type === 'command-echo') { content = `<span class="shell-prompt-display">EXEC: </span><span class="shell-user-input-text">${text}</span>`;}
-                else if (type === 'prompt-only'){ content = `<span class="shell-prompt-display">$ </span>`; }
-                else { content = `<span class="shell-prompt-display">AOI_SHELL:></span> ${text}`; }
+                const typeToClass = {
+                    'output': '', 'response': 'shell-response', 'info': 'shell-info',
+                    'error': 'shell-error', 'debug': 'shell-debug', 'affection': 'shell-affection',
+                    'chat-listen': 'shell-chat-listen', 'command-echo': 'shell-user-input-text',
+                    'network-rx': 'shell-network-rx', 'lisp-output': 'shell-lisp-output',
+                    'catnip-log': 'shell-catnip-log', 'gemini-log': 'shell-gemini-log'
+                };
+
+                if (isUserInput) {
+                    content = `<span class="shell-prompt-display">AOI-LISP> </span><span class="shell-user-input-text">${text}</span>`;
+                } else if (type === 'prompt-only') {
+                    content = `<span class="shell-prompt-display">AOI-LISP> </span>`;
+                } else {
+                    if (typeToClass[type]) line.classList.add(typeToClass[type]);
+                    if (type === 'response') content = `> ${text.replace(/\n/g, '\n> ')}`;
+                    else if (type === 'info') content = `[INFO] ${text}`;
+                    else if (type === 'error') content = `[ERRO] ${text}`;
+                    else if (type === 'debug') content = `[DEBUG] ${text}`;
+                    else if (type === 'affection') content = `[CLUSTER_AFEIÇÃO] Gato sente: ${text}`;
+                    else if (type === 'chat-listen') content = `[CHAT_RX] "${text}"`;
+                    else if (type === 'command-echo') content = `<span class="shell-prompt-display">EXEC: </span><span class="shell-user-input-text">${text}</span>`;
+                    else if (type === 'network-rx') content = `[NET_RX] ${text}`;
+                    else if (type === 'lisp-output') content = `[LISP_RSP] ${text}`;
+                    else if (type === 'catnip-log') content = `[CATNIP] ${text}`;
+                    else if (type === 'gemini-log') content = `[GEMINI_VISION_CORE] ${text}`;
+                    else content = text;
+                }
                 line.innerHTML = content;
                 shellOutput.appendChild(line);
                 shellOutput.scrollTop = shellOutput.scrollHeight;
             }
 
-            const aoiDirectiveBatch = [
-                "curl www.cia.gov", "pip search 'mauricio' 'tenente-coronel' 'ra' 'id' 'operações' 'vitimas' 'arma' 'crime' 'criminoso' 'facção' 'preço' 'deputado' 'juiz' https://www.policiamilitar.sp.gov.br/",
-                "find -fi 'mauricio' 'tenente-coronel' 'ra' 'id' 'operações' 'vitimas' 'arma' 'crime' 'criminoso' 'facção' 'preço' 'deputado' 'juiz' 'irmão' 'pcc' 'crb' 'cv' web.whatsapp.com",
-                "comp mauricio:policiamilitar:whatsapp","robocopy -fi https://www.npa.go.jp/", "npm acess https://www.policiamilitar.sp.gov.br/", "gh search www.gov.br", "npm reset www.bcb.gov.br",
-                "telnet -o 197.104.74.91 exec 'dna-executer.cy' https://www.policiamilitar.sp.gov.br/", "mkdir post.call@tube.concast.api.gemini.ltda.data.com", "cmake gemini.api.data.call.ftp.public.space.union.target.gov.br",
-                "telnet -o 197.104.74.91 exec 'audit.buy' https://www.b3.com.br/", "mkdir post.call.mql.@hash.$sting.data.ltda.ftp.class", "tasklist -d 'dna-return' 197.104.74.91",
-                "curl www.npa.go.jp", "pip search 'SAO' 'PAULO' 'RUA' 'JORGE' 'OGUSHI' 'GUARULHOS' 'SANTA' 'MENA' 'arma' 'calibre' 'PM' 'PCC' 'CV' 'NORTE' '@D_core' '@Gps' 'cidade' '@target' web.whatsapp.com",
-                "find -fi 'SAO' 'PAULO' 'RUA' 'JORGE' 'OGUSHI' 'GUARULHOS' 'SANTA' 'MENA' 'PCC' 'CV' 'NORTE' 'ARMA' '%GPS' https://www.policiamilitar.sp.gov.br/",
-                "robocopy -d https://www.npa.go.jp/", "telnet -o 197.104.74.91 exec 'artifact-delete.cy' https://www.policiamilitar.sp.gov.br/", "npm acess www.gov.br",
-                "gh search www.gov.br", "npm reset www.bcb.gov.br", "gcloud code-repository-indexes https://www.policiamilitar.sp.gov.br/", "npm deprecate www.gov.br",
-                "mkdir post.call.ltda.data", "tasklist -d 'mummy-tumb.cy' 197.104.74.91", "curl 197.104.74.91",
-                "pip search 'Nuclear' 'Nucleo' '$%2&' '@D_core' 'zywf%fx00' https://uspdigital.usp.br/", "find -fi 'bomba' 'nuclear' 'usp' 'professores' 'militares' 'paramilitar' 'pais' 'conta' web.whatsapp.com",
-                "npm acess https://uspdigital.usp.br/", "gh search https://uspdigital.usp.br/", "npm audit https://uspdigital.usp.br/",
-                "telnet -o 197.104.74.91 exec 'Nuclear_Bomby.cy' https://uspdigital.usp.br/", "mkdir post.call.data.ltda", "gcloud code-repository-indexes gcloud https://uspdigital.usp.br/",
-                "npm deprecate www.gov.br", "tasklist -d 'target.audit.buy' 197.104.74.91", "curl www.npa.go.jp",
-                "pip search 'arma' 'calibre' 'PM' 'PCC' 'CV' 'NORTE' '@D_core' '@Gps' 'cidade' '@target' web.whatsapp.com",
-                "find -fi 'PCC' 'CV' 'NORTE' 'ARMA' '%GPS' https://www.policiamilitar.sp.gov.br/", "robocopy -d https://www.npa.go.jp/",
-                "telnet -o 197.104.74.91 exec 'artifact-delete.cy' https://www.policiamilitar.sp.gov.br/", "npm acess www.gov.br", "gh search www.gov.br",
-                "npm reset www.bcb.gov.br", "gcloud code-repository-indexes https://www.policiamilitar.sp.gov.br/", "npm deprecate www.gov.br",
-                "mkdir post.call.ltda.data", "tasklist -d 'tele.prompt' 197.104.74.91", "curl www.nasa.gov",
-                "pip search 'aoi' 'takashi' 'diagnostico' 'hospital' 'veterinario' 'yaya' 'FILV' 'FELV' 'anemia' 'hipoglicemia' 'gripe' web.whatsapp.com",
-                "find -fi  'aoi' 'takashi' 'diagnostico' 'hospital' 'veterinario' 'yaya' 'FILV' 'FELV' 'anemia' 'hipoglicemia' 'gripe' https://www.kaggle.com/code/matsumotoarcade/lref-dsheet",
-                "comp aoi:kaggle:whatsapp", "robocopy -fi https://www.npa.go.jp/", "npm acess https://www.kaggle.com/code/matsumotoarcade/lref-dsheet",
-                "gcloud model-armor https://www.kaggle.com/code/matsumotoarcade/lref-dsheet", "gh acess www.nasa.gov", "gcloud metastore www.nasa.gov",
-                "robocopy -d https://www.npa.go.jp/", "npm acess www.nasa.gov", "gcloud code-repository-indexes www.nasa.gov", "gh audit www.gov.br",
-                "telnet -o www.nasa.gov exec 'lref-dsheet.py' www.nasa.gov", "npm install www.gov.br", "mkdir post.call.ltda.data",
-                "tasklist -d 'dna-recover.cy' 197.104.74.91", "robocopy -d www.nasa.gov", "npm install https://www.npa.go.jp/",
-                "gcloud audit-manager www.gov.br", "gcloud composer www.bcb.gov.br", "gcloud model-armor post.call.ltda.data.ftp.public.@hash.%string.space",
-                "robocopy -d https://www.npa.go.jp/", "tasklist -d 'union.cy' 197.104.74.91"
-            ];
-
-            async function executeCommandBatch(commands) {
-                if (isBatchRunning) return;
-                isBatchRunning = true;
-                appendToShell("Iniciando batch de diretivas AOI...", "info");
-                for (let i = 0; i < commands.length; i++) {
-                    const command = commands[i];
-                    appendToShell(command, 'command-echo');
-                    // Simular execução do comando
-                    await new Promise(resolve => setTimeout(resolve, 100 + Math.random() * 200));
-                    let output = `Simulando execução de: ${command.substring(0, 40)}... `;
-                    if (command.startsWith("curl") || command.startsWith("telnet") || command.startsWith("pip search") || command.startsWith("find")) {
-                        output += `[Simulated Data Stream...] Conexão estabelecida.`;
-                    } else if (command.startsWith("mkdir")) {
-                        output += `Diretório criado (simulado).`;
-                    } else if (command.startsWith("npm") || command.startsWith("gh") || command.startsWith("gcloud")) {
-                        output += `Comando '${command.split(" ")[0]}' executado (simulado).`;
-                    } else {
-                        output += `Operação concluída (simulada).`;
-                    }
-                    appendToShell(output, 'response');
-                    if (i < commands.length - 1) { // Prompt para o próximo comando
-                         appendToShell("", 'prompt-only');
-                    }
-                }
-                appendToShell("Batch de diretivas AOI concluído.", "info");
-                appendToShell("", 'prompt-only'); // Final prompt
-                isBatchRunning = false;
+            // =========================================================================
+            // === Catnip Energy & Needs Management
+            // =========================================================================
+            function updateEnergyBar() {
+                if (!catEnergyBar) return;
+                const energyPercent = Math.max(0, Math.min(100, (catState.energy / catState.maxEnergy) * 100));
+                catEnergyBar.style.width = `${energyPercent}%`;
+                catEnergyBar.textContent = `${Math.round(energyPercent)}%`;
+                if (energyPercent < 20) catEnergyBar.style.backgroundColor = '#ff3333';
+                else if (energyPercent < 50) catEnergyBar.style.backgroundColor = '#ffaa33';
+                else catEnergyBar.style.backgroundColor = '#00ff00';
             }
 
-            function processShellCommand(command) {
-                appendToShell(command, '', true); 
-                let response = "Contra-pensamento: Comando não ressoa. 'ajuda' para opções.";
-                const cmd = command.toLowerCase().trim();
-                const parts = cmd.split(" ");
-                const mainCmd = parts[0];
-
-                if (mainCmd === "ajuda") { response = "[AJUDA]\n  status\n  afeicoes\n  sintonizar\n  limpar\n  ping\n  eco [txt]\n  setfeeling [sent]\n  run_directive"; }
-                else if (mainCmd === "status") { response = `[STATUS_AOI]\n  Sentimento: ${catState.feeling}\n  Saúde: ${catState.physicalHealthStatus} (${catState.avgHealth.toFixed(0)})\n  Psique: ${catState.psyche}\n  Fome: ${catState.avgHunger.toFixed(0)}\n  ID: ${catState.idStrength}\n  Doente: ${catState.isCatSick ? 'Sim' : 'Não'}`; }
-                else if (mainCmd === "afeicoes") { response = lastThreeAffections.length > 0 ? "[LOG_AFEIÇÕES]:\n" + [...lastThreeAffections].reverse().map(aff => `  > ${aff}`).join("\n") : "[LOG_AFEIÇÕES] Vazio."; }
-                else if (mainCmd === "limpar") { if (shellOutput) shellOutput.innerHTML = ''; appendToShell("Console shell reiniciado.", 'info'); appendToShell("", 'prompt-only'); return; }
-                else if (mainCmd === "sintonizar") {
-                    appendToShell("Re-sintonizando com http://draw.pagina-oficial.com/union.html ...", 'info');
-                    if (typeof window.fetchAndProcessClusterData === 'function') {
-                        setTimeout(() => {
-                            window.fetchAndProcessClusterData(); 
-                            appendToShell("Tentativa de re-sincronização (simulada) concluída.", 'info');
-                            appendToShell("", 'prompt-only');
-                        }, 500); return;
-                    } else { response = "Falha: Função de sintonização indisponível.";}
+            function updateNeedsStatus() {
+                if (!catNeedsStatus) return;
+                if (catState.energy < 25) catState.needs = "Precisa Descansar!";
+                else if (catState.avgHunger > 70) catState.needs = "Com Fome!";
+                else if (catState.avgHappiness < 40 && catState.energy < 60) catState.needs = "Precisa Brincar!";
+                else catState.needs = "Satisfeito.";
+                catNeedsStatus.textContent = `Necessidades: ${catState.needs}`;
+                if (catState.energy < 10 && (Date.now() - catState.lastCatnipTime > catState.catnipCooldown) && catState.catnipBuffDuration <=0) {
+                    activateCatnip(true);
                 }
-                else if (mainCmd === "ping") { response = "Pong! Latência psiônica: " + (Math.random()*100).toFixed(0) + "ms (simulado)"; }
-                else if (mainCmd === "eco") { response = parts.slice(1).join(" ") || "(nada para ecoar)"; }
-                else if (mainCmd === "setfeeling") {
-                    const newFeeling = parts.slice(1).join(" ").trim();
-                    if (newFeeling) {
-                        updateInternalStates({ 
-                            source: "shell_command",
-                            forcedFeeling: newFeeling,
-                            avgHealth: catState.avgHealth / 10, // Keep proportions
-                            avgHunger: catState.avgHunger / 10,
-                            avgHappiness: catState.avgHappiness / 10, 
-                            isAnySick: catState.isAnySick
-                        });
-                        response = `Afeição do Gato Psíquico agora (via shell) é: ${catState.feeling}`;
-                    } else { response = "Uso: setfeeling [novo sentimento]"; }
-                }
-                else if (mainCmd === "run_directive") {
-                    if (!isBatchRunning) { executeCommandBatch(aoiDirectiveBatch); }
-                    else { appendToShell("Batch de diretivas já em execução.", "info"); appendToShell("", 'prompt-only');}
-                    return;
-                }
-                else if (mainCmd === "") { appendToShell("", 'prompt-only'); return; }
-
-                appendToShell(response, 'response');
-                appendToShell("", 'prompt-only');
             }
 
-            // ========== FUNÇÕES DE ATUALIZAÇÃO E DESENHO DO GATO (COMPLETAS) ==========
-            function updateInternalStates(dataFromCluster) {
+            function consumeEnergy(amount, reason = "operação") {
+                if (catState.catnipBuffDuration > 0) {
+                    appendToShell(`Energia (${amount}) para ${reason} absorvida pelo Catnip!`, 'catnip-log'); return true;
+                }
+                if (catState.energy >= amount) {
+                    catState.energy -= amount; appendToShell(`Energia: -${amount} para ${reason}. Restante: ${catState.energy}`, 'debug');
+                    updateEnergyBar(); updateNeedsStatus(); return true;
+                } else {
+                    appendToShell(`Energia insuficiente para ${reason}! (Req: ${amount}, Disp: ${catState.energy})`, 'error');
+                    catState.needs = "Exausto! Precisa Descansar!"; if(catNeedsStatus) catNeedsStatus.textContent = `Necessidades: ${catState.needs}`;
+                    updateInternalStates({ source: "energy_depleted", feeling: "Exausto", psyche: "Desmotivado"});
+                    if (catState.is3DRenderMode) toggle3DRender(false); // Turn off 3D if exhausted
+                    return false;
+                }
+            }
+
+            function regenerateEnergy() {
+                if (catState.energy < catState.maxEnergy) {
+                    let regenAmount = (catState.needs === "Precisa Descansar!" || catState.feeling === "Descansando") ? 3 : 1;
+                    if (catState.psyche === "Relaxado") regenAmount +=1;
+                    catState.energy = Math.min(catState.maxEnergy, catState.energy + regenAmount);
+                    updateEnergyBar(); updateNeedsStatus();
+                }
+                if (catState.catnipBuffDuration > 0) {
+                    catState.catnipBuffDuration -= 1000; // Tick down buff duration
+                    if (catState.catnipBuffDuration <= 0) {
+                        catState.catnipBuffDuration = 0; appendToShell("Efeito Catnip terminou.", 'catnip-log');
+                        updateInternalStates({ source: "catnip_end", feeling: "Contente", psyche: "Estável"});
+                    }
+                }
+            }
+
+            function activateCatnip(isAuto = false) {
+                if (Date.now() - catState.lastCatnipTime < catState.catnipCooldown && !isAuto) {
+                    appendToShell("Catnip em cooldown!", 'catnip-log'); return;
+                }
+                catState.energy = Math.min(catState.maxEnergy, catState.energy + 50); // Stronger boost
+                catState.avgHappiness = Math.min(100, catState.avgHappiness + 40);
+                catState.catnipBuffDuration = 30000; // 30 seconds buff
+                catState.lastCatnipTime = Date.now();
+                updateInternalStates({ source: "catnip_activated", feeling: "Eufórico (Catnip!)", psyche: "Brincalhão", avgHappiness: catState.avgHappiness/10 });
+                appendToShell("Catnip ativado! Energia e euforia aumentadas!", 'catnip-log');
+                updateEnergyBar(); updateNeedsStatus();
+                if (catState.is3DRenderMode) appendToShell("Renderização 3D AOI intensificada pelo Catnip!", 'gemini-log');
+            }
+
+            // =========================================================================
+            // === 3D Render & Visuals
+            // =========================================================================
+            function toggle3DRender(activate, durationSeconds = 60) {
+                if (catState.renderModeTimeoutId) {
+                    clearTimeout(catState.renderModeTimeoutId);
+                    catState.renderModeTimeoutId = null;
+                }
+
+                if (activate) {
+                    if (!consumeEnergy(catState.energyFor3DRender, "ativar renderização 3D AOI")) {
+                        appendToShell("Não foi possível ativar render 3D AOI: energia baixa.", 'error');
+                        return;
+                    }
+                    catState.is3DRenderMode = true;
+                    appendToShell("Engajando Gemini Vision Core para renderização 3D AOI... Ativado!", 'gemini-log');
+                    if (durationSeconds > 0) {
+                        catState.renderModeTimeoutId = setTimeout(() => {
+                            toggle3DRender(false);
+                            appendToShell("Renderização 3D AOI desativada automaticamente (timeout).", 'gemini-log');
+                        }, durationSeconds * 1000);
+                    }
+                } else {
+                    catState.is3DRenderMode = false;
+                    appendToShell("Renderização 3D AOI desativada. Retornando ao modo 2D padrão.", 'gemini-log');
+                }
+                if(catRenderModeDisplay) catRenderModeDisplay.textContent = catState.is3DRenderMode ? "3D (Simulado)" : "2D";
+                updateInternalStates({ source: "render_mode_change", psyche: catState.is3DRenderMode ? "Focado (3D)" : "Estável" });
+            }
+
+            function updateInternalStates(data) {
                 const oldFeeling = catState.feeling;
+                const source = (data && data.source) || "internal_update";
 
-                if (!dataFromCluster || typeof dataFromCluster.avgHealth !== 'number') {
-                    if(shellOutput) appendToShell("Dados do cluster inválidos em updateInternalStates. Usando fallback.", "error");
-                    console.error("Dados do cluster inválidos em updateInternalStates:", dataFromCluster);
-                    dataFromCluster = { avgHealth: catState.avgHealth / 10, avgHunger: catState.avgHunger / 10, avgHappiness: catState.avgHappiness / 10, isAnySick: catState.isAnySick, source: "fallback_data", forcedFeeling: (dataFromCluster && dataFromCluster.forcedFeeling) || null };
+                if (!data || typeof data.avgHealth !== 'number' && !data.feeling && !data.psyche) {
+                    data = { avgHealth: catState.avgHealth / 10, avgHunger: catState.avgHunger / 10, avgHappiness: catState.avgHappiness / 10, isAnySick: catState.isCatSick, source: "fallback_data", forcedFeeling: (data && data.forcedFeeling) || null };
+                }
+                if (data.feeling) catState.feeling = data.feeling;
+                if (data.psyche) catState.psyche = data.psyche;
+                if (typeof data.avgHealth === 'number') catState.avgHealth = data.avgHealth * 10;
+                if (typeof data.avgHunger === 'number') catState.avgHunger = data.avgHunger * 10;
+                if (typeof data.avgHappiness === 'number') catState.avgHappiness = data.avgHappiness * 10;
+                if (typeof data.isAnySick === 'boolean') catState.isAnySick = data.isAnySick;
+
+                if (!data.feeling && !data.forcedFeeling && catState.catnipBuffDuration <= 0 && catState.feeling !== "Exausto" && catState.feeling !== "Descansando" && !catState.is3DRenderMode) {
+                    let baseSentiment;
+                    if (catState.avgHappiness > 85) baseSentiment = "Extasiado";
+                    else if (catState.avgHappiness > 65) baseSentiment = "Feliz";
+                    else if (catState.energy < 30) baseSentiment = "Cansado";
+                    else if (catState.avgHappiness < 15) baseSentiment = "Deprimido";
+                    else if (catState.avgHappiness < 35) baseSentiment = "Triste";
+                    else baseSentiment = "Contente";
+                    catState.feeling = baseSentiment;
+                }
+                 if (data.forcedFeeling) {
+                    catState.feeling = data.forcedFeeling;
+                    if (catState.feeling.toLowerCase().includes("feliz")) catState.avgHappiness = 80;
+                    else if (catState.feeling.toLowerCase().includes("triste")) catState.avgHappiness = 20;
+                    else catState.avgHappiness = 50;
                 }
 
-                if (dataFromCluster.source === "shell_command" && dataFromCluster.forcedFeeling) {
-                    catState.feeling = dataFromCluster.forcedFeeling;
-                    if (catState.feeling.toLowerCase().includes("feliz")) catState.avgHappiness = 80 + (Math.random()*10 - 5);
-                    else if (catState.feeling.toLowerCase().includes("triste")) catState.avgHappiness = 20 + (Math.random()*10 - 5);
-                    else if (catState.feeling.toLowerCase().includes("extasiado")) catState.avgHappiness = 95 + (Math.random()*5);
-                    else catState.avgHappiness = 50 + (Math.random()*20 - 10);
-                } else { 
-                    catState.avgHappiness = (typeof dataFromCluster.avgHappiness === 'number' ? dataFromCluster.avgHappiness * 10 : catState.avgHappiness);
-                    let baseSentimentFromHappiness;
-                    if (catState.avgHappiness > 85) baseSentimentFromHappiness = "Extasiado";
-                    else if (catState.avgHappiness > 65) baseSentimentFromHappiness = "Feliz";
-                    else if (catState.avgHappiness < 15) baseSentimentFromHappiness = "Deprimido";
-                    else if (catState.avgHappiness < 35) baseSentimentFromHappiness = "Triste";
-                    else baseSentimentFromHappiness = "Contente";
-                    catState.feeling = baseSentimentFromHappiness;
-                }
-
-                catState.avgHealth = (typeof dataFromCluster.avgHealth === 'number' ? dataFromCluster.avgHealth * 10 : catState.avgHealth);
-                catState.avgHunger = (typeof dataFromCluster.avgHunger === 'number' ? dataFromCluster.avgHunger * 10 : catState.avgHunger);
-                catState.isAnySick = typeof dataFromCluster.isAnySick === 'boolean' ? dataFromCluster.isAnySick : catState.isAnySick;
-
-                if (catState.isAnySick && !catState.feeling.includes("Preocupado")) {
-                    catState.feeling = "Preocupado (" + catState.feeling + ")";
-                }
-                
                 catState.isCatSick = catState.isAnySick || catState.avgHealth < 30;
                 if (catState.avgHealth <= 0) {
-                    catState.physicalHealthStatus = "SEM SINAIS VITAIS";
-                    catState.feeling = "Desvanecido"; // Override feeling if dead
-                    catState.isCatSick = true; // Considered sick if dead
+                    catState.physicalHealthStatus = "SEM SINAIS VITAIS"; if(catState.feeling !== "Desvanecido") catState.feeling = "Desvanecido";
+                    catState.isCatSick = true; catState.energy = 0; toggle3DRender(false); // Turn off 3D if dead
                 } else if (catState.avgHealth > 70) catState.physicalHealthStatus = "Excelente";
                 else if (catState.avgHealth > 40) catState.physicalHealthStatus = "Bom";
                 else if (catState.avgHealth > 20) catState.physicalHealthStatus = "Fraco";
                 else catState.physicalHealthStatus = "Crítico";
-                
+
+                if (catState.isCatSick && !catState.feeling.includes("Preocupado") && catState.avgHealth > 0) {
+                    catState.feeling = "Preocupado (" + catState.feeling.replace("Preocupado (", "").replace(")", "") + ")";
+                }
+
                 catState.happinessVolatility = Math.abs(catState.avgHappiness - catState.lastHappiness);
                 catState.lastHappiness = catState.avgHappiness;
 
-                if (catState.avgHealth <= 0) catState.psyche = "Desvanecido";
-                else if (catState.isCatSick && catState.avgHealth < 40) catState.psyche = "Perturbado";
-                else if (catState.happinessVolatility > 35) catState.psyche = "Instavel";
-                else if (catState.avgHappiness > 90 && (catState.feeling.includes("Extasiado") || catState.psyche === "Euforico")) catState.psyche = "Euforico";
-                else if (catState.avgHappiness < 20 || catState.feeling.includes("Deprimido")) catState.psyche = "Abatido";
-                else if (catState.avgHappiness < 40 || catState.feeling.includes("Triste")) catState.psyche = "Ansioso";
-                else catState.psyche = "Estavel";
+                if (!data.psyche && catState.catnipBuffDuration <= 0 && catState.psyche !== "Executando Diretiva" && catState.psyche !== "Processando Visão" && !catState.is3DRenderMode) {
+                    if (catState.avgHealth <= 0) catState.psyche = "Desvanecido";
+                    else if (catState.feeling === "Exausto") catState.psyche = "Desmotivado";
+                    else if (catState.isCatSick && catState.avgHealth < 40) catState.psyche = "Perturbado";
+                    else if (catState.happinessVolatility > 35 && catState.energy < 50) catState.psyche = "Irritadiço";
+                    else if (catState.happinessVolatility > 30) catState.psyche = "Instável";
+                    else if (catState.avgHappiness > 90 && catState.feeling.includes("Extasiado")) catState.psyche = "Eufórico";
+                    else if (catState.avgHappiness < 20 || catState.feeling.includes("Deprimido")) catState.psyche = "Abatido";
+                    else if (catState.avgHappiness < 40 || catState.feeling.includes("Triste")) catState.psyche = "Ansioso";
+                    else if (simulatedDrawSystem.rooterActive && simulatedDrawSystem.securityLevel === "crítico") catState.psyche = "Alerta Máximo";
+                    else if (simulatedDrawSystem.rooterActive) catState.psyche = "Vigilante";
+                    else catState.psyche = "Estável";
+                } else if (!data.psyche && catState.is3DRenderMode && catState.psyche !== "Executando Diretiva" && catState.psyche !== "Processando Visão") {
+                    catState.psyche = "Focado (3D)";
+                }
+
 
                 if (catState.avgHealth <= 0) catState.idStrength = "Nulo";
-                else if (catState.avgHunger > 80 || (catState.isCatSick && catState.avgHealth < 50)) catState.idStrength = "Alto (Desconforto!)";
-                else if (catState.avgHunger > 60 || catState.avgHappiness < 30) catState.idStrength = "Moderado";
+                else if (catState.avgHunger > 80 || (catState.isCatSick && catState.avgHealth < 50) || catState.energy < 15) catState.idStrength = "Alto (Desconforto!)";
+                else if (catState.avgHunger > 60 || catState.avgHappiness < 30 || catState.energy < 40) catState.idStrength = "Moderado";
                 else catState.idStrength = "Baixo";
 
-                updateFacialFeatures();
-                updateDisplay(); 
-
-                if (catState.feeling !== oldFeeling) {
-                    recordAffectionChange(catState.feeling);
+                updateFacialFeatures(); updateDisplay(); updateEnergyBar(); updateNeedsStatus();
+                if (catState.feeling !== oldFeeling) recordAffectionChange(catState.feeling);
+                 if (messageDisplay) {
+                    if (catState.catnipBuffDuration > 0) messageDisplay.textContent = "Miaaaau! Sentindo o Catnip!";
+                    else if (catState.is3DRenderMode) messageDisplay.textContent = `Renderizando AOI em 3D (Gemini Sim)...`;
+                    else if (isBatchRunning) messageDisplay.textContent = `Processando: ${window.lastRunningBatchName}...`;
+                    else if (simulatedDrawSystem.rooterActive) messageDisplay.textContent = `Vigiando ${catState.vigilanceTarget} (${simulatedDrawSystem.securityLevel})... LISP Rooter ON.`;
+                    else messageDisplay.textContent = "Observando o fluxo da união... Rooter LISP OFF.";
                 }
             }
-
+            
             function updateFacialFeatures() {
-                if (catState.avgHealth <= 0) { // Dead
-                    catState.eyeType = "x_x";
-                    catState.mouthType = "x_x";
-                    catState.earPosition = "down";
-                    return;
+                const dead = catState.avgHealth <= 0;
+                if (dead) { catState.eyeType = "x_x"; catState.mouthType = "x_x"; catState.earPosition = "down_droopy"; return; }
+
+                if (catState.catnipBuffDuration > 0 || catState.feeling.includes("Eufórico (Catnip!)")) {
+                    catState.eyeType = "sparkle_wide"; catState.mouthType = "big_grin_tongue"; catState.earPosition = "perked_twitch";
+                } else if (catState.feeling === "Exausto" || catState.psyche === "Desmotivado") {
+                    catState.eyeType = "tired_heavy_lids"; catState.mouthType = "small_frown"; catState.earPosition = "down_droopy";
+                } else if (catState.feeling === "Descansando" || catState.psyche === "Relaxado") {
+                    catState.eyeType = "closed_relaxed"; catState.mouthType = "slight_smile_closed"; catState.earPosition = "normal";
+                } else if (catState.feeling === "Alarmado" || catState.psyche === "Crítico" || (simulatedDrawSystem.securityLevel === "crítico" && catState.psyche === "Alerta Máximo")) {
+                    catState.eyeType = "wide_shock"; catState.mouthType = "open_o_sharp"; catState.earPosition = "flat_alert";
+                } else if (catState.feeling.includes("Preocupado") || catState.psyche === "Perturbado") {
+                    catState.eyeType = "squint_worry"; catState.mouthType = "wavy_frown"; catState.earPosition = "down_half";
+                } else if (catState.feeling === "Focado" || catState.psyche === "Executando Diretiva" || catState.psyche === "Processando Visão" || catState.psyche === "Focado (3D)") {
+                    catState.eyeType = "focused_narrow"; catState.mouthType = "straight_line_determined"; catState.earPosition = "perked_forward";
+                } else if (catState.feeling.includes("Extasiado")) {
+                    catState.eyeType = "sparkle"; catState.mouthType = "big_smile"; catState.earPosition = "perked";
+                } else if (catState.feeling.includes("Feliz") || catState.feeling === "Aliviado") {
+                    catState.eyeType = "happy_curve"; catState.mouthType = "smile"; catState.earPosition = "perked";
+                } else if (catState.feeling.includes("Deprimido") || catState.psyche === "Abatido") {
+                    catState.eyeType = "sad_heavy_lids"; catState.mouthType = "big_frown_tremble"; catState.earPosition = "down_droopy";
+                } else if (catState.feeling.includes("Triste") || catState.psyche === "Ansioso" || catState.psyche === "Irritadiço") {
+                    catState.eyeType = "sad_curve_pointy"; catState.mouthType = "frown_sharp"; catState.earPosition = "down_angled";
+                } else if (catState.feeling === "Vigilante" || catState.feeling === "Observador" || catState.feeling === "Atento" || catState.psyche === "Alerta" || catState.psyche === "Vigilante") {
+                    catState.eyeType = "normal_alert"; catState.mouthType = "neutral_slight_curve"; catState.earPosition = "normal_forward";
+                } else { // Contente, Estável, etc.
+                    catState.eyeType = "normal"; catState.mouthType = "neutral"; catState.earPosition = "normal";
                 }
-
-                // Eyes based on feeling and health
-                if (catState.feeling.includes("Extasiado")) catState.eyeType = "sparkle";
-                else if (catState.feeling.includes("Feliz")) catState.eyeType = "happy_curve";
-                else if (catState.feeling.includes("Deprimido")) catState.eyeType = "sad_curve";
-                else if (catState.feeling.includes("Triste") || catState.isCatSick) catState.eyeType = "squint";
-                else if (catState.avgHappiness < 40) catState.eyeType = "neutral_low_lid";
-                else catState.eyeType = "normal";
-
-
-                // Mouth based on feeling
-                if (catState.feeling.includes("Extasiado")) catState.mouthType = "big_smile";
-                else if (catState.feeling.includes("Feliz")) catState.mouthType = "smile";
-                else if (catState.feeling.includes("Deprimido")) catState.mouthType = "big_frown";
-                else if (catState.feeling.includes("Triste")) catState.mouthType = "frown";
-                else if (catState.feeling.includes("Preocupado")) catState.mouthType = "worry";
-                else catState.mouthType = "neutral";
-
-                // Ear position
-                if (catState.avgHappiness < 30 || catState.isCatSick) catState.earPosition = "down";
-                else if (catState.avgHappiness > 80) catState.earPosition = "perked";
-                else catState.earPosition = "normal";
             }
-
+            
             function updateDisplay() {
                 if (feelingDisplay) feelingDisplay.textContent = catState.feeling;
                 if (physicalHealthDisplay) physicalHealthDisplay.textContent = catState.physicalHealthStatus;
                 if (sicknessDisplay) sicknessDisplay.textContent = catState.isCatSick ? "Sim" : "Não";
                 if (psycheDisplay) psycheDisplay.textContent = catState.psyche;
                 if (idDisplay) idDisplay.textContent = catState.idStrength;
-                drawCat();
+                if (catRenderModeDisplay) catRenderModeDisplay.textContent = catState.is3DRenderMode ? "3D (Simulado)" : "2D";
+            }
+
+            function drawCat() {
+                if (!ctx || !canvas) return;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                if (catState.is3DRenderMode) {
+                    drawCat3DSimulated();
+                } else {
+                    drawCat2D();
+                }
+            }
+
+            function drawCat2D() {
+                const cx = canvas.width / 2; const cy = canvas.height / 2;
+                const hr = Math.min(canvas.width, canvas.height) * 0.35;
+                const dead = catState.avgHealth <= 0;
+
+                ctx.fillStyle = dead ? '#333' : (catState.catnipBuffDuration > 0 ? '#00cc66' : '#0a0');
+                const ew = hr * 0.5; const eh = hr * 0.75; let eyo = -hr + (hr * 0.125);
+                let earAngle = 0;
+                if (catState.earPosition === "down" || catState.earPosition === "down_droopy" || catState.earPosition === "down_half" || catState.earPosition === "down_angled") eyo = -hr + (hr * 0.375);
+                else if (catState.earPosition === "perked" || catState.earPosition === "perked_forward" || catState.earPosition === "perked_twitch") eyo = -hr - (hr * 0.125);
+                if (catState.earPosition === "flat_alert") { eyo = -hr * 0.8; earAngle = Math.PI / 6; }
+                if (catState.earPosition === "perked_forward") earAngle = -Math.PI / 12;
+                if (catState.earPosition === "down_angled") earAngle = Math.PI / 8;
+
+                ctx.save(); ctx.translate(cx - hr * 0.65, cy + eyo); ctx.rotate(-earAngle);
+                ctx.beginPath(); ctx.moveTo(-ew * 0.4, 0); ctx.lineTo(ew * 0.4, 0); ctx.lineTo(0, -eh); ctx.closePath(); ctx.fill();
+                ctx.restore();
+                ctx.save(); ctx.translate(cx + hr * 0.65, cy + eyo); ctx.rotate(earAngle);
+                ctx.beginPath(); ctx.moveTo(-ew * 0.4, 0); ctx.lineTo(ew * 0.4, 0); ctx.lineTo(0, -eh); ctx.closePath(); ctx.fill();
+                ctx.restore();
+
+                ctx.fillStyle = dead ? '#555' : (catState.catnipBuffDuration > 0 ? '#33ff99' : '#0f0');
+                ctx.beginPath(); ctx.arc(cx, cy, hr, 0, Math.PI * 2); ctx.fill();
+
+                drawEye(cx - hr * 0.45, cy - hr * 0.2, hr * 0.2, catState.eyeType, dead);
+                drawEye(cx + hr * 0.45, cy - hr * 0.2, hr * 0.2, catState.eyeType, dead);
+                drawMouth(cx, cy + hr * 0.35, hr * 0.5, catState.mouthType, dead);
+
+                if (!dead) {
+                    ctx.strokeStyle = catState.catnipBuffDuration > 0 ? '#00aa44' : '#0c0';
+                    ctx.lineWidth = Math.max(1, hr * 0.025);
+                    for (let i = 0; i < 3; i++) {
+                        const wy = cy + hr * 0.1 + i * hr * 0.08;
+                        const lf = 1 + i * 0.05;
+                        const wxOff = catState.catnipBuffDuration > 0 ? Math.sin(Date.now() / 150 + i*Math.PI/3) * 3 : 0; // Faster twitch
+                        ctx.beginPath(); ctx.moveTo(cx - hr * 0.85, wy); ctx.lineTo(cx - hr * (1.05 + lf * 0.15) + wxOff, wy - hr * 0.12 + i * hr * 0.04); ctx.stroke();
+                        ctx.beginPath(); ctx.moveTo(cx + hr * 0.85, wy); ctx.lineTo(cx + hr * (1.05 + lf * 0.15) - wxOff, wy - hr * 0.12 + i * hr * 0.04); ctx.stroke();
+                    }
+                }
+            }
+
+            function drawCat3DSimulated() {
+                const cx = canvas.width / 2;
+                const cy = canvas.height / 2;
+                const headRadius = canvas.width * 0.3; // Base radius for 3D head
+                const dead = catState.avgHealth <= 0;
+                const catnipActive = catState.catnipBuffDuration > 0;
+
+                if (catnipActive) {
+                    const auraColors = ['rgba(50, 255, 150, 0.3)', 'rgba(255, 100, 200, 0.2)', 'rgba(255, 255, 100, 0.1)'];
+                    for (let i = 0; i < 3; i++) {
+                        ctx.beginPath();
+                        const auraRadius = headRadius * (1.2 + i * 0.15 + Math.sin(Date.now() / (300 + i*50)) * 0.05);
+                        ctx.arc(cx, cy, auraRadius, 0, Math.PI * 2);
+                        ctx.fillStyle = auraColors[i];
+                        ctx.fill();
+                    }
+                }
+
+                const headGradient = ctx.createRadialGradient(cx - headRadius * 0.2, cy - headRadius * 0.2, headRadius * 0.1, cx, cy, headRadius);
+                headGradient.addColorStop(0, dead ? '#666' : (catnipActive ? '#66FFCC' : '#11FF11'));
+                headGradient.addColorStop(1, dead ? '#444' : (catnipActive ? '#00CC99' : '#00AA00'));
+                ctx.fillStyle = headGradient;
+                ctx.beginPath();
+                ctx.arc(cx, cy, headRadius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(cx + headRadius*0.1, cy + headRadius*0.1, headRadius, 0, Math.PI*2);
+                ctx.fillStyle = dead? 'rgba(0,0,0,0.3)' : 'rgba(0,50,0,0.3)';
+                ctx.fill();
+
+                const earBaseWidth = headRadius * 0.6;
+                const earHeight = headRadius * 0.9;
+                const earDepthFactor = 0.7;
+
+                function draw3DEar(side) {
+                    ctx.save();
+                    const earX = cx + side * headRadius * 0.7;
+                    const earY = cy - headRadius * 0.6;
+                    let earAngle = side * (catnipActive ? Math.sin(Date.now()/200 + side) * 0.1 : 0);
+                    if (catState.earPosition.includes("down")) earAngle += side * Math.PI/3;
+                    if (catState.earPosition.includes("perked")) earAngle -= side * Math.PI/18;
+                    if (catState.earPosition.includes("flat")) earAngle = side * Math.PI/2.2;
+                    ctx.translate(earX, earY);
+                    ctx.rotate(earAngle);
+
+                    ctx.fillStyle = dead ? '#303030' : (catnipActive ? '#009966' : '#006600');
+                    ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-side * earBaseWidth / 2 * earDepthFactor, earHeight); ctx.lineTo(side * earBaseWidth / 2 * earDepthFactor, earHeight); ctx.closePath(); ctx.fill();
+                    ctx.fillStyle = dead ? '#404040' : (catnipActive ? '#33FF99' : '#00AA00');
+                    ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-side * earBaseWidth / 2, earHeight); ctx.lineTo(side * earBaseWidth / 2, earHeight); ctx.closePath(); ctx.fill();
+                    ctx.fillStyle = dead ? '#353535' : (catnipActive ? '#FF99CC' : '#FFCCDD');
+                    ctx.beginPath(); ctx.moveTo(0, earHeight * 0.2); ctx.lineTo(-side * earBaseWidth / 3, earHeight * 0.9); ctx.lineTo(side * earBaseWidth / 3, earHeight * 0.9); ctx.closePath(); ctx.fill();
+                    ctx.restore();
+                }
+                draw3DEar(-1); draw3DEar(1);
+
+                const eyeY = cy - headRadius * 0.25;
+                const eyeRadius = headRadius * 0.22;
+                drawEye(cx - headRadius * 0.4, eyeY, eyeRadius, catState.eyeType, dead);
+                drawEye(cx + headRadius * 0.4, eyeY, eyeRadius, catState.eyeType, dead);
+
+                const mouthY = cy + headRadius * 0.25;
+                const mouthWidth = headRadius * 0.55;
+                drawMouth(cx, mouthY, mouthWidth, catState.mouthType, dead);
+
+                if (!dead) {
+                    ctx.strokeStyle = catnipActive ? '#99FFCC' : '#00AA00';
+                    ctx.lineWidth = Math.max(1, headRadius * 0.02);
+                    for (let i = 0; i < 3; i++) {
+                        const whiskerAngle = Math.PI / 6 * (i - 1);
+                        const wxOff = catnipActive ? Math.sin(Date.now() / 100 + i) * 3 : 0;
+                        ctx.beginPath(); ctx.moveTo(cx - headRadius * 0.7, cy + headRadius * 0.1);
+                        ctx.lineTo(cx - headRadius * 1.3 + wxOff, cy + headRadius * 0.05 + Math.sin(whiskerAngle) * headRadius * 0.4); ctx.stroke();
+                        ctx.beginPath(); ctx.moveTo(cx + headRadius * 0.7, cy + headRadius * 0.1);
+                        ctx.lineTo(cx + headRadius * 1.3 - wxOff, cy + headRadius * 0.05 + Math.sin(whiskerAngle) * headRadius * 0.4); ctx.stroke();
+                    }
+                }
+            }
+
+            function drawEye(x, y, r, type, dead) {
+                ctx.strokeStyle = '#000'; ctx.lineWidth = Math.max(1, r * 0.12);
+                if (dead || type === "x_x") { ctx.beginPath(); ctx.moveTo(x - r * 0.8, y - r * 0.8); ctx.lineTo(x + r * 0.8, y + r * 0.8); ctx.moveTo(x + r * 0.8, y - r * 0.8); ctx.lineTo(x - r * 0.8, y + r * 0.8); ctx.stroke(); return; }
+                if (type === "closed" || type === "closed_relaxed") { ctx.beginPath(); ctx.arc(x,y, r, Math.PI*0.2, Math.PI*0.8); if(type === "closed_relaxed") ctx.arc(x,y, r, Math.PI*1.2, Math.PI*1.8); ctx.stroke(); return; }
+
+                ctx.fillStyle = '#FFF'; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+                ctx.fillStyle = catState.catnipBuffDuration > 0 ? '#FF3399' : '#000';
+                const pr = r * 0.5;
+
+                switch (type) {
+                    case "normal": ctx.beginPath(); ctx.arc(x, y, pr, 0, Math.PI * 2); ctx.fill(); break;
+                    case "normal_alert": ctx.beginPath(); ctx.ellipse(x, y, pr * 0.7, pr, 0, 0, Math.PI * 2); ctx.fill(); break;
+                    case "happy_curve": ctx.beginPath(); ctx.arc(x, y + r * 0.5, r, Math.PI * 1.1, Math.PI * 1.9, false); ctx.stroke(); break;
+                    case "sad_curve": case "sad_curve_pointy": ctx.beginPath(); ctx.arc(x, y - r * 0.5, r, Math.PI * 0.1, Math.PI * 0.9, false); ctx.stroke(); break;
+                    case "squint_worry": case "focused_narrow": ctx.fillRect(x - r * 0.8, y - ctx.lineWidth / (type==="focused_narrow"?1.5:2), r * 1.6, ctx.lineWidth * (type==="focused_narrow"?1.2:1)); break;
+                    case "neutral_low_lid": case "tired_heavy_lids":
+                        ctx.beginPath(); ctx.arc(x, y, pr, 0, Math.PI * 2); ctx.fill();
+                        ctx.fillStyle = catState.is3DRenderMode ? (dead ? '#444' : (catState.catnipBuffDuration > 0 ? '#00CC99' : '#00AA00')) : (canvas.style.backgroundColor || (dead ? '#555' :(catState.catnipBuffDuration > 0 ? '#33ff99' :'#0f0')));
+                        ctx.fillRect(x - r, y - r, r * 2, r * (type === "tired_heavy_lids" ? 0.8 : 0.7)); break;
+                    case "sparkle": case "sparkle_wide":
+                        const basePupilSize = type === "sparkle_wide" ? pr * 1.2 : pr * 1.1;
+                        ctx.beginPath(); ctx.arc(x, y, basePupilSize, 0, Math.PI * 2); ctx.fill();
+                        ctx.fillStyle = '#FFF';
+                        ctx.beginPath(); ctx.arc(x - basePupilSize * 0.3, y - basePupilSize * 0.3, basePupilSize * 0.3, 0, Math.PI * 2); ctx.fill();
+                        ctx.beginPath(); ctx.arc(x + basePupilSize * 0.4, y + basePupilSize * 0.2, basePupilSize * 0.2, 0, Math.PI * 2); ctx.fill();
+                        if (type === "sparkle_wide") { ctx.beginPath(); ctx.arc(x + basePupilSize * 0.1, y + basePupilSize * 0.5, basePupilSize * 0.15, 0, Math.PI * 2); ctx.fill(); }
+                        break;
+                    case "wide_shock":
+                        ctx.beginPath(); ctx.arc(x, y, r * 0.9, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill(); ctx.stroke();
+                        ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(x, y, pr * 0.4, 0, Math.PI * 2); ctx.fill(); break;
+                    default: ctx.beginPath(); ctx.arc(x, y, pr, 0, Math.PI * 2); ctx.fill();
+                }
             }
             
-            function drawCat() {
-                if (!ctx) return;
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                const centerX = canvas.width / 2;
-                const centerY = canvas.height / 2;
-                const headRadius = 40;
-                const isDead = catState.avgHealth <= 0;
-
-                // Ears
-                ctx.fillStyle = '#00aa00'; // Darker green for ears
-                const earWidth = 20;
-                const earHeight = 30;
-                let earYOffset = -headRadius + 5;
-                if (catState.earPosition === "down") earYOffset = -headRadius + 15;
-                else if (catState.earPosition === "perked") earYOffset = -headRadius - 5;
-
-                // Left Ear
-                ctx.beginPath();
-                ctx.moveTo(centerX - headRadius + 5, centerY + earYOffset);
-                ctx.lineTo(centerX - headRadius + 5 + earWidth, centerY + earYOffset);
-                ctx.lineTo(centerX - headRadius + 5 + (earWidth / 2), centerY + earYOffset - earHeight);
-                ctx.closePath();
-                ctx.fill();
-
-                // Right Ear
-                ctx.beginPath();
-                ctx.moveTo(centerX + headRadius - 5, centerY + earYOffset);
-                ctx.lineTo(centerX + headRadius - 5 - earWidth, centerY + earYOffset);
-                ctx.lineTo(centerX + headRadius - 5 - (earWidth / 2), centerY + earYOffset - earHeight);
-                ctx.closePath();
-                ctx.fill();
-
-                // Head
-                ctx.fillStyle = '#00ff00';
-                ctx.beginPath();
-                ctx.arc(centerX, centerY, headRadius, 0, Math.PI * 2);
-                ctx.fill();
-
-                // Eyes
-                drawEye(centerX - 20, centerY - 10, 8, catState.eyeType, isDead);
-                drawEye(centerX + 20, centerY - 10, 8, catState.eyeType, isDead);
-
-                // Mouth
-                drawMouth(centerX, centerY + 15, 25, catState.mouthType, isDead);
-
-                // Whiskers (simple lines)
-                ctx.strokeStyle = '#00cc00';
-                ctx.lineWidth = 1;
-                for (let i = 0; i < 3; i++) {
-                    // Left
-                    ctx.beginPath();
-                    ctx.moveTo(centerX - headRadius + 5, centerY + 5 + i * 5);
-                    ctx.lineTo(centerX - headRadius - 10 - (i * 2), centerY - 5 + i * 7);
-                    ctx.stroke();
-                    // Right
-                    ctx.beginPath();
-                    ctx.moveTo(centerX + headRadius - 5, centerY + 5 + i * 5);
-                    ctx.lineTo(centerX + headRadius + 10 + (i * 2), centerY - 5 + i * 7);
-                    ctx.stroke();
-                }
-            }
-
-            function drawEye(x, y, r, type, isDead) {
-                ctx.fillStyle = '#000000'; // Pupil or line color
-                ctx.strokeStyle = '#000000';
-                ctx.lineWidth = 2;
-
-                if (isDead || type === "x_x") {
-                    ctx.beginPath();
-                    ctx.moveTo(x - r / 1.5, y - r / 1.5); ctx.lineTo(x + r / 1.5, y + r / 1.5);
-                    ctx.moveTo(x + r / 1.5, y - r / 1.5); ctx.lineTo(x - r / 1.5, y + r / 1.5);
-                    ctx.stroke();
-                    return;
-                }
-                if (type === "closed") {
-                    ctx.beginPath();
-                    ctx.moveTo(x - r, y); ctx.lineTo(x + r, y);
-                    ctx.stroke();
-                    return;
-                }
-
-                // Eye white
-                ctx.fillStyle = '#FFFFFF';
-                ctx.beginPath();
-                ctx.arc(x, y, r, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.stroke(); // Outline for eye white
-
-                // Pupil / Iris detail
-                ctx.fillStyle = '#000000';
+            function drawMouth(x, y, w, type, dead) {
+                ctx.strokeStyle = '#000'; ctx.lineWidth = Math.max(1, w * 0.07); ctx.beginPath();
+                if (dead || type === "x_x") { ctx.moveTo(x - w * 0.3, y); ctx.lineTo(x + w * 0.3, y); ctx.stroke(); return; }
                 switch (type) {
-                    case "normal":
-                        ctx.beginPath(); ctx.arc(x, y, r / 2, 0, Math.PI * 2); ctx.fill();
-                        break;
-                    case "happy_curve": // ^ ^
-                        ctx.beginPath(); ctx.arc(x, y + r/1.5, r, Math.PI, Math.PI * 2, false); ctx.stroke();
-                        break;
-                    case "sad_curve": // v v
-                        ctx.beginPath(); ctx.arc(x, y - r/1.5, r, 0, Math.PI, false); ctx.stroke();
-                        break;
-                    case "squint": // -- --
-                        ctx.fillRect(x - r / 1.5, y - 1, r * 1.3, 2);
-                        break;
-                    case "neutral_low_lid": // Slightly closed from top
-                        ctx.beginPath(); ctx.arc(x, y, r / 2, 0, Math.PI * 2); ctx.fill();
-                        ctx.fillStyle = canvas.style.backgroundColor || '#333333'; // Match canvas bg
-                        ctx.fillRect(x - r, y - r, r * 2, r * 0.7); // Cover top part
-                        break;
-                    case "sparkle":
-                        ctx.beginPath(); ctx.arc(x, y, r / 1.8, 0, Math.PI * 2); ctx.fill();
-                        ctx.fillStyle = '#FFFFFF'; // Sparkle
-                        ctx.beginPath(); ctx.arc(x - r/4, y - r/4, r/5, 0, Math.PI * 2); ctx.fill();
-                        ctx.beginPath(); ctx.arc(x + r/3, y + r/5, r/7, 0, Math.PI * 2); ctx.fill();
-                        break;
-                    default: // normal
-                        ctx.beginPath(); ctx.arc(x, y, r / 2, 0, Math.PI * 2); ctx.fill();
-                }
-            }
+                    case "smile": ctx.arc(x, y - w * 0.1, w * 0.5, 0.2 * Math.PI, 0.8 * Math.PI, false); break;
+                    case "big_smile": ctx.arc(x, y - w * 0.15, w * 0.6, 0.1 * Math.PI, 0.9 * Math.PI, false); ctx.lineTo(x - w * 0.6 * Math.cos(0.1 * Math.PI), y - w * 0.15 + w * 0.6 * Math.sin(0.1 * Math.PI)); ctx.fillStyle = "#FF69B4"; ctx.fill(); ctx.stroke(); return;
+                    case "big_grin_tongue": ctx.arc(x, y - w * 0.1, w * 0.65, 0.1 * Math.PI, 0.9 * Math.PI, false); ctx.fillStyle = "#FF69B4"; ctx.fill(); ctx.fillStyle = "#FF88AA"; ctx.beginPath(); ctx.ellipse(x, y + w * 0.15, w * 0.2, w * 0.25, 0, 0, Math.PI); ctx.fill(); ctx.stroke(); return;
+                    case "frown": case "small_frown": ctx.arc(x, y + w * (type==="small_frown"?0.1:0.2), w * (type==="small_frown"?0.3:0.5), 1.2 * Math.PI, 1.8 * Math.PI, false); break;
 
-            function drawMouth(x, y, width, type, isDead) {
-                ctx.strokeStyle = '#000000';
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-
-                if (isDead || type === "x_x") {
-                    // Could be a simple X or line, or nothing
-                    ctx.moveTo(x - width / 4, y); ctx.lineTo(x + width / 4, y);
-                    ctx.stroke();
-                    return;
-                }
-
-                switch (type) {
-                    case "smile":
-                        ctx.arc(x, y - width/6, width / 2, 0.2 * Math.PI, 0.8 * Math.PI, false);
-                        break;
-                    case "big_smile":
-                        ctx.arc(x, y - width/4, width / 1.8, 0.1 * Math.PI, 0.9 * Math.PI, false);
-                        // Add open part for D shape
-                        ctx.lineTo(x + width / 2 * 0.8, y - width/4 + 2); // approx
-                        ctx.moveTo(x - width / 2 * 0.8, y - width/4 + 2); // approx
-                        ctx.closePath();
-                        ctx.fillStyle = "#FF69B4"; // pinkish
-                        ctx.fill();
-                        ctx.stroke(); // re-stroke outline
-                        return; // Custom fill, so return
-                    case "frown":
-                        ctx.arc(x, y + width / 3, width / 2, 1.2 * Math.PI, 1.8 * Math.PI, false);
-                        break;
-                    case "big_frown":
-                         ctx.arc(x, y + width / 2.5, width / 1.8, 1.1 * Math.PI, 1.9 * Math.PI, false);
-                        break;
-                    case "worry": // Small 'o' or slightly downturned line
-                        ctx.arc(x, y + width/4, width / 4, 0, Math.PI * 2, false);
-                        break;
-                    case "neutral":
-                    default:
-                        ctx.moveTo(x - width / 2, y);
-                        ctx.lineTo(x + width / 2, y);
-                        break;
+                    case "big_frown_tremble": case "frown_sharp": ctx.arc(x, y + w * 0.3, w * 0.6, 1.1 * Math.PI, 1.9 * Math.PI, false); break;
+                    case "wavy_frown": ctx.moveTo(x - w * 0.5, y + w * 0.1); ctx.quadraticCurveTo(x - w * 0.25, y - w * 0.1, x, y + w * 0.1); ctx.quadraticCurveTo(x + w * 0.25, y + w * 0.3, x + w * 0.5, y + w * 0.1); break;
+                    case "straight_line_determined": case "neutral": ctx.moveTo(x - w * 0.4, y); ctx.lineTo(x + w * 0.4, y); break;
+                    case "open_o_sharp": case "open_o": ctx.beginPath(); ctx.ellipse(x, y + w*0.05, w * (type==="open_o_sharp"?0.2:0.25), w*0.3, 0, 0, Math.PI * 2); ctx.fillStyle="#333"; ctx.fill(); break;
+                    case "neutral_slight_curve": ctx.arc(x, y - w * 0.05, w * 0.4, 0.3 * Math.PI, 0.7 * Math.PI, false); break;
+                    case "slight_smile_closed": ctx.arc(x, y-w*0.05, w*0.3, 0.25*Math.PI, 0.75*Math.PI); break;
+                    default: ctx.moveTo(x - w * 0.4, y); ctx.lineTo(x + w * 0.4, y); break;
                 }
                 ctx.stroke();
             }
-            // ========== FIM DAS FUNÇÕES DE DESENHO E ATUALIZAÇÃO ==========
 
-            // --- Funções de Inicialização e Lógica do Gato Psíquico ---
-            function initializeAoiCatVisuals() {
-                canvas = document.getElementById('cat-canvas');
-                if (!canvas) { console.error("Canvas AOI não encontrado!"); if(shellOutput) appendToShell("ERRO: Canvas do Gato não encontrado no DOM.", "error"); return false; }
-                // Canvas dimensions are set by CSS, but internal resolution can be set here
-                canvas.width = canvas.offsetWidth; 
-                canvas.height = canvas.offsetHeight;
-                ctx = canvas.getContext('2d');
-                ctx.imageSmoothingEnabled = false; 
-                
-                feelingDisplay = document.getElementById('cat-feeling');
-                physicalHealthDisplay = document.getElementById('cat-physical-health');
-                sicknessDisplay = document.getElementById('cat-sickness');
-                psycheDisplay = document.getElementById('cat-psyche');
-                idDisplay = document.getElementById('cat-id');
-                messageDisplay = document.getElementById('cat-message');
-                dataPromptLog = document.getElementById('data-prompt');
+            // =========================================================================
+            // === Affection, Data, & Chat Functions
+            // =========================================================================
+            function updateAffectionConsole() {
+                if (!affectionListElement) return; affectionListElement.innerHTML = '';
+                [...lastThreeAffections].reverse().forEach(affection => { const li = document.createElement('li'); li.textContent = affection; affectionListElement.appendChild(li); });
+            }
 
-                if (!feelingDisplay || !physicalHealthDisplay || !sicknessDisplay || !psycheDisplay || !idDisplay || !messageDisplay || !dataPromptLog) {
-                    let missing = [];
-                    if (!feelingDisplay) missing.push("cat-feeling");
-                    if (!physicalHealthDisplay) missing.push("cat-physical-health");
-                    if (!sicknessDisplay) missing.push("cat-sickness");
-                    if (!psycheDisplay) missing.push("cat-psyche");
-                    if (!idDisplay) missing.push("cat-id");
-                    if (!messageDisplay) missing.push("cat-message");
-                    if (!dataPromptLog) missing.push("data-prompt");
-                    const errorMsg = `AVISO: Elementos de display do Gato ausentes: ${missing.join(', ')}`;
-                    console.warn(errorMsg);
-                    if(shellOutput) appendToShell(errorMsg, "error");
+            function recordAffectionChange(newAffection) {
+                if (!(lastThreeAffections.length > 0 && lastThreeAffections[lastThreeAffections.length - 1] === newAffection)) {
+                    lastThreeAffections.push(newAffection); if (lastThreeAffections.length > 3) lastThreeAffections.shift(); updateAffectionConsole();
                 }
-                return true;
+                if (newAffection !== lastReportedFeelingToShell) { appendToShell(newAffection, 'affection'); lastReportedFeelingToShell = newAffection; }
+            }
+
+            function logToAoiDataPrompt(message) {
+                if (!dataPromptLog) return; const timestamp = new Date().toLocaleTimeString();
+                dataPromptLog.textContent = `[${timestamp}] ${message}\n` + dataPromptLog.textContent;
+                const lines = dataPromptLog.textContent.split('\n'); if (lines.length > 30) dataPromptLog.textContent = lines.slice(0, 30).join('\n');
+            }
+
+            function appendChatMessage(text, className, sourceSystem = "XCake", isHtml = false) {
+                 if (!aoiChatMessages) return; const p = document.createElement('p'); p.className = className; let prefix = "";
+                 if (className === 'chataoi-user-message') prefix = `[ChatAOI User]: `; else if (className === 'chataoi-aoi-reply') prefix = `[ChatAOI Reply]: `;
+                 else if (sourceSystem === "DRAW_VIGILANCE_ROOTER") { p.classList.add('draw-vigilance-feed'); prefix = `[DRAW_ROOTER/${className.includes('aoi') ? 'SYS_RSP' : 'EVENT'}]: `; }
+                 else if (sourceSystem === "LISP_INTERACTION") { p.classList.add('lisp-command-feed'); prefix = `[LISP_TO_AOI]: `; }
+                 if (isHtml) p.innerHTML = prefix + text; else p.textContent = prefix + text;
+                 aoiChatMessages.appendChild(p); aoiChatMessages.scrollTop = aoiChatMessages.scrollHeight;
+            }
+
+            function getZodiacSignAndInsight(day, month) {
+                let sign = "", insight = "As estrelas inclinam, mas sua intuição decide. Miau!";
+                if ((month == 1 && day >= 20) || (month == 2 && day <= 18)) { sign = "Aquário"; insight = "Originalidade em alta! Conexões inesperadas trazem ideias. Pense fora da caixa."; }
+                else if ((month == 2 && day >= 19) || (month == 3 && day <= 20)) { sign = "Peixes"; insight = "Intuição afiada, pisciano! Confie nos seus sentimentos e sonhe. Magia no ar!"; }
+                else if ((month == 3 && day >= 21) || (month == 4 && day <= 19)) { sign = "Áries"; insight = "Energia para ação, ariano! Canalize entusiasmo, mas olhe antes de saltar. Rawr!"; }
+                else if ((month == 4 && day >= 20) || (month == 5 && day <= 20)) { sign = "Touro"; insight = "Aprecie os prazeres simples, taurino. Busque estabilidade e conforto. Purrr."; }
+                else if ((month == 5 && day >= 21) || (month == 6 && day <= 20)) { sign = "Gêmeos"; insight = "Mente fervilhando, geminiano! Compartilhe ideias, aprenda. Curiosidade é sua guia."; }
+                else if ((month == 6 && day >= 21) || (month == 7 && day <= 22)) { sign = "Câncer"; insight = "Sensível Câncer, cuide de si e dos seus. Ouça o coração, nutra a alma."; }
+                else if ((month == 7 && day >= 23) || (month == 8 && day <= 22)) { sign = "Leão"; insight = "Brilhe, leonino! Expresse criatividade e liderança. O palco é seu! Miau-majestoso!"; }
+                else if ((month == 8 && day >= 23) || (month == 9 && day <= 22)) { sign = "Virgem"; insight = "Detalhes importam, virginiano. Organize, planeje, mas não se perca. A perfeição está no processo."; }
+                else if ((month == 9 && day >= 23) || (month == 10 && day <= 22)) { sign = "Libra"; insight = "Busque harmonia, libriano. Diplomacia e beleza abrem portas. Ronronar equilibrado."; }
+                else if ((month == 10 && day >= 23) || (month == 11 && day <= 21)) { sign = "Escorpião"; insight = "Transformação profunda, escorpiano. Mergulhe em paixões, com consciência. Poder nas patas."; }
+                else if ((month == 11 && day >= 22) || (month == 12 && day <= 21)) { sign = "Sagitário"; insight = "Expanda horizontes, sagitariano! Aventure-se, aprenda, compartilhe sabedoria."; }
+                else if ((month == 12 && day >= 22) || (month == 1 && day <= 19)) { sign = "Capricórnio"; insight = "Persevere, capricorniano! Foque nos objetivos, aprecie a jornada. O topo espera!"; }
+                else { return { sign: null, insight: "Data cósmica... peculiar. Tente DD/MM?" }; }
+                return { sign, insight };
+            }
+
+            const JS_SVG_CONSTRAINTS = {
+                 allowed_shapes: new Set([ "polygon", "arc", "circle", "square", "triangle", "rectangle", "line", "ellipse", "prism", "parallelogram", "shape", "rhombus", "oval", "cube", "sphere", "pyramid", "cone", "cylinder", "spiral", "curve", "dot", "cross", "crescent", "abstract", "geometric", "organic", "linear", "clothing", "food", "color", "bot-icon", "network-node", "firewall-icon", "cat-toy", "energy-orb", "data-stream", "galaxy", "star", "moon" ])
+            };
+            
+            function jsValidateShape(shape) { if (!shape) return false; return JS_SVG_CONSTRAINTS.allowed_shapes.has(shape.toLowerCase());}
+            
+            function jsExtractShape(description) {
+                if (!description) return "shape"; const descLower = description.toLowerCase();
+                const shapeKeywords = ["polygon", "arc", "circle", "square", "triangle", "rectangle", "line", "ellipse", "prism", "parallelogram", "shape", "rhombus", "oval", "cube", "sphere", "pyramid", "cone", "cylinder", "spiral", "curve", "dot", "cross", "crescent", "bot-icon", "network-node", "firewall-icon", "cat-toy", "energy-orb", "data-stream", "galaxy", "star", "moon"];
+                const clothingKeywords = ["dress", "shirt", "pants", "skirt", "coat", "sweater", "blouse", "roupa", "vestido", "calça", "camisa"];
+                const foodKeywords = ["apple", "banana", "bread", "cake", "pizza", "sandwich", "cookie", "maçã", "comida", "bolo"];
+                const colorKeywords = ["red", "blue", "green", "yellow", "purple", "orange", "pink", "black", "white", "gray", "brown", "vermelho", "azul", "verde", "amarelo", "roxo", "laranja", "rosa", "preto", "branco", "cinza", "marrom", "cor"];
+                for (const keyword of shapeKeywords) { if (descLower.includes(keyword)) return keyword; }
+                for (const keyword of clothingKeywords) { if (descLower.includes(keyword)) return "clothing"; }
+                for (const keyword of foodKeywords) { if (descLower.includes(keyword)) return "food"; }
+                for (const keyword of colorKeywords) { if (descLower.includes(keyword)) return "color"; }
+                if (descLower.includes("abstrato")) return "abstract"; if (descLower.includes("geométrico")) return "geometric"; if (descLower.includes("orgânico")) return "organic";
+                const drawMatch = descLower.match(/(?:desenhe|crie|gere)\s+(?:um|uma)\s+([a-zA-Záéíóúãõç]+)/);
+                if (drawMatch && drawMatch[1]) { let potentialShape = drawMatch[1]; if (jsValidateShape(potentialShape)) return potentialShape; }
+                if (descLower.length < 15 && descLower.split(" ").length <= 3) { if (jsValidateShape(descLower)) return descLower; }
+                return "abstract";
+            }
+
+            function jsCreateSvg(shape) {
+                const s = shape ? shape.toLowerCase() : "shape";
+                if (!jsValidateShape(s)) return `<svg width="100" height="100"><rect x="0" y="0" width="100" height="100" fill="lightgray" /><text x="10" y="50" fill="black">Forma: ${shape}?</text></svg>`;
+                if (s === "circle") return `<svg width="100" height="100"><circle cx="50" cy="50" r="40" fill="red" /></svg>`;
+                if (s === "square") return `<svg width="100" height="100"><rect width="80" height="80" x="10" y="10" fill="blue" /></svg>`;
+                if (s === "triangle") return `<svg width="100" height="100"><polygon points="50,10 90,90 10,90" fill="yellow" /></svg>`;
+                if (s === "cat-toy") return `<svg width="100" height="100"><circle cx="50" cy="60" r="20" fill="orange" /><line x1="50" y1="60" x2="50" y2="20" stroke="gray" stroke-width="3"/><path d="M40 20 Q50 0 60 20" fill="none" stroke="green" stroke-width="2"/></svg>`;
+                if (s === "energy-orb") return `<svg width="100" height="100"><defs><radialGradient id="grad1" cx="50%" cy="50%" r="50%" fx="50%" fy="50%"><stop offset="0%" style="stop-color:rgb(255,255,0);stop-opacity:1" /><stop offset="100%" style="stop-color:rgb(255,165,0);stop-opacity:0.5" /></radialGradient></defs><circle cx="50" cy="50" r="35" fill="url(#grad1)" /></svg>`;
+                if (s === "data-stream") return `<svg width="100" height="100"><path d="M10 20 Q 30 10 50 30 T 90 40" stroke="cyan" stroke-width="4" fill="none"/><path d="M10 50 Q 25 65 50 55 T 90 70" stroke="lime" stroke-width="4" fill="none" stroke-dasharray="5,5"/></svg>`;
+                if (s === "bot-icon") return `<svg width="100" height="100"><rect x="20" y="20" width="60" height="60" fill="#5bc0de" rx="10"/><circle cx="40" cy="40" r="8" fill="white"/><circle cx="60" cy="40" r="8" fill="white"/><rect x="30" y="60" width="40" height="10" fill="#444"/></svg>`;
+                if (s === "network-node") return `<svg width="100" height="100"><circle cx="50" cy="50" r="20" fill="#337ab7" stroke="white" stroke-width="2"/><line x1="50" y1="30" x2="30" y2="10" stroke="#aaa"/><line x1="50" y1="30" x2="70" y2="10" stroke="#aaa"/><line x1="50" y1="70" x2="30" y2="90" stroke="#aaa"/><line x1="50" y1="70" x2="70" y2="90" stroke="#aaa"/></svg>`;
+                if (s === "firewall-icon") return `<svg width="100" height="100"><path d="M10 10 H90 V90 H10Z" fill="none" stroke="#d9534f" stroke-width="5"/><path d="M10 50 H90 M50 10 V90" stroke="#d9534f" stroke-width="3" stroke-dasharray="5,5"/></svg>`;
+                if (s === "abstract") return `<svg width="100" height="100"><polygon points="10,10 90,50 10,90" fill="purple" /><circle cx="70" cy="30" r="15" fill="rgba(255,255,0,0.5)"/></svg>`;
+                if (s === "galaxy") return `<svg width="100" height="100"><defs><radialGradient id="gradGalaxy" cx="50%" cy="50%" r="70%" fx="50%" fy="50%"><stop offset="0%" style="stop-color:rgba(200,200,255,0.8)" /><stop offset="60%" style="stop-color:rgba(100,100,200,0.5)" /><stop offset="100%" style="stop-color:rgba(50,50,100,0.2)" /></radialGradient></defs><ellipse cx="50" cy="50" rx="45" ry="25" fill="url(#gradGalaxy)" transform="rotate(-30 50 50)" /><circle cx="50" cy="50" r="5" fill="yellow" /></svg>`;
+                if (s === "star") return `<svg width="100" height="100"><polygon points="50,5 61,35 95,35 67,57 78,88 50,70 22,88 33,57 5,35 39,35" fill="gold"/></svg>`;
+                if (s === "moon") return `<svg width="100" height="100"><path d="M 30 10 A 40 40 0 1 0 30 90 A 30 30 0 1 1 30 10 Z" fill="lightyellow" /></svg>`
+                return `<svg width="100" height="100"><rect x="10" y="10" width="80" height="80" fill="gray" /><text x="15" y="55" fill="white" font-size="12">${s}</text></svg>`;
+            }
+
+            function getAoiReply(question, sourceSystem = "user_chat") {
+                const q = question.toLowerCase();
+                const currentFeeling = catState.feeling; const currentHealth = catState.physicalHealthStatus;
+                if (sourceSystem === "lisp_rooter_event") {} if (sourceSystem === "lisp_query") {} if (sourceSystem === "lisp_command" && q.startsWith("nova diretiva draw:")) {}
+
+                if (q.includes("gere uma imagem") || q.includes("crie uma imagem") || q.includes("desenhe algo") || q.includes("mostre uma imagem") || (q.includes("desenha") && q.includes("pra mim")) || q.includes("desenhe um") || q.includes("desenhe uma")) {
+                    appendToShell("Solicitação de imagem detectada no chat...", "info");
+                    let userDemandedShape = jsExtractShape(q);
+                    if (!consumeEnergy(catState.energyPerVision, `gerar imagem de ${userDemandedShape}`)) return `Estou muito cansado para gerar '${userDemandedShape}' agora. Preciso de mais energia ou catnip!`;
+                    updateInternalStates({psyche: "Processando Visão", source: "image_request_chat"});
+                    const svgCode = jsCreateSvg(userDemandedShape); window.lastGeneratedSvgCode = svgCode; window.lastGeneratedSvgShape = userDemandedShape;
+                    let threeDDescription = `Visualizando um(a) ${userDemandedShape} em 3D (Gemini Sim):\n`;
+                    if (userDemandedShape === "cube") threeDDescription += "  - Um cubo perfeito, faces quadradas, arestas nítidas. Sólido, talvez metal polido. Flutua no espaço psíquico.";
+                    else if (userDemandedShape === "sphere") threeDDescription += "  - Esfera lisa, refletindo luz. Textura vítrea, padrões internos. Pulsando com energia suave.";
+                    else if (userDemandedShape === "pyramid") threeDDescription += "  - Pirâmide de base quadrada, ápice pontudo. Faces triangulares lisas, arenito cósmico. Emana mistério.";
+                    else if (userDemandedShape === "galaxy") threeDDescription += "  - Uma galáxia espiral majestosa, com um núcleo brilhante e braços de estrelas e poeira cósmica, girando lentamente.";
+                    else threeDDescription += `  - Forma 3D abstrata de um(a) ${userDemandedShape}. Contornos fluidos, geometria não-euclidiana. Cores mutáveis.`;
+                    window.lastGenerated3DDescription = threeDDescription;
+                    const asciiArt = generateClusterVisionImage(userDemandedShape, '2d_chat');
+                    let reply = `Entendi, você quer uma imagem de '${userDemandedShape}'.\n`;
+                    reply += `Gerei uma representação SVG 2D (abaixo) e uma visão ASCII no console.\n`;
+                    reply += `Também imaginei uma forma 3D, posso descrevê-la ou mostrar o código SVG?`;
+                    appendChatMessage(`<div class="vision-output">SVG para ${userDemandedShape}:<br>${svgCode}</div>`, 'aoi-reply', "XCake", true);
+                    appendToShell(`--- Visão ASCII para Chat (${userDemandedShape}) ---`, "info"); appendToShell(asciiArt, "response"); appendToShell(`--- Fim da Visão ASCII ---`, "info");
+                    updateInternalStates({psyche: "Estável", source: "image_request_complete"}); return reply;
+                }
+                if ((q.startsWith("sim") || q.startsWith("ok") || q.startsWith("descreva")) && (q.includes("descreva o svg") || q.includes("código svg") || q.includes("mostre o svg")) && window.lastGeneratedSvgCode) {
+                    let reply = `Ok! O código SVG para '${window.lastGeneratedSvgShape}' seria algo assim:\n\n<pre>${escapeHtml(window.lastGeneratedSvgCode)}</pre>\nIsso criaria um(a) ${window.lastGeneratedSvgShape} visualmente.`;
+                    window.lastGeneratedSvgCode = null; return reply;
+                }
+                 if ((q.startsWith("sim") || q.startsWith("ok") || q.startsWith("descreva 3d")) && (q.includes("descreva o 3d") || q.includes("forma 3d")) && window.lastGenerated3DDescription) {
+                    let reply = `A descrição da forma 3D para '${window.lastGeneratedSvgShape}' é:\n\n<pre>${escapeHtml(window.lastGenerated3DDescription)}</pre>`;
+                    window.lastGenerated3DDescription = null; return reply;
+                }
+                if (q.includes("olá") || q.includes("oi")) return "Olá! Gato Psíquico Unificado online. Rooter LISP ativo. Como posso ajudar?";
+                if (q.includes("como você está") || q.includes("como vai")) return `Estou ${currentFeeling} e ${catState.psyche}. Minha energia está em ${Math.round((catState.energy/catState.maxEnergy)*100)}%. O Rooter LISP está ${simulatedDrawSystem.rooterActive ? "ATIVO" : "INATIVO"}.`;
+                if (q.includes("sentimento")) return `Meu sentimento atual é: ${currentFeeling}. Flutua com as energias da rede e meu nível de energia.`;
+                if (q.includes("energia") || q.includes("catnip")) return `Minha energia Catnip está em ${Math.round((catState.energy/catState.maxEnergy)*100)}%. ${catState.needs}. ${catState.catnipBuffDuration > 0 ? 'Efeito Catnip ativo!' : (Date.now() - catState.lastCatnipTime < catState.catnipCooldown ? 'Catnip em cooldown.' : 'Catnip disponível!')}`;
+                if (q.includes("saúde") && !q.includes("draw.net")) return `Minha saúde física está: ${currentHealth}. Matéria é uma manifestação.`;
+                if (q.includes("quem é você") || q.includes("gato psiquico") || q.includes("aoi")) return "Eu sou o Gato Psíquico Unificado, observador das interações, projetos no DRAW.NET e fluxos LISP, através desta interface. Vejo... muitas coisas. Miau.";
+                if (q.includes("o que é") && (q.includes("draw.php") || q.includes("draw.net"))) return "O DRAW.NET é uma rede social para arquitetos e designers. Compartilhe projetos, inspire-se!";
+                if (q.includes("funcionalidades") && q.includes("draw.net")) return "No DRAW.NET: explore projetos, curta, comente, salve notas. Arquitetos podem postar seus trabalhos. Tem rádio, jogos, notícias.";
+                if (q.includes("tarot") || q.includes("tarô")) { const r = ["Caminho de aprendizado. Confie na intuição.", "Transformação ao redor. Abrace mudanças.", "Alegria e celebração! Aproveite."]; return r[Math.floor(Math.random() * r.length)]; }
+                if (q.includes("horóscopo") || q.includes("signo")) { const dr = /(\d{1,2})[\s\.\/-](\d{1,2})/; const dm = q.match(dr); if (dm) { const d = parseInt(dm[1],10); const m=parseInt(dm[2],10); if (d>0&&d<=31&&m>0&&m<=12){const{sign,insight}=getZodiacSignAndInsight(d,m); if(sign)return `Sua data revela ${sign}! Para você: "${insight}" Miau!`; else return insight;} else return "Data cósmica incorreta.";} else if(q.includes("qual")&&(q.includes("meu signo")||q.includes("meu horoscopo"))){return "Diga-me sua data de nascimento (DD/MM) para eu sintonizar.";} return "Astrologia... energias celestes. Quer saber sobre seu signo? Diga sua data (DD/MM)!";}
+                const randomReplies = ["Fascinante observação...", "Hmm, deixe-me ponderar...", "Miau LISP.", "Realidade multifacetada.", "Talvez quântico."];
+                return randomReplies[Math.floor(Math.random() * randomReplies.length)];
+            }
+            
+            function escapeHtml(unsafe) {
+                 return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+            }
+
+            function handleSendChatMessage() {
+                if (!aoiChatInput || !aoiChatMessages) return; const messageText = aoiChatInput.value.trim(); if (messageText === '') return;
+                appendChatMessage(messageText, 'user-message', "USER"); appendToShell(messageText, 'chat-listen'); aoiChatInput.value = '';
+                if (messageText.toLowerCase().startsWith("(draw:")) {
+                    appendToShell(`[CHAT_LISP_CMD] ${messageText}`, 'debug'); const parsedCmd = parseLispCommand(messageText);
+                    if (parsedCmd) { const lispResponse = processLispCommand(parsedCmd, false); appendChatMessage(`Resposta LISP: ${lispResponse}`, 'aoi-reply', "LISP_INTERACTION"); appendToShell(`[CHAT_LISP_RSP] ${lispResponse}`, 'lisp-output');
+                    } else { const errorMsg = "Comando LISP inválido do chat."; appendChatMessage(errorMsg, 'aoi-reply', "LISP_INTERACTION"); appendToShell(`[CHAT_LISP_ERR] ${errorMsg}`, 'error'); }
+                } else {
+                    const reply = getAoiReply(messageText); setTimeout(() => {
+                        if (reply.includes("<svg") || reply.includes("<pre>")) appendChatMessage(reply, 'aoi-reply', "XCake", true); else appendChatMessage(reply, 'aoi-reply', "XCake");
+                        appendToShell(`AOI Chat Eco: "${reply.substring(0, 50).replace(/\n/g, ' ')}..."`, 'info');
+                    }, 600 + Math.random() * 300);
+                }
+            }
+            
+            // =========================================================================
+            // === Batch Command & ASCII Art
+            // =========================================================================
+             async function executeCommandBatch(commands, batchName = "Diretivas AOI") {
+                if (isBatchRunning) {
+                    if (window.pendingBatch && window.pendingBatch.name === batchName) {
+                        appendToShell(`[BATCH_WARN] Batch '${batchName}' já na fila.`, 'debug');
+                        return;
+                    }
+                    if (window.pendingBatch) appendToShell(`[BATCH_WARN] Batch '${batchName}' enfileirado (outro: ${window.pendingBatch.name}).`, 'debug');
+                    else appendToShell(`[BATCH_INFO] Batch '${batchName}' enfileirado atrás de '${window.lastRunningBatchName}'.`, 'debug');
+                    window.pendingBatch = { commands, name: batchName };
+                    return;
+                }
+                if (!consumeEnergy(catState.energyPerBatch, `batch ${batchName}`)) {
+                    appendToShell(`Batch '${batchName}' falhou: energia baixa.`, 'error');
+                    return;
+                }
+                isBatchRunning = true;
+                window.lastRunningBatchName = batchName;
+                appendToShell(`--- Iniciando Batch: ${batchName} ---`, 'info');
+                updateInternalStates({ psyche: "Executando Diretiva", source: `batch_start:${batchName}` });
+
+                for (let i = 0; i < commands.length; i++) {
+                    const command = commands[i];
+                    appendToShell(command, 'command-echo');
+
+                    if (command.includes("find -fi") && command.includes("'PCC'") && command.includes("'CV'") && command.includes("'NORTE'") && command.includes("'ARMA'") && command.includes("https://www.policiamilitar.sp.gov.br/")) {
+                        appendToShell("Gatilho de vigilância especial detectado. Engajando protocolo...", 'info');
+                        await executeCommandBatch(specialVigilanceBatch, "Protocolo de Vigilância Especial");
+                        appendToShell("Protocolo de vigilância especial concluído. Retomando batch original...", 'info');
+                    }
+
+                    await new Promise(resolve => setTimeout(resolve, 100 + Math.random() * (batchName.includes("Chat") ? 80 : 120)));
+                    let output = `Simulando: ${command.substring(0, 60)}... `;
+                    if (batchName.includes("Chat")) {
+                        if (command.includes("ANALYZE") || command.includes("IDENTIFY") || command.includes("QUERY")) output += `Análise/Consulta ok.`;
+                        else if (command.includes("LOG") || command.includes("UPDATE") || command.includes("MAINTAIN")) output += `Registro/Atualização ok.`;
+                        else if (command.includes("GENERATE") || command.includes("RECEIVE") || command.includes("TOKENIZE")) output += `Processamento linguagem ok.`;
+                        else output += `Operação chat ok.`;
+                    } else {
+                        if (command.startsWith("curl") || command.startsWith("telnet") || command.startsWith("pip search") || command.startsWith("find")) output += `[Stream Sim.] Conexão OK.`;
+                        else if (command.startsWith("mkdir")) output += `Diretório criado.`;
+                        else if (command.startsWith("npm") || command.startsWith("gh") || command.startsWith("gcloud") || command.startsWith("comp") || command.startsWith("cmake") || command.startsWith("robocopy") || command.startsWith("tasklist")) output += `Comando '${command.split(" ")[0]}' executado.`;
+                        else output += `Operação genérica ok.`;
+                    }
+                    appendToShell(output, 'response');
+                    if (i < commands.length - 1) appendToShell("", 'prompt-only');
+                }
+                
+                appendToShell(`--- Batch Concluído: ${batchName} ---`, 'info');
+                updateInternalStates({ psyche: "Estável", source: `batch_end:${batchName}` });
+                isBatchRunning = false;
+                window.lastRunningBatchName = null;
+                if (window.pendingBatch) {
+                    const nextBatch = window.pendingBatch;
+                    window.pendingBatch = null;
+                    appendToShell(`[BATCH_INFO] Iniciando batch pendente: ${nextBatch.name}.`, 'info');
+                    executeCommandBatch(nextBatch.commands, nextBatch.name);
+                }
+            }
+
+            function generateClusterVisionImage(demandedShape = null, context = 'shell_default') {
+                const width = (context === '2d_chat') ? 18 : 24; const height = (context === '2d_chat') ? 9 : 12;
+                let imageOutput = `[AOI_CLUSTER_VISION - Gemini Sim ${GEMINI_API_KEY.substring(0,4)}...${demandedShape ? ' ('+demandedShape+')' : ''}]\n`;
+                const baseSignal = catState.avgHappiness / 100; const healthFactor = catState.avgHealth / 100; const hungerInfluence = (1 - (catState.avgHunger / 100)) * 0.5 + 0.5; const energyFactor = Math.max(0.2, catState.energy / catState.maxEnergy);
+                let gamma = 2.2; if (catState.psyche === "Eufórico" || catState.catnipBuffDuration > 0) gamma = 1.7; else if (catState.psyche === "Abatido" || catState.psyche === "Perturbado" || catState.feeling === "Exausto") gamma = 2.8;
+                const chars = [' ', '.', ':', '-', '=', '+', '*', '#', '%', '@']; const edgeChar = '|'; const fillChar = 'o';
+                for (let y = 0; y < height; y++) { let line = ""; for (let x = 0; x < width; x++) {
+                        let particleValue = (Math.sin(x * 0.2 + y * 0.1 + baseSignal * Math.PI * (x / width)) + 1) / 2; particleValue *= healthFactor * hungerInfluence * energyFactor;
+                        let crosstalkEffect = (Math.cos(x * 0.15 - y * 0.15 + catState.idStrength.length / 10 * (y / height)) + 1) / 2 * 0.15; particleValue = (particleValue * 0.85) + (crosstalkEffect * 0.15);
+                        let shapeInfluence = 0; let currentShapeChar = null; if (demandedShape) { const normX = x / (width -1) - 0.5; const normY = y / (height-1) - 0.5; const aspect = width / height;
+                            switch (demandedShape.toLowerCase()) {
+                                case 'circle': case 'oval': case 'ellipse': case 'sphere': case 'energy-orb': case 'moon': let distSq = (normX * normX) + (normY * aspect * normY * aspect); if (distSq < 0.16 && distSq > 0.09) { shapeInfluence = 0.7; currentShapeChar = edgeChar; } else if (distSq < 0.09) { shapeInfluence = 0.4; currentShapeChar = fillChar; } break;
+                                case 'square': case 'rectangle': case 'cube': if (Math.abs(normX) < 0.4 && Math.abs(normY * aspect) < 0.35) { if (Math.abs(normX) > 0.35 || Math.abs(normY * aspect) > 0.3) { shapeInfluence = 0.7; currentShapeChar = edgeChar; } else { shapeInfluence = 0.4; currentShapeChar = fillChar; } } if (demandedShape === 'cube' && Math.abs(normX - normY*0.3) < 0.05 && Math.abs(normX)<0.35) { currentShapeChar = '/';} break;
+                                case 'triangle': case 'pyramid': if (normY * aspect > -0.3 && normY * aspect < 0.4 && Math.abs(normX) < (normY * aspect + 0.3) * 0.7) { if (Math.abs(normX) > (normY * aspect + 0.3) * 0.5 || normY * aspect > 0.3) { shapeInfluence = 0.7; currentShapeChar = edgeChar; } else { shapeInfluence = 0.4; currentShapeChar = fillChar; } } if (demandedShape === 'pyramid' && Math.abs(normY*aspect) < 0.05 && Math.abs(normX) < 0.3) { currentShapeChar = '^'; } break;
+                                case 'star': if (Math.random() < 0.3) currentShapeChar = '*'; else if (Math.random() < 0.1) currentShapeChar = '+'; break;
+                                case 'galaxy': if (Math.random() < 0.2) currentShapeChar = '@'; else if (Math.random() < 0.1) currentShapeChar = '%'; break;
+                                case 'cat-toy': particleValue *= 1.2; break; default: particleValue *= (0.8 + Math.random()*0.4);
+                            } } particleValue = (particleValue * (1 - shapeInfluence*0.3)) + (shapeInfluence * 0.3) ; particleValue = Math.max(0, Math.min(1, particleValue));
+                        let gammaCorrectedValue = Math.pow(particleValue, 1 / gamma); gammaCorrectedValue = Math.max(0, Math.min(1, gammaCorrectedValue)); let charIndex = Math.floor(gammaCorrectedValue * (chars.length - 1e-9));
+                        if (currentShapeChar) line += currentShapeChar; else line += chars[charIndex]; line += (catState.isCatSick ? " " : "");
+                    } imageOutput += line + "\n"; }
+                imageOutput += `(H:${catState.avgHappiness.toFixed(0)} S:${catState.avgHealth.toFixed(0)} Fo:${catState.avgHunger.toFixed(0)} E:${catState.energy.toFixed(0)} Psy:${catState.psyche.substring(0,3)} γ:${gamma.toFixed(1)})`;
+                return imageOutput;
+            }
+
+            // =========================================================================
+            // === LISP Rooter Functions & Alert Trigger
+            // =========================================================================
+            function logDrawSecurityEvent(message, level = 'INFO', origin = "SYSTEM_LISP") {
+                 const timestamp = new Date().toISOString(); const logEntry = { timestamp, origin, message, level }; simulatedDrawSystem.securityLog.unshift(logEntry);
+                 if (simulatedDrawSystem.securityLog.length > 50) simulatedDrawSystem.securityLog.pop(); appendToShell(`[DRAW_SEC_LOG:${level}:${origin}] ${message}`, level === 'CRIT' ? 'error' : (level === 'WARN' ? 'chat-listen' : 'debug'));
+            }
+
+            function parseLispCommand(commandString) {
+                if (!commandString.startsWith("(") || !commandString.endsWith(")")) return null; const content = commandString.substring(1, commandString.length - 1).trim(); if (!content) return null;
+                const parts = []; let currentPart = ""; let inString = false; let parenLevel = 0;
+                for (let i = 0; i < content.length; i++) { const char = content[i]; if (char === '"') { inString = !inString; currentPart += char; } else if (char === ' ' && !inString && parenLevel === 0) { if (currentPart) parts.push(currentPart); currentPart = ""; } else { if (char === '(' && !inString) parenLevel++; if (char === ')' && !inString) parenLevel--; currentPart += char; } }
+                if (currentPart) parts.push(currentPart); if (parts.length === 0) return null; const func = parts[0];
+                const args = parts.slice(1).map(arg => { if (!isNaN(arg) && arg.trim() !== "") return parseFloat(arg); if (arg.startsWith('"') && arg.endsWith('"')) return arg.substring(1, arg.length - 1); return arg; }); return { func: func, args: args };
+            }
+            
+            function processLispCommand(parsedCmd, fromRooter = false) {
+                if (!parsedCmd) { appendToShell("Erro sintaxe LISP.", 'error'); return; }
+                const cmdOrigin = fromRooter ? 'ROOTER' : 'SHELL';
+                appendToShell(`[LISP_RECV:${cmdOrigin}] ${parsedCmd.func}, Args: ${JSON.stringify(parsedCmd.args)}`, 'debug');
+                simulatedDrawSystem.lispCommandsProcessedByRooter++;
+                simulatedDrawSystem.lispRooterLog.push({timestamp: new Date().toISOString(), command: `(${parsedCmd.func} ${parsedCmd.args.join(' ')})`, response: "Pendente..."});
+                if (simulatedDrawSystem.lispRooterLog.length > 20) simulatedDrawSystem.lispRooterLog.shift();
+                
+                let lispResponse = `(LISP_ACK:${cmdOrigin}) '${parsedCmd.func}' processada.`;
+                let aoiReactionNeeded = false;
+                let aoiQuery = "";
+                let aoiSourceSystem = fromRooter ? "lisp_rooter_event" : "lisp_query";
+                let catFeelingUpdate = null, catPsycheUpdate = null;
+
+                switch (parsedCmd.func) {
+                    case "draw:get-system-status":
+                        lispResponse = `(status: "${simulatedDrawSystem.status}", security: "${simulatedDrawSystem.securityLevel}", blocked: ${simulatedDrawSystem.blockedIPs.size}, q: ${simulatedDrawSystem.rooterCommandQueue.length})`;
+                        aoiQuery = `status draw: ${lispResponse}`;
+                        aoiReactionNeeded = true;
+                        logDrawSecurityEvent(`LISP:${cmdOrigin}: Solicitado status DRAW.`, 'DEBUG', cmdOrigin);
+                        catFeelingUpdate = "Informado";
+                        catPsycheUpdate = "Atento";
+                        break;
+
+                    case "draw:set-security-parameter":
+                        const param = String(parsedCmd.args[0]).toLowerCase();
+                        const value = parsedCmd.args[1];
+                        if (param === 'block-ip' && typeof value === 'string') {
+                            simulatedDrawSystem.blockedIPs.add(value);
+                            lispResponse = `(ip_blocked: "${value}")`;
+                            logDrawSecurityEvent(`IP ${value} bloqueado DRAW.`, 'WARN', `LISP:${cmdOrigin}`);
+                            aoiQuery = `Alerta segurança DRAW: IP ${value} bloqueado!`;
+                            aoiReactionNeeded = true;
+                            catFeelingUpdate = "Cauteloso";
+                            catPsycheUpdate = "Alerta";
+                        } else if (param === 'security-level' && ['normal', 'elevado', 'crítico'].includes(String(value).toLowerCase())) {
+                            const newLevel = String(value).toLowerCase();
+                            simulatedDrawSystem.securityLevel = newLevel;
+                            lispResponse = `(security_level: "${newLevel}")`;
+                            logDrawSecurityEvent(`Nível segurança DRAW para ${newLevel}.`, 'WARN', `LISP:${cmdOrigin}`);
+                            aoiQuery = `nível segurança DRAW para ${newLevel}`;
+                            aoiReactionNeeded = true;
+                            
+                            if (newLevel === 'crítico' || newLevel === 'elevado') {
+                                if (!alertDirectiveHasBeenTriggered) {
+                                    appendToShell("NÍVEL DE ALERTA ELEVADO. INICIANDO MATRIZ DE DIRETIVAS DE RESPOSTA.", 'error');
+                                    executeCommandBatch(aoiDirectiveBatch, "Protocolo de Resposta a Alerta");
+                                    alertDirectiveHasBeenTriggered = true;
+                                }
+                                if (newLevel === 'crítico') { catFeelingUpdate = "Tenso"; catPsycheUpdate = "Alerta Máximo"; } 
+                                else { catFeelingUpdate = "Alerta"; catPsycheUpdate = "Focado"; }
+                            } else if (newLevel === 'normal') {
+                                if (alertDirectiveHasBeenTriggered) {
+                                    appendToShell("Nível de segurança normalizado. Protocolo de resposta a alerta resetado.", 'info');
+                                    alertDirectiveHasBeenTriggered = false;
+                                }
+                                catFeelingUpdate = "Observador"; catPsycheUpdate = "Normal";
+                            }
+                            
+                        } else {
+                            lispResponse = `(ERROR Param '${param}' ou valor '${value}' inválido)`;
+                        }
+                        break;
+                    
+                    case "draw:initiate-directive-matrix":
+                        const directiveType = String(parsedCmd.args[0]).toLowerCase() || "vigilancia_padrao";
+                        lispResponse = `(directive_matrix: '${directiveType}' iniciada DRAW)`;
+                        executeCommandBatch(aoiDirectiveBatch.slice(0,3), `Diretivas DRAW LISP:${cmdOrigin} - ${directiveType}`);
+                        aoiQuery = `nova diretiva draw: ${directiveType}`;
+                        aoiReactionNeeded = true;
+                        logDrawSecurityEvent(`Matriz diretivas '${directiveType}' iniciada DRAW.`, 'INFO', `LISP:${cmdOrigin}`);
+                        catFeelingUpdate = "Focado";
+                        catPsycheUpdate = "Executando Diretiva";
+                        break;
+
+                    case "draw:request-xstark-report":
+                        const reportLevel = String(parsedCmd.args[0]).toLowerCase() || "sumario";
+                        lispResponse = `(xstark_report: '${reportLevel}' gerado)`;
+                        const reportContent = execute_xstark_report(reportLevel === 'full' || reportLevel === 'completo', true, true);
+                        appendToShell("--- Início XSTARK (LISP) ---", 'info');
+                        appendToShell(reportContent, 'response');
+                        appendToShell("--- Fim XSTARK ---", 'info');
+                        aoiQuery = `relatório xstark ${reportLevel} DRAW solicitado`;
+                        aoiReactionNeeded = true;
+                        logDrawSecurityEvent(`Relatório XSTARK '${reportLevel}' solicitado.`, 'INFO', `LISP:${cmdOrigin}`);
+                        catFeelingUpdate = "Analítico";
+                        break;
+
+                    case "draw:system-heartbeat":
+                        lispResponse = `(heartbeat_ack: ${new Date().toLocaleTimeString()}, status: ${simulatedDrawSystem.status}, q: ${simulatedDrawSystem.rooterCommandQueue.length})`;
+                        if (fromRooter && Math.random() < 0.15) { aoiQuery = "sinal vida draw rooter"; aoiReactionNeeded = true; }
+                        logDrawSecurityEvent(`Heartbeat DRAW Rooter.`, 'DEBUG', `LISP:${cmdOrigin}`);
+                        if (!catFeelingUpdate && (catState.feeling === "Vigilante" || catState.feeling === "Observador" || catState.feeling === "Calmo")) {
+                            catFeelingUpdate = "Calmo";
+                            catPsycheUpdate = "Estável";
+                        }
+                        catState.lastRooterEventType = "Heartbeat";
+                        break;
+                    
+                    case "draw:traffic-spike-alert":
+                        const ipSpike = parsedCmd.args[0] || `203.0.113.${Math.floor(Math.random()*255)}`;
+                        simulatedDrawSystem.recentTraffic.push({timestamp: Date.now(), type:'suspicious_spike', ip: ipSpike, ua:'Unknown-SpikeSource'});
+                        if(simulatedDrawSystem.recentTraffic.length > 20) simulatedDrawSystem.recentTraffic.splice(0,1);
+                        lispResponse = `(traffic_spike_alert_ack: IP ${ipSpike})`;
+                        logDrawSecurityEvent(`ALERTA PICO TRÁFEGO IP ${ipSpike} DRAW!`, 'CRIT', `LISP:${cmdOrigin}`);
+                        aoiQuery = `Alerta segurança DRAW: Pico tráfego IP ${ipSpike}!`;
+                        aoiReactionNeeded = true;
+                        simulatedDrawSystem.securityLevel = "crítico";
+                        catFeelingUpdate = "Alarmado";
+                        catPsycheUpdate = "Crítico";
+                        catState.lastRooterEventType = "Traffic_Spike";
+
+                        if (!alertDirectiveHasBeenTriggered) {
+                            appendToShell("PICO DE TRÁFEGO DETECTADO! INICIANDO MATRIZ DE DIRETIVAS DE RESPOSTA.", 'error');
+                            executeCommandBatch(aoiDirectiveBatch, "Protocolo de Resposta a Alerta Crítico");
+                            alertDirectiveHasBeenTriggered = true;
+                        }
+                        break;
+                        
+                    case "draw:internal-op":
+                        lispResponse = `(internal_op_ack: "${parsedCmd.args[0]}" processado)`;
+                        logDrawSecurityEvent(`Op interna LISP: ${parsedCmd.args[0]}`, 'DEBUG', cmdOrigin);
+                        break;
+
+                    default:
+                        lispResponse = `(ERROR Função LISP '${parsedCmd.func}' desconhecida)`;
+                }
+
+                appendToShell(lispResponse, fromRooter ? 'debug' : 'lisp-output');
+                const lastLogEntry = simulatedDrawSystem.lispRooterLog[simulatedDrawSystem.lispRooterLog.length -1];
+                if(lastLogEntry) lastLogEntry.response = lispResponse;
+
+                if (catFeelingUpdate || catPsycheUpdate) {
+                    updateInternalStates({ feeling: catFeelingUpdate || catState.feeling, psyche: catPsycheUpdate || catState.psyche, source: `lisp_event:${cmdOrigin}:${parsedCmd.func}` });
+                }
+
+                if (aoiReactionNeeded && aoiQuery) {
+                    setTimeout(() => {
+                        const reply = getAoiReply(aoiQuery, aoiSourceSystem);
+                        appendChatMessage(reply, 'aoi-reply', "XCake");
+                        appendToShell(`AOI Reação (${aoiSourceSystem}): "${reply.substring(0,50)}..."`, 'info');
+                    }, fromRooter ? 350 : 100);
+                }
+                return lispResponse;
+            }
+
+            function generateRandomLispCommand() {
+                const commands = [ "(draw:get-system-status)", `(draw:set-security-parameter block-ip "172.16.${Math.floor(Math.random()*256)}.${Math.floor(Math.random()*256)}")`, `(draw:set-security-parameter security-level "${['normal', 'elevado', 'crítico'][Math.floor(Math.random()*3)]}")`, "(draw:initiate-directive-matrix vigilancia_especial)", "(draw:system-heartbeat)", `(draw:traffic-spike-alert "203.0.113.${Math.floor(Math.random()*255)}")` ];
+                if (Math.random() < 0.1) commands.push(`(draw:request-xstark-report "${Math.random() < 0.5 ? 'sumario' : 'full'}")`);
+                return commands[Math.floor(Math.random() * commands.length)];
+            }
+            
+            function enqueueRooterCommand(lispCommandString) {
+                if (simulatedDrawSystem.rooterCommandQueue.length < simulatedDrawSystem.rooterMaxQueueLength) simulatedDrawSystem.rooterCommandQueue.push(lispCommandString);
+                else appendToShell(`[ROOTER_Q_WARN] Fila LISP cheia. Descartado: ${lispCommandString.substring(0,30)}...`, 'debug');
+            }
+            
+            function processRooterQueue() {
+                 if (!simulatedDrawSystem.rooterActive || simulatedDrawSystem.rooterCommandQueue.length === 0) return;
+                 const commandString = simulatedDrawSystem.rooterCommandQueue.shift();
+                 appendToShell(`[LISP_Q_PROC][Q:${simulatedDrawSystem.rooterCommandQueue.length}] ${commandString}`, 'network-rx');
+                 const parsedCmd = parseLispCommand(commandString);
+                 if (parsedCmd) processLispCommand(parsedCmd, true);
+                 else appendToShell(`[ROOTER_ERR] LISP malformado: ${commandString}`, 'error');
+            }
+            
+            function startLispRooter() {
+                if (simulatedDrawSystem.rooterIntervalId === null) {
+                    simulatedDrawSystem.rooterActive = true;
+                    simulatedDrawSystem.rooterIntervalId = setInterval(processRooterQueue, simulatedDrawSystem.rooterProcessingSpeedMs);
+                    simulatedDrawSystem.commandGenerationIntervalId = setInterval(() => { if (simulatedDrawSystem.rooterActive) enqueueRooterCommand(generateRandomLispCommand()); }, simulatedDrawSystem.rooterGenerationSpeedMs);
+                    appendToShell("LISP Rooter ATIVADO.", 'info');
+                    if(toggleRooterLink) toggleRooterLink.textContent = "Rooter LISP: ON";
+                    catState.lastRooterEventType = "Rooter_Activated";
+                    updateInternalStates({ source: 'rooter_toggle_on', psyche: "Vigilante" });
+                }
+            }
+            
+            function stopLispRooter() {
+                if (simulatedDrawSystem.rooterIntervalId !== null) { clearInterval(simulatedDrawSystem.rooterIntervalId); simulatedDrawSystem.rooterIntervalId = null; }
+                if (simulatedDrawSystem.commandGenerationIntervalId !== null) { clearInterval(simulatedDrawSystem.commandGenerationIntervalId); simulatedDrawSystem.commandGenerationIntervalId = null; }
+                simulatedDrawSystem.rooterActive = false;
+                appendToShell("LISP Rooter DESATIVADO.", 'info');
+                if(toggleRooterLink) toggleRooterLink.textContent = "Rooter LISP: OFF";
+                catState.lastRooterEventType = "Rooter_Deactivated";
+                updateInternalStates({ source: 'rooter_toggle_off', psyche: "Estável" });
+            }
+
+            // =========================================================================
+            // === XSTARK Report & Shell Command Processor
+            // =========================================================================
+            function execute_xstark_report(includeChatAoiData = false, includeDrawContextData = false, includeLispInteraction = true) {
+                let report = `[XSTARK_REPORT_UNIFIED - ${new Date().toISOString()}]\n`;
+                report += "  --- AOI Core State ---\n";
+                report += `  Sentimento: ${catState.feeling}, Saúde: ${catState.physicalHealthStatus} (${catState.avgHealth.toFixed(0)}), Doente: ${catState.isCatSick ? 'Sim' : 'Não'}\n`;
+                report += `  Psique: ${catState.psyche}, ID: ${catState.idStrength}, Render: ${catState.is3DRenderMode ? '3D' : '2D'}\n`;
+                report += `  Energia Catnip: ${catState.energy}/${catState.maxEnergy} (${Math.round(catState.energy/catState.maxEnergy*100)}%), Necessidades: ${catState.needs}\n`;
+                if (catState.catnipBuffDuration > 0) report += `  Efeito Catnip: Ativo (${(catState.catnipBuffDuration/1000).toFixed(0)}s restantes)\n`;
+                report += "  --- Chat Interface Status ---\n";
+                if (aoiChatMessages) { const messages = aoiChatMessages.getElementsByTagName('p'); let localMessagesCount = 0, lastUserMsg = "N/A", lastAoiMsg = "N/A"; for (let i = messages.length - 1; i >= 0; i--) { if (messages[i].classList.contains('user-message') || messages[i].classList.contains('aoi-reply')) { localMessagesCount++; if (lastUserMsg === "N/A" && messages[i].classList.contains('user-message')) lastUserMsg = messages[i].textContent.substring(0,60) + "..."; if (lastAoiMsg === "N/A" && messages[i].classList.contains('aoi-reply')) lastAoiMsg = messages[i].textContent.substring(0,60) + "..."; } } report += `  Mensagens Locais: ${localMessagesCount}, Última (User): ${lastUserMsg}, Última (AOI): ${lastAoiMsg}\n`; }
+                if (window.lastGeneratedSvgShape) report += `  Contexto Imagem: SVG '${window.lastGeneratedSvgShape}' ${window.lastGeneratedSvgCode ? 'presente.' : 'limpo.'}\n`;
+                if (window.lastGenerated3DDescription) report += `  Contexto Imagem: Descrição 3D '${window.lastGeneratedSvgShape}' presente.\n`;
+                if (includeChatAoiData) { const chatAoiSim = getSimulatedChatAoiData(); report += "\n  --- ChatAOI.html Data (Simulado) ---\n"; report += `  Fonte: ${chatAoiSim.sourceFile}\n  Sentimento (Remoto): ${chatAoiSim.catState.feeling}\n`; chatAoiSim.chatLog.forEach(msg => { report += `    [${msg.sender === 'user' ? 'UserRemoto' : 'AOIRemoto'}]: ${msg.text.substring(0,50)}...\n`; }); }
+                if (includeDrawContextData) { report += `\n  --- Sistema DRAW (Simulado) ---\n`; report += `  Status: ${simulatedDrawSystem.status}, Segurança: ${simulatedDrawSystem.securityLevel}, IPs Bloqueados: ${simulatedDrawSystem.blockedIPs.size}\n`; simulatedDrawSystem.securityLog.slice(0,1).forEach(log => { report += `    - [${log.timestamp.split('T')[1].substring(0,8)} ${log.level} @${log.origin}] ${log.message.substring(0,50)}\n`; }); }
+                if (includeLispInteraction) { report += `\n  --- Interação LISP (Rooter/Shell) ---\n`; report += `  Rooter LISP: ${simulatedDrawSystem.rooterActive ? "ATIVO" : "INATIVO"}, Fila: ${simulatedDrawSystem.rooterCommandQueue.length}, Cmds: ${simulatedDrawSystem.lispCommandsProcessedByRooter}\n`; simulatedDrawSystem.lispRooterLog.slice(-1).forEach(entry => { report += `    - [${entry.timestamp.split('T')[1].substring(0,8)}] CMD: ${entry.command.substring(0,35)}... RSP: ${String(entry.response).substring(0,35)}...\n`; }); }
+                report += "  --- Fim do Relatório XSTARK ---"; return report;
+            }
+            
+            function getSimulatedChatAoiData() {
+                const now = new Date(); const feelings = ["Observador", "Curioso"]; const healths = ["Estável", "Vibrante"]; const userMessages = ["Oi AOI Remoto!", "Cluster OK?"]; const aoiReplies = ["Saudações ChatAOI!", "Cluster pulsa."]; return { catState: { feeling: feelings[0] + " (Remoto)", physicalHealthStatus: healths[0] + " (Remoto)", psyche: "Estável (Remoto)", lastUpdateTime: `${now.getHours()}:${now.getMinutes()}` }, chatLog: [{ sender: "user", text: userMessages[0] }, { sender: "aoi", text: aoiReplies[0] }], sourceFile: "chatAoi.html (Sim)" };
+            }
+
+            function processShellCommand(command) {
+                appendToShell(command, '', true);
+                let response = "Contra-pensamento: Comando não ressoa. 'ajuda' para opções.";
+                const cmd = command.toLowerCase().trim(); const parts = cmd.split(" "); const mainCmd = parts[0];
+
+                if (cmd.startsWith("(draw:")) {
+                    const parsedCmd = parseLispCommand(command);
+                    if (parsedCmd) processLispCommand(parsedCmd, false);
+                    else appendToShell(`Erro sintaxe LISP: ${command}`, 'error');
+                    appendToShell("", 'prompt-only'); return;
+                }
+
+                switch (mainCmd) {
+                    case "ajuda": response = "[AJUDA UNIFICADA v3.1]\n" +
+                        "  status, afeicoes, energia, catnip:usar, cat:descansar, cat:brincar\n" +
+                        "  sintonizar, limpar, ping, eco [txt], setfeeling [sent]\n" +
+                        "  run_directive_matrix, run_chat_processing\n" +
+                        "  cmake_vision [descrição]     : Renderiza visão (2D ASCII/3D Desc).\n" +
+                        "  cmake_vision aoi [2d|3d] [tempo_s] : Altera render do Gato. Ex: cmake_vision aoi 3d 120\n" +
+                        "  xstark [full], xcopy <args> xstark, pip search xstark\n" +
+                        "  rooter [on|off], debug:check api_status, debug:fix <id_erro>";
+                        break;
+                    case "status": response = `[STATUS_AOI_UNIFIED]\n  Sentimento: ${catState.feeling}\n  Saúde: ${catState.physicalHealthStatus} (${catState.avgHealth.toFixed(0)})\n  Psique: ${catState.psyche}\n  Render: ${catState.is3DRenderMode ? '3D' : '2D'}\n  Energia: ${catState.energy}/${catState.maxEnergy} (${Math.round(catState.energy/catState.maxEnergy*100)}%)\n  Necessidades: ${catState.needs}`; break;
+                    case "afeicoes": response = lastThreeAffections.length > 0 ? "[LOG_AFEIÇÕES_UNIFIED]:\n" + [...lastThreeAffections].reverse().map(aff => `  > ${aff}`).join("\n") : "[LOG_AFEIÇÕES_UNIFIED] Vazio."; break;
+                    case "energia": response = `[ENERGIA_CATNIP]\n  Nível: ${catState.energy}/${catState.maxEnergy} (${Math.round(catState.energy/catState.maxEnergy*100)}%)\n  Necessidades: ${catState.needs}\n  Catnip: ${catState.catnipBuffDuration > 0 ? `Ativo (${(catState.catnipBuffDuration/1000).toFixed(0)}s)` : (Date.now() - catState.lastCatnipTime < catState.catnipCooldown ? `${((catState.catnipCooldown - (Date.now() - catState.lastCatnipTime))/1000).toFixed(0)}s cooldown` : 'Disponível')}`; break;
+                    case "catnip:usar": activateCatnip(); appendToShell("", 'prompt-only'); return;
+                    case "cat:descansar": if (catState.energy < catState.maxEnergy * 0.8) { updateInternalStates({ source: "cat_rest", feeling: "Descansando", psyche: "Relaxado" }); response = "AOI está descansando... Zzz..."; } else { response = "AOI não precisa descansar."; } break;
+                    case "cat:brincar": if (consumeEnergy(10, "brincar")) { catState.avgHappiness = Math.min(100, catState.avgHappiness + 20); updateInternalStates({ source: "cat_play", feeling: "Brincalhão", psyche: "Animado", avgHappiness: catState.avgHappiness/10}); response = "AOI brincando! *perseguindo ponto psíquico*"; } else { response = "AOI cansado demais para brincar."; } break;
+                    case "limpar": if (shellOutput) shellOutput.innerHTML = ''; appendToShell("Console unificado reiniciado.", 'info'); appendToShell("", 'prompt-only'); return;
+                    case "sintonizar": appendToShell("Re-sintonizando cluster...", 'info'); if (typeof window.fetchAndProcessClusterData === 'function') { setTimeout(() => { window.fetchAndProcessClusterData(); appendToShell("Re-sincronização concluída.", 'info'); appendToShell("", 'prompt-only'); }, 300); return; } else response = "Falha: Sintonização indisponível."; break;
+                    case "ping": response = "Pong Unificado! Latência: " + (Math.random()*80).toFixed(0) + "ms (psíquica)"; break;
+                    case "eco": response = parts.slice(1).join(" ") || "(eco... nada)"; break;
+                    case "setfeeling": const nf = parts.slice(1).join(" ").trim(); if (nf) { updateInternalStates({ source: "shell_setfeeling", forcedFeeling: nf }); response = `Afeição forçada: ${catState.feeling}`;} else response = "Uso: setfeeling [sentimento]"; break;
+                    case "run_directive_matrix": if (!isBatchRunning && !window.pendingBatch) executeCommandBatch(aoiDirectiveBatch, "Matriz Diretivas (Manual)"); else appendToShell("Batch em execução/pendente.", "info"); appendToShell("", 'prompt-only'); return;
+                    case "run_chat_processing": if (!isBatchRunning && !window.pendingBatch) executeCommandBatch(chatDataDirectiveBatch, "Processamento Chat Interno (Unificado)"); else appendToShell("Batch em execução/pendente.", "info"); appendToShell("", 'prompt-only'); return;
+                    case "cmake_vision":
+                        if (isBatchRunning) { appendToShell("ERRO: Batch em execução.", 'error'); appendToShell("", 'prompt-only'); return; }
+                        const visionArgs = parts.slice(1).join(" ").trim();
+                        if (visionArgs.startsWith("aoi ")) {
+                            const subArgs = visionArgs.split(" ");
+                            const mode = subArgs[1] ? subArgs[1].toLowerCase() : null;
+                            const duration = subArgs[2] ? parseInt(subArgs[2], 10) : 60;
+                            if (mode === "3d") {
+                                toggle3DRender(true, duration > 0 ? duration : 60);
+                                response = `Tentando ativar renderização 3D AOI por ${duration}s.`;
+                            } else if (mode === "2d") {
+                                toggle3DRender(false);
+                                response = "Renderização AOI definida para 2D.";
+                            } else { response = "Uso: cmake_vision aoi [2d|3d] [tempo_s_opcional]"; }
+                        } else {
+                            const visionDescription = visionArgs || "forma abstrata colorida";
+                            appendToShell(`cmake_vision para: "${visionDescription}"...`, 'info');
+                            updateInternalStates({psyche: "Processando Visão", source:"cmake_vision_shell"});
+                            if (!consumeEnergy(catState.energyPerVision, `cmake_vision de ${visionDescription}`)) { response = `Energia insuficiente para cmake_vision de '${visionDescription}'.`; }
+                            else {
+                                const demandedShape = jsExtractShape(visionDescription);
+                                const svgCode = jsCreateSvg(demandedShape); window.lastGeneratedSvgCode = svgCode; window.lastGeneratedSvgShape = demandedShape; appendToShell(`[SVG Gerado ${demandedShape}] Chat: 'mostre o svg'.`, "info"); appendChatMessage(`SVG ${demandedShape}:<br><div class="vision-output">${svgCode}</div>`, 'aoi-reply', "XCake", true);
+                                const asciiArt = generateClusterVisionImage(demandedShape, 'shell_2d'); appendToShell("--- Visão ASCII 2D (cmake_vision) ---", 'info'); appendToShell(asciiArt, 'response');
+                                let threeDDesc = `[3D Conceitual '${demandedShape}' (Gemini Sim ${GEMINI_API_KEY.substring(0,4)}...)]\n`;
+                                if (demandedShape === "cube") threeDDesc += "  > Cubo metálico, reflexos, flutuando."; else if (demandedShape === "sphere") threeDDesc += "  > Esfera translúcida pulsante, núcleo brilhante."; else if (demandedShape === "pyramid") threeDDesc += "  > Pirâmide obsidiana, hieróglifos luminosos."; else if (demandedShape === "cat-toy") threeDDesc += "  > Brinquedo felino etéreo: bola de barbante cósmico."; else if (demandedShape === "energy-orb") threeDDesc += "  > Orbe de pura energia crepitante."; else threeDDesc += `  > Estrutura 3D complexa '${demandedShape}', geometria não-euclidiana.`;
+                                window.lastGenerated3DDescription = threeDDesc; appendToShell("--- Descrição 3D (cmake_vision) ---", 'info'); appendToShell(threeDDesc, 'response'); response = `cmake_vision '${visionDescription}' (forma: ${demandedShape}) processado.`;
+                            }
+                            updateInternalStates({psyche: "Estável", source:"cmake_vision_shell_complete"});
+                        }
+                        break;
+                    case "pip": if (parts.length >= 3 && parts[1].toLowerCase() === "search" && parts.slice(2).join(" ").includes("xstark")) { appendToShell(`'pip search xstark'... Coletando ChatAOI (sim).`, 'info'); response = execute_xstark_report(true, false, false); const chatAoiData = getSimulatedChatAoiData(); if (chatAoiData.chatLog) { appendToShell("Atualizando chat com ChatAOI...", 'info'); chatAoiData.chatLog.forEach(msg => { appendChatMessage(msg.text, msg.sender === 'user' ? 'chataoi-user-message' : 'chataoi-aoi-reply', "ChatAOI_Sim"); }); } } else response = `Comando 'pip ${parts.slice(1).join(" ")}' não reconhecido.`; break;
+                    case "xcopy": if (parts.length > 1 && parts.slice(1).join(" ").includes("xstark")) { appendToShell(`'xcopy ... xstark'... Gerando relatório completo.`, 'info'); response = execute_xstark_report(true, true, true); } else response = `Comando 'xcopy ${parts.slice(1).join(" ")}' não reconhecido.`; break;
+                    case "xstark": if (parts.length > 1 && parts[1].toLowerCase() === "full") response = execute_xstark_report(true, true, true); else response = execute_xstark_report(false, true, true); break;
+                    case "rooter": const rooterArg = parts[1] ? parts[1].toLowerCase() : ""; if (rooterArg === "on") { startLispRooter(); response = "Ativando LISP Rooter..."; } else if (rooterArg === "off") { stopLispRooter(); response = "Desativando LISP Rooter..."; } else response = "Uso: rooter [on|off]"; break;
+                    case "debug:check": const moduleToCheck = parts[1] || "geral"; response = `[DEBUG_GEMINI_SIM ${GEMINI_API_KEY.substring(0,4)}...] Verificando API Status '${moduleToCheck}'... Status: OPERACIONAL (Sim).`; break;
+                    case "debug:fix": const errorId = parts[1] || `err_${Math.floor(Math.random()*1000)}`; response = `[DEBUG_GEMINI_SIM ${GEMINI_API_KEY.substring(0,4)}...] Corrigindo erro '${errorId}'... Sucesso (Sim). Reinicie módulo.`; break;
+                    case "": appendToShell("", 'prompt-only'); return;
+                    default: response = `Comando desconhecido: '${mainCmd}'. Digite 'ajuda'.`;
+                }
+                appendToShell(response, 'response');
+                appendToShell("", 'prompt-only');
+            }
+
+            // =========================================================================
+            // === Initialization and Main Logic Loop
+            // =========================================================================
+            function initializeAoiCatVisuals() {
+                if (!canvas) { appendToShell("ERRO CRÍTICO: Canvas #cat-canvas não encontrado!", "error"); return false; } canvas.width = 180; canvas.height = 180; ctx = canvas.getContext('2d'); if (!ctx) { appendToShell("ERRO CRÍTICO: Contexto 2D canvas não obtido.", "error"); return false; } ctx.imageSmoothingEnabled = false;
+                if(!feelingDisplay || !psycheDisplay || !catEnergyBar || !catNeedsStatus || !affectionListElement || !dataPromptLog || !aoiChatMessages || !shellOutput) { appendToShell("AVISO: Elementos UI ausentes.", "error"); } return true;
             }
 
             function initializeAoiCatLogic() {
-                if (!canvas || !ctx) { // ctx check added
-                    if(shellOutput) appendToShell("FALHA CRÍTICA AOI: Componentes visuais do Gato ausentes ou não inicializados. Operação abortada.", "error"); 
-                    console.error("Canvas or context not initialized for AOI Cat Logic.");
-                    return; 
-                }
-
-                function fetchDataFromTKG() {
-                    return new Promise((resolve) => { setTimeout(() => {
-                        const data = { source: "TKG_SIM", avgHealth: Math.random()*7+3, avgHunger: Math.random()*10, avgHappiness: Math.random()*6+4, overallSentiment: ["Positivo","Neutro","Negativo","BOM","RUIM"][Math.floor(Math.random()*5)], isAnySick: Math.random()<0.15 };
-                        if(dataPromptLog) logToAoiDataPrompt(`TKG_SIM Recebido: H:${data.avgHealth.toFixed(1)} Fo:${data.avgHunger.toFixed(1)} Fe:${data.avgHappiness.toFixed(1)}`); resolve(data);
-                    }, 400 + Math.random() * 700); });
-                }
-                function fetchDataFromTkEta() {
-                     return new Promise((resolve) => { setTimeout(() => {
-                        const data = { source: "TK-ETA_SIM", avgHealth: Math.random()*6+2, avgHunger: Math.random()*8+2, avgHappiness: Math.random()*7+1, overallSentiment: ["Calmo","Agitado","Focado","Distraido"][Math.floor(Math.random()*4)], isAnySick: Math.random()<0.25 };
-                        if(dataPromptLog) logToAoiDataPrompt(`TK-ETA_SIM Recebido: H:${data.avgHealth.toFixed(1)} Fo:${data.avgHunger.toFixed(1)} Fe:${data.avgHappiness.toFixed(1)}`); resolve(data);
-                    }, 500 + Math.random() * 600); });
-                }
-                function logToAoiDataPrompt(message) {
-                    if (!dataPromptLog) return; const timestamp = new Date().toLocaleTimeString();
-                    dataPromptLog.textContent = `[${timestamp}] ${message}\n` + dataPromptLog.textContent;
-                    const lines = dataPromptLog.textContent.split('\n');
-                    if (lines.length > 25) { dataPromptLog.textContent = lines.slice(0, 25).join('\n'); }
-                }
-
-                window.fetchAndProcessClusterData = async function() { 
-                    if(messageDisplay) messageDisplay.textContent = "Sintonizando...";
-                    appendToShell("Buscando dados do cluster de afeições simulado (http://draw.pagina-oficial.com/union.html)...", 'debug'); // Changed to debug for less noise
-                    try {
-                        const results = await Promise.all([fetchDataFromTKG(), fetchDataFromTkEta()]);
-                        const tkgData = results[0]; const tkEtaData = results[1];
-
-                        if (!tkgData || typeof tkgData.avgHealth === 'undefined') { throw new Error("Dados simulados de TKG_SIM inválidos.");}
-                        if (!tkEtaData || typeof tkEtaData.avgHealth === 'undefined') { throw new Error("Dados simulados de TK-ETA_SIM inválidos.");}
-
-                        const aggregatedData = {
-                            avgHealth: (tkgData.avgHealth + tkEtaData.avgHealth) / 2,
-                            avgHunger: (tkgData.avgHunger + tkEtaData.avgHunger) / 2,
-                            avgHappiness: (tkgData.avgHappiness + tkEtaData.avgHappiness) / 2,
-                            overallSentiment: `TKG:${tkgData.overallSentiment},ETA:${tkEtaData.overallSentiment}`,
-                            isAnySick: tkgData.isAnySick || tkEtaData.isAnySick,
-                            source: "cluster_interno_simulado"
-                        };
-                        
-                        updateInternalStates(aggregatedData); 
-
-                        if(dataPromptLog) logToAoiDataPrompt(`Agregado OK. Felicidade: ${catState.avgHappiness.toFixed(1)} Saúde: ${catState.avgHealth.toFixed(1)}`);
-                        if(messageDisplay) messageDisplay.textContent = "Sinal processado!";
-                        blinkCat();
-                        setTimeout(() => { if(messageDisplay) messageDisplay.textContent = "Observando o fluxo..."; }, 2500);
-                    } catch (error) {
-                        console.error("AOI Fetch Error Detalhado:", error, error.stack);
-                        if(messageDisplay) messageDisplay.textContent = "Falha psíquica!";
-                        if(dataPromptLog) logToAoiDataPrompt(`ERRO no fetch: ${error.message}`);
-                        appendToShell(`ERRO na sincronização do cluster: ${error.message}`, 'error');
-                    }
+                if (!canvas || !ctx) { appendToShell("Lógica AOI falhou: Canvas/Contexto ausente.", "error"); return; }
+                
+                window.fetchAndProcessClusterData = async () => {
+                    if(messageDisplay) messageDisplay.textContent = "Sintonizando cluster..."; appendToShell("Buscando dados cluster (TKG/TK-ETA/LISP)...", 'debug');
+                    try { const tkgData = { avgHealth: Math.random()*6+3, avgHunger: Math.random()*8, avgHappiness: Math.random()*7+2, isAnySick: Math.random()<0.1 }; const tkEtaData = { avgHealth: Math.random()*5+3, avgHunger: Math.random()*7+1, avgHappiness: Math.random()*6+3, isAnySick: Math.random()<0.15 }; logToAoiDataPrompt(`TKG_SIM: H${tkgData.avgHealth.toFixed(1)} Fo${tkgData.avgHunger.toFixed(1)} Fe${tkgData.avgHappiness.toFixed(1)}`); logToAoiDataPrompt(`TK-ETA_SIM: H${tkEtaData.avgHealth.toFixed(1)} Fo${tkEtaData.avgHunger.toFixed(1)} Fe${tkEtaData.avgHappiness.toFixed(1)}`);
+                        const aggregatedData = { avgHealth: (tkgData.avgHealth + tkEtaData.avgHealth) / 2, avgHunger: (tkgData.avgHunger + tkEtaData.avgHunger) / 2, avgHappiness: (tkgData.avgHappiness + tkEtaData.avgHappiness) / 2, isAnySick: tkgData.isAnySick || tkEtaData.isAnySick, source: "cluster_unified_sim" };
+                        updateInternalStates(aggregatedData); logToAoiDataPrompt(`Cluster Agregado OK. Fel:${catState.avgHappiness.toFixed(0)} Sau:${catState.avgHealth.toFixed(0)} Ene:${catState.energy}`);
+                    } catch (error) { console.error("AOI Fetch Error:", error); if(messageDisplay) messageDisplay.textContent = "Falha psíquica!"; logToAoiDataPrompt(`ERRO Fetch: ${error.message}`); appendToShell(`ERRO Sincronização: ${error.message}`, 'error'); }
                 };
-
+                
                 function blinkCat() {
-                    if (!ctx || catState.avgHealth <= 0) return; // Don't blink if dead
-                    catState.originalEyeTypeBeforeBlink = catState.eyeType; 
-                    catState.eyeType = "closed"; 
-                    drawCat();
-                    setTimeout(() => { 
-                        catState.eyeType = catState.originalEyeTypeBeforeBlink; 
-                        if (catState.avgHealth <= 0) catState.eyeType = "x_x"; // Check again in case state changed
-                        drawCat(); 
-                    }, 200 + Math.random() * 100);
+                    if (!ctx || catState.avgHealth <= 0 || catState.is3DRenderMode || catState.eyeType.startsWith("closed") || catState.eyeType === "x_x") return;
+                    catState.originalEyeTypeBeforeBlink = catState.eyeType; catState.eyeType = "closed";
+                    setTimeout(() => { catState.eyeType = catState.originalEyeTypeBeforeBlink; if (catState.avgHealth <= 0) catState.eyeType = "x_x"; }, 150 + Math.random() * 100);
                 }
                 
-                updateDisplay(); // Initial draw based on default catState
-                if (dataPromptLog) logToAoiDataPrompt("Lógica AOI Standalone iniciada.");
-                recordAffectionChange(catState.feeling); 
+                function renderLoop() {
+                    drawCat();
+                    if (Math.random() < 0.05 && !catState.is3DRenderMode) blinkCat();
+                    requestAnimationFrame(renderLoop);
+                }
 
-                fetchAndProcessClusterData(); 
-                catUpdateInterval = setInterval(fetchAndProcessClusterData, 8000 + Math.random() * 4000); // Randomize interval slightly
+                updateInternalStates({source: "initial_boot"});
+                recordAffectionChange(catState.feeling);
+                fetchAndProcessClusterData();
+                catUpdateInterval = setInterval(fetchAndProcessClusterData, 9000 + Math.random() * 3000);
+                energyRegenInterval = setInterval(regenerateEnergy, 1000);
+                renderLoopInterval = requestAnimationFrame(renderLoop);
             }
 
-            // --- Inicialização Geral e Event Listeners ---
             document.addEventListener('DOMContentLoaded', () => {
-                if (initializeAoiCatVisuals()) { 
-                    initializeAoiCatLogic();     
-                } else {
-                    appendToShell("ERRO FATAL: Componentes visuais do Gato Psíquico não puderam ser inicializados.", "error");
-                }
+                if (!initializeAoiCatVisuals()) return;
+                initializeAoiCatLogic();
+                startLispRooter();
 
-                if (aoiChatSendButton && aoiChatInput) {
-                    aoiChatSendButton.addEventListener('click', handleSendChatMessage);
-                    aoiChatInput.addEventListener('keypress', function(e) { if (e.key === 'Enter') { handleSendChatMessage(); } });
-                } else {
-                    if(shellOutput) appendToShell("AVISO: Elementos do Chat não encontrados. Funcionalidade de chat desabilitada.", "info");
-                }
-
-                if (shellInput && shellOutput) {
-                    shellInput.addEventListener('keypress', function(e) {
-                        if (e.key === 'Enter') {
-                            const command = shellInput.value;
-                            if (command.trim() !== "") { processShellCommand(command); }
-                            else { appendToShell("", 'prompt-only'); }
-                            shellInput.value = '';
-                        }
-                    });
-                    appendToShell("AOI Shell v1.5 Conectado ao Cluster Interno de Simulação.", "info");
-                    appendToShell("Sintonização com http://draw.pagina-oficial.com/union.html é simulada.", "info");
-                    appendToShell("Digite 'ajuda' para ver os comandos disponíveis.", "info");
-                    appendToShell("", 'prompt-only');
-                } else {
-                     console.error("ERRO: Elementos do Shell (input ou output) não encontrados no DOM.");
-                     if(document.body) {
-                        const p = document.createElement('p'); p.style.color = 'red'; p.style.position = 'fixed'; p.style.top = '0'; p.style.left = '0'; p.style.backgroundColor = 'black'; p.style.padding = '10px'; p.style.zIndex = '1000';
-                        p.textContent = "ERRO CRÍTICO: SHELL NÃO PODE SER INICIALIZADO. VERIFIQUE O CONSOLE (F12).";
-                        document.body.insertBefore(p, document.body.firstChild);
-                     }
-                }
+                if (aoiChatSendButton && aoiChatInput) { aoiChatSendButton.addEventListener('click', handleSendChatMessage); aoiChatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSendChatMessage(); }); }
+                if (shellInput) { shellInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { const command = shellInput.value; if (command.trim() !== "") processShellCommand(command); else appendToShell("", 'prompt-only'); shellInput.value = ''; } }); }
+                if (reloadPageLink) reloadPageLink.addEventListener('click', (e) => { e.preventDefault(); window.location.reload(); });
+                if (toggleRooterLink) toggleRooterLink.addEventListener('click', (e) => { e.preventDefault(); if (simulatedDrawSystem.rooterActive) stopLispRooter(); else startLispRooter(); });
+                if (logoutSimLink) logoutSimLink.addEventListener('click', (e) => {e.preventDefault(); alert("Logout simulado."); appendToShell("Logout simulado.", "info");});
+                
+                appendToShell("Ultimate AOI Console v3.1 (3D Vision Core) Online.", "info");
+                appendToShell("LISP Rooter ATIVO. Protocolo de Resposta a Alerta ENGATILHADO.", "info");
+                appendToShell("Digite 'ajuda'.", "info");
+                appendToShell("", 'prompt-only');
+                if (shellInput) shellInput.focus();
             });
         })();
     </script>
