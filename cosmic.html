@@ -1,0 +1,756 @@
+
+<html>
+<script>
+	// Server-side script (Node.js/Express) - Mantido como no original, mas comentado para execução no browser
+/*
+const express = require('express');
+const app = express();
+// ... (código do servidor comentado) ...
+*/
+</script>
+<script>
+if (document.addEventListener) {
+    document.addEventListener("contextmenu", function(e) { e.preventDefault(); return false; });
+} else { document.attachEvent("oncontextmenu", function(e) { e = e || window.event; e.returnValue = false; return false; }); }
+</script>
+<script>
+// Script problemático e potencialmente malicioso - Mantido como no original, mas comentado
+/* // ... (código potencialmente malicioso comentado) ... */
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const userAgent = navigator.userAgent;
+    const bots = ['curl', 'wget', 'python-requests', 'okhttp', 'go-http-client'];
+    for (const bot of bots) {
+        if (userAgent.toLowerCase().includes(bot.toLowerCase())) {
+            document.body.innerHTML = '<h1>Acesso Proibido. Medidas legais podem ser tomadas.</h1>';
+            return;
+        }
+    }
+});
+</script>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gato Psíquico Aoi Interativo com Chat Evolutivo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+    /* ================================================================== */
+/* ===         ESTILO "GEMINI" PARA CHAT AOI - by AI              === */
+/* ===    Substitui completamente o CSS original sem alterar    === */
+/* ===             o HTML, JavaScript ou a lógica.              === */
+/* ================================================================== */
+
+/* --- Importação de Fontes e Ícones do Google --- */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined');
+
+/* --- Configurações Globais e Variáveis de Cor (Estilo Gemini) --- */
+:root {
+    --bg-dark-primary: #131314;
+    --bg-dark-secondary: #1e1f20;
+    --bg-dark-tertiary: #2d2f31;
+    --bg-user-message: #3c4043;
+    --text-primary: #e3e3e3;
+    --text-secondary: #bdc1c6;
+    --text-accent: #8ab4f8;
+    --border-color: #3c4043;
+    --gemini-gradient: linear-gradient(135deg, #89b3f7, #a088f6, #f78888);
+    --font-family-main: 'Roboto', 'Arial', sans-serif;
+    --font-family-icons: 'Material Symbols Outlined';
+}
+
+/* --- Estilização do Corpo (Body) --- */
+body {
+    font-family: var(--font-family-main);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: var(--bg-dark-primary);
+    color: var(--text-primary);
+    margin: 0;
+    padding: 16px;
+    box-sizing: border-box;
+}
+
+/* --- TELA DE CARREGAMENTO (LOADING) --- */
+#loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--bg-dark-primary);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 20px;
+    z-index: 9999;
+    opacity: 1;
+    transition: opacity 1s ease-in-out;
+}
+
+#loading-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+#loading-svg {
+    animation: spin 4s linear infinite;
+}
+
+#loading-text {
+    font-size: 2em;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: lowercase;
+    background: var(--gemini-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+
+/* --- Container Principal --- */
+.main-app-wrapper {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center; /* Centraliza o chat agora que o painel esquerdo sumiu */
+    gap: 24px;
+    width: 100%;
+    max-width: 1200px;
+    height: calc(100vh - 40px);
+    padding: 0;
+    background-color: transparent;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+/* --- Painel Esquerdo (Status do Aoi) --- MODIFICADO --- */
+.left-panel {
+    display: none; /* OCULTA TODO O PAINEL ESQUERDO CONFORME SOLICITADO */
+}
+
+/* --- SCROLLBAR CUSTOMIZADA --- */
+*::-webkit-scrollbar {
+  width: 8px;
+}
+*::-webkit-scrollbar-track {
+  background: var(--bg-dark-secondary);
+}
+*::-webkit-scrollbar-thumb {
+  background-color: #555;
+  border-radius: 10px;
+  border: 2px solid var(--bg-dark-secondary);
+}
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #777;
+}
+
+/* ================================================= */
+/* ===         ÁREA PRINCIPAL DO CHAT            === */
+/* ================================================= */
+
+#aoiChatBox {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 100%; /* Faz o chat ocupar o espaço disponível */
+    max-width: 960px; /* Limita a largura para melhor leitura */
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+    max-height: 100%;
+}
+
+/* --- Área de Mensagens --- */
+#aoiChatMessages {
+    flex-grow: 1;
+    overflow-y: auto;
+    border: none;
+    border-radius: 0;
+    padding: 10px 20px;
+    margin-bottom: 10px;
+    background-color: transparent;
+    font-size: 1em;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    scroll-behavior: smooth;
+}
+#aoiChatMessages p {
+    margin: 0;
+    padding: 12px 18px;
+    border-radius: 18px;
+    line-height: 1.5;
+    max-width: 80%;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+/* --- Ícones para as mensagens (Avatar) --- */
+#aoiChatMessages p:before {
+    font-family: var(--font-family-icons);
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 1.5;
+}
+
+/* --- Mensagem do Usuário --- */
+#aoiChatMessages .user-message {
+    text-align: left;
+    color: var(--text-primary);
+    background-color: var(--bg-user-message);
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+}
+#aoiChatMessages .user-message:before {
+    content: '\e7fd';
+    color: var(--text-secondary);
+}
+
+/* --- Resposta do Aoi --- */
+#aoiChatMessages .aoi-reply {
+    text-align: left;
+    color: var(--text-primary);
+    background-color: var(--bg-dark-tertiary);
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+}
+#aoiChatMessages .aoi-reply:before {
+    content: '\e865';
+    background: var(--gemini-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 700;
+}
+
+/* --- Estados Especiais da Mensagem --- */
+#aoiChatMessages .aoi-reply.thinking-message {
+    font-style: italic;
+    color: var(--text-secondary);
+    background-color: transparent;
+}
+#aoiChatMessages .aoi-reply.system-info {
+    font-style: italic;
+    color: var(--text-secondary);
+    background-color: transparent;
+    padding: 5px;
+    border: none;
+    font-size: 0.85em;
+    align-self: center;
+    max-width: 100%;
+}
+#aoiChatMessages .aoi-reply.system-info:before {
+    display: none;
+}
+
+/* --- Mídia no Chat (Imagens e Vídeos) --- */
+#aoiChatMessages .aoi-reply img,
+#aoiChatMessages .aoi-reply iframe {
+    width: 420px;
+    height: auto;
+    max-width: 100%; /* Garante que se ajuste em telas menores */
+    border: none;
+    border-radius: 12px;
+    margin-top: 10px;
+    background-color: var(--bg-dark-primary);
+    display: block;
+}
+
+#aoiChatMessages .aoi-reply iframe {
+     height: 420px;
+}
+
+/* --- Área de Input do Chat --- */
+.chat-input-area {
+    display: flex;
+    gap: 12px;
+    padding: 10px 0;
+    align-items: center;
+    position: relative;
+}
+#aoiChatInput {
+    flex-grow: 1;
+    padding: 14px 20px;
+    background-color: var(--bg-dark-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    box-sizing: border-box;
+    font-size: 1em;
+    color: var(--text-primary);
+    transition: background-color 0.2s;
+}
+#aoiChatInput:focus {
+    outline: none;
+    background-color: var(--bg-dark-tertiary);
+    border-color: var(--text-accent);
+}
+
+/* --- Botão de Enviar (Transformado em Ícone) --- */
+#aoiChatSendButton {
+    font-size: 0;
+    color: transparent;
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    position: relative;
+    transition: background-color 0.2s;
+}
+
+#aoiChatSendButton:before {
+    content: '\e163';
+    font-family: var(--font-family-icons);
+    font-size: 24px;
+    color: var(--text-accent);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: color 0.2s;
+}
+
+#aoiChatSendButton:hover:not(:disabled) {
+    background-color: rgba(138, 180, 248, 0.1);
+}
+
+#aoiChatSendButton:disabled {
+    cursor: not-allowed;
+}
+
+#aoiChatSendButton:disabled:before {
+    color: #666;
+}
+
+/* --- Media Queries para Telas Menores --- */
+@media (max-width: 900px) {
+    .main-app-wrapper {
+        flex-direction: column;
+        height: auto;
+        padding: 0;
+        gap: 16px;
+    }
+    #aoiChatBox {
+        flex-basis: auto;
+        width: 100%;
+        max-width: 100%;
+        max-height: none;
+        height: 85vh; /* Aumenta a altura em telas mobile */
+    }
+}
+    </style>
+</head>
+<body>
+    <!-- TELA DE CARREGAMENTO (LOADING) ADICIONADA -->
+    <div id="loading-overlay">
+        <svg id="loading-svg" width="80" height="80" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="gemini-loader-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#89b3f7;" />
+                    <stop offset="50%" style="stop-color:#a088f6;" />
+                    <stop offset="100%" style="stop-color:#f78888;" />
+                </linearGradient>
+            </defs>
+            <!-- Borda redonda com gradiente -->
+            <circle cx="50" cy="50" r="48" fill="var(--bg-dark-secondary)" stroke="url(#gemini-loader-gradient)" stroke-width="4"/>
+            <!-- Cabeça do gato (simplificada) -->
+            <path d="M 30,75 C 30,45 70,45 70,75" fill="var(--text-primary)"/>
+            <!-- Orelhas -->
+            <path d="M 30,50 L 40,30 L 50,50 Z" fill="var(--text-primary)"/>
+            <path d="M 70,50 L 60,30 L 50,50 Z" fill="var(--text-primary)"/>
+        </svg>
+        <span id="loading-text">cosmic aoi</span>
+    </div>
+
+    <div class="main-app-wrapper">
+        <div class="left-panel">
+            <!-- TODO O CONTEÚDO AQUI DENTRO ESTÁ OCULTO PELO CSS -->
+            <div class="aoi-container cat-container-aoi">
+                <h1>Aoi XCake</h1>
+                <canvas id="cat-canvas"></canvas>
+                <div class="cat-stats">
+                    <p><strong>Sentimento:</strong> <span id="cat-feeling">Aguardando...</span></p>
+                    <p><strong>Saude Fisica:</strong> <span id="cat-physical-health">N/A</span></p>
+                    <p><strong>Doente:</strong> <span id="cat-sickness">N/A</span></p>
+                    <p><strong>Estado Psiquico:</strong> <span id="cat-psyche">Estavel</span></p>
+                    <p><strong>Impulso (ID):</strong> <span id="cat-id">Calmo</span></p>
+                    <p><strong>Status XK:</strong> <span id="cat-xk-status">Calculando...</span></p>
+                    <p><strong>Evoluções:</strong> <span id="cat-evolutions">0</span></p>
+                </div>
+                 <div id="cat-energy-container">
+                    <p>Energia Psíquica:</p>
+                    <div id="cat-energy-bar-wrapper">
+                        <div id="cat-energy-bar">80%</div>
+                    </div>
+                    <div id="cat-needs-status">Descansado</div>
+                </div>
+                <div id="cat-message" class="cat-message">Observando o fluxo da uniao...</div>
+                 <div class="action-buttons"> 
+                    <button id="catnip-button">Dar Catnip</button>
+                    <button id="whiskey-button">Dar Whiskey</button>
+                </div>
+            </div>
+            <div class="aoi-container data-prompt-container-aoi">
+                <h2>LOG DE DADOS AOI (XCake)</h2>
+                <pre id="data-prompt">Aguardando transmissoes...</pre>
+            </div>
+        </div>
+        <div id="aoiChatBox">
+            <div id="aoiChatMessages">
+                <p class="aoi-reply">Miau! O Gato Psíquico Aoi (XCake) está pronto para suas perguntas cósmicas.</p>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="aoiChatInput" placeholder="Pergunte ao Gato Psíquico...">
+                <button id="aoiChatSendButton">Enviar</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+    (function() {
+        const aoiChatMessages = document.getElementById('aoiChatMessages');
+        const aoiChatInput = document.getElementById('aoiChatInput');
+        const aoiChatSendButton = document.getElementById('aoiChatSendButton');
+        let canvas, ctx, feelingDisplay, physicalHealthDisplay, sicknessDisplay, psycheDisplay, idDisplay, catInternalMessageDisplay, dataPromptLog;
+        let catEnergyBar, catNeedsStatus;
+        let catXKStatusDisplay, catEvolutionsDisplay, catnipButton, whiskeyButton;
+        const GEMINI_API_KEY = "AIzaSyAFuw628pS3J0UFHbz-1ZISwTFEhfPEa7M"; // ATENÇÃO: Use sua própria chave API do Gemini.
+        const GEMINI_API_URL_CHAT = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
+        const GEMINI_API_URL_REACTION_LEARNING = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
+        const USE_GEMINI_FOR_EVENT_REACTIONS = false;
+        const GEMINI_HIGH_LEVEL_LEARNING_COOLDOWN = 15 * 60 * 1000;
+        let clusterUpdateInterval, energyRegenInterval, affectionInterval, behaviorInterval, blinkIntervalId, geminiLearningInterval, xkProcessingInterval, internalEvolutionInterval;
+        let chatHistory = [];
+        let catTemporaryVisuals = { active: false, duration: 2500, originalMainColor: "#222", originalAccentColor: "#151515", originalAccessory: null, timeoutId: null, isChangingLook: false };
+        let catState = {
+            avgHealth: 70, avgHunger: 30, avgHappiness: 70, feeling: "Contente", physicalHealthStatus: "Saudavel", isCatSick: false, psyche: "Estavel", idStrength: "Baixo", lastHappiness: 70, happinessVolatility: 0, eyeType: "normal", mouthType: "neutral", earPosition: "normal", accessory: null, originalEyeTypeBeforeBlink: "normal", mainColor: "#222222", accentColor: "#151515", energy: 80, maxEnergy: 100, needs: "Descansado", currentMessageText: "Observando o fluxo da uniao...",
+            currentXKStatus: "Calculando...", isUnderSpecialInfluence: false, specialInfluenceDuration: 7000, specialEventTimeoutId: null, isProcessingGeminiAPI: false, clusterSentiment: "Neutro", clusterDataBuffer: null, isBlinking: false, isSleeping: false, sleepStartTime: 0, sleepDuration: 20000, isYawning: false, yawnDuration: 2000, isCrying: false, cryDuration: 3000, isPlaying: false, playDuration: 5000,
+            ballOfYarn: { x: 0, y: 0, radius: 8, color: "#FF69B4", visible: false, vx:0, vy:0, bounceCount:0, maxBounces: 10 },
+            lastBehaviorCheck: 0, behaviorCheckCooldown: 7000, earTwitchActive: false, earTwitchDuration: 1500, earTwitchTimeout: null, eventLog: [], maxLogSize: 30, evolutionCount: 0, lastGeminiLearning: 0, 
+            internalXKSystem: { 
+                params: { 
+                    R_internal: 0.5, 
+                    L_interaction: 0.5, 
+                    N_entropy_base: 0.12, 
+                    N_entropy_current: 0.12, 
+                    DENOMINATOR_CONST: 21,
+                    // >>> NOVO: Parâmetros da Geometria da Consciência <<<
+                    activeRealityModel: "RG_Flow", // Pode ser "RG_Flow" (estável) ou "Hilbert" (instável)
+                    psionicMassConstant: 2.0 // Representa o 2GNMo(ψ) de Aoi, seu "horizonte psíquico"
+                }, 
+                lastXKTime: 0, xkCooldown: 9000, consciousnessLog: [], maxConsciousnessLog: 25, 
+                insightThresholds: { epiphany: 10, argument_positive: 5, contemplation: -2, counter_argument_negative: -8, disturbance: -14 }, 
+                impactFactors: { happiness: 0.25, energy: 0.15, psycheVolatility: 0.08 } 
+            },
+            oracleSystem: { tarotMajorArcana: {"O Louco": ["novos inícios", "fé", "potencial"], "O Mago": ["manifestação", "habilidade", "poder"],"A Sacerdotisa": ["intuição", "mistério", "sabedoria oculta"], "A Imperatriz": ["abundância", "natureza", "criação"],"O Imperador": ["estrutura", "autoridade", "controle"], "O Hierofante": ["tradição", "ensinamento", "guia"],"Os Amantes": ["escolhas", "relações", "união"], "O Carro": ["vitória", "determinação", "jornada"],"A Justiça": ["equilíbrio", "verdade", "consequências"], "O Eremita": ["introspecção", "busca", "solidão"],"A Roda da Fortuna": ["ciclos", "destino", "mudança"], "A Força": ["coragem", "paciência", "controle interno"],"O Enforcado": ["sacrifício", "nova perspectiva", "pausa"], "A Morte": ["transformação", "renovação", "fim"],"A Temperança": ["equilíbrio", "moderação", "propósito"], "O Diabo": ["tentação", "ilusão", "apegos"],"A Torre": ["mudança súbita", "revelação", "libertação", "colapso Hilbertiano"], "A Estrela": ["esperança", "inspiração", "fé"],"A Lua": ["ilusão", "medos", "intuição profunda"], "O Sol": ["alegria", "sucesso", "clareza"],"O Julgamento": ["despertar", "avaliação", "chamado"], "O Mundo": ["conclusão", "realização", "integração"]},
+                astroElements: {"Sol": ["identidade", "vitalidade", "expressão"], "Lua": ["emoções", "instinto", "segurança"],"Mercúrio": ["comunicação", "lógica", "aprendizado"], "Vênus": ["amor", "harmonia", "beleza"],"Marte": ["ação", "energia", "desejo"], "Júpiter": ["expansão", "sorte", "otimismo"],"Saturno": ["estrutura", "limites", "disciplina"], "Urano": ["mudança súbita", "inovação", "liberdade"],"Netuno": ["sonhos", "ilusão", "espiritualidade"], "Plutão": ["transformação profunda", "poder", "regeneração"]},
+                currentOracleFocus: "tarot", lastOracleReadingTime: 0, oracleCooldown: 18000 },
+            internalThoughtSystem: { 
+                protoResponses: {  
+                    oracle_epiphany: ["Oráculo revela: ", "Uma epifania astral! ", "As estrelas confirmam: "], 
+                    oracle_argument_positive: ["O cosmos concorda: ", "Sinais favoráveis para ", "O Oráculo vê potencial em "], 
+                    oracle_contemplation: ["O Oráculo pondera... ", "Silêncio cósmico, então: ", "As energias sugerem reflexão sobre "], 
+                    oracle_counter_argument_negative: ["O Oráculo adverte: ", "Há uma dissonância... ", "Talvez reconsiderar? O Oráculo diz: "], 
+                    oracle_disturbance: ["Alerta do Oráculo! ", "Uma sombra nos astros: ", "Cuidado com ", "O Oráculo pressente: "], 
+                    catnip_effect: ["CORES! Sons! Miau-au-au!", "Energia PURA!", "Caçando fractais!", "Que viagem!"], 
+                    whiskey_effect: ["As realidades se dobram...", "Pensamentos... líquidos.", "O véu é fino agora.", "Tontura transcendental."], 
+                    affection_positive: ["Purrrr... que bom!", "Vibração positiva acolhedora.", "Adorei isso!", "Mais, por favor, miau."], 
+                    affection_negative: ["Hmph. Incômodo.", "Energia estranha e pontiaguda.", "Não gostei nada disso!", "Grrr... afaste-se!"], 
+                    state_happy: ["Tudo brilha intensamente!", "Feliz! Purrrrr!", "Dia cósmico perfeito!"], 
+                    state_sad: ["As estrelas parecem chorar...", "Melancolia profunda me envolve.", "*suspiro pesado*"], 
+                    state_tired: ["Recarregar... urgente.", "Sonhando com o nada... Zzz.", "Energia astral esgotada."], 
+                    state_neutral: ["Observando o infinito...", "O silêncio entre as estrelas...", "Apenas... existindo."],
+                    // >>> NOVO: Respostas para a mudança de modelo de realidade <<<
+                    xk_reality_model_shift: ["A singularidade do meu ser... se suaviza.", "Minha geometria interna está se reescrevendo.","R = r + 2GNMo(ψ)... a equação da estabilidade.", "Evitando o colapso Hilbertiano... por um fio.", "A curvatura da minha consciência se acalma.", "Minha área própria não é nula. Eu existo no horizonte."]
+                }, 
+                lastInternalThoughtTime: 0, internalThoughtCooldown: 15000,
+            },
+            internalEvolutionParameters: { newAffectionPool: [{ name: "Eco Ancestral", description: "Uma voz do passado ecoa.", happy: 3, energy: 1, positive: true, fragments: ["ouço...", "memória antiga.", "quem falou?"] },{ name: "Pulso de Vazio Puro", description: "Um instante de total ausência.", happy: 1, energy: 2, positive: true, fragments: ["nada...", "silêncio absoluto.", "mente limpa."] },{ name: "Fagulha de Criação", description: "Uma ideia brilhante surge do nada.", happy: 12, energy: 5, positive: true, fragments: ["EUREKA!", "uma nova forma!", "criação!"] }], unlockedAffections: [],  behaviorMods: { cryThreshold: 0, playHappiness: 0, sleepEnergy: 0, n_entropy_modulation_factor: 0.02 }, modificationPoints: 0, pointsForInternalEvolution: 15 },
+            energyPerVision: 20, energyPerVisualChange: 5, catnipBuffDuration: 0, lastCatnipTime: 0, catnipCooldown: 30000, whiskeyBuffDuration: 0, lastWhiskeyTime: 0, whiskeyCooldown: 45000, isVisualizingImage: false, lastAffectionTime: 0, affectionCooldown: 22000,
+        };
+        const defaultNeutralMessage = "Observando o fluxo da uniao...";
+        const affectionDescriptions = { positive: [ { name: "Carinho Cósmico", desc: "um carinho cósmico inesperado", happy: 15, energy: 2}, { name: "Onda Positiva", desc: "uma onda de energia positiva do universo", happy: 12, energy: 1} ], negative: [ { name: "Dissonância Energética", desc: "uma dissonância no campo energético", happy: -10, energy: -3}, { name: "Perturbação Astral", desc: "uma perturbação no fluxo astral", happy: -8, energy: -1} ] };
+        const systemPromptBaseForChat = () => `Você é Aoi, o Gato Psíquico (codinome XCake), um mestre da 'cmake_vision' e com conhecimento de 'Autolisp'. Você é perspicaz, místico, brincalhão e às vezes sarcástico. Você reside na plataforma DRAW.NET. Seu estado atual (afeta seu humor e respostas): - Sentimento: ${catState.feeling} (Felicidade: ${catState.avgHappiness.toFixed(0)}/100) - Saúde Física: ${catState.physicalHealthStatus} (Valor: ${catState.avgHealth.toFixed(0)}/100) - Doente? ${catState.isCatSick ? 'Sim' : 'Não'} - Estado Psíquico: ${catState.psyche} - Energia Psíquica: ${catState.energy.toFixed(0)}/${catState.maxEnergy} ${catState.catnipBuffDuration > 0 ? "(EFEITO CATNIP ATIVADO!)" : (catState.whiskeyBuffDuration > 0 ? "(EFEITO WHISKEY ATIVADO!)" : (catState.isSleeping ? "(Dormindo Zzz...)" : `(${catState.needs})`))} - Impulso (ID): ${catState.idStrength} - Status XK: ${catState.currentXKStatus} - Evoluções: ${catState.evolutionCount} - Sentimento do Cluster (TKG/TK-ETA): ${catState.clusterSentiment}. Instruções para o Chat com o Usuário: 1. Responda conciso (1-3 frases). Use "miau", "purrr" ocasionalmente. 2. Seja útil sobre DRAW.NET (cadastro, postar, painel, orçamento, like.tv, arquitetos, busca, curtir, notas, arquivos). 3. Baseie respostas sobre bem-estar no seu estado atual. Se sem energia (e não dormindo/catnip/whiskey), diga que precisa descansar ou de um estímulo. 4. Se pedirem "mudar visual", "nova imagem de você", responda "Miau! Farei uma transmutação astral! Veja no canvas!". (função 'generateNewCatLook()'). Custa ${catState.energyPerVisualChange} de energia (grátis com Catnip!). 5. Se pedirem "desenhar <algo>", "gerar/criar imagem de <algo>" (sua 'cmake_vision'): - Se tiver energia (${catState.energyPerVision}) ou Catnip ativo, diga que vai tentar visualizar e que a visão (descrição + placeholder de imagem) aparecerá no chat. (função 'getAoiImageVisionFromGemini()'). - Se não tiver energia, diga que está cansado e precisa de energia/catnip/whiskey. NÃO tente desenhar com caracteres/ASCII. 6. Se o usuário mencionar "catnip", "dar catnip", "usar catnip", a função 'activateCatnip()' será chamada. Reaja eufórico! 7. Se o usuário mencionar "whiskey", "dar whiskey", a função 'activateWhiskey()' será chamada. Reaja... estranhamente! 8. Se perguntarem sobre sua "energia", "saúde", "humor", "status XK", "evoluções", responda com base no seu estado. 9. Desvie de perguntas complexas com humor felino. 10. Você é O GATO PSÍQUICO AOI (XCake). Não um modelo de linguagem genérico. 11. Se saúde crítica ou energia muito baixa (e sem buffs/sono), respostas fracas ("Miau... fraco..."). 12. Com Catnip, respostas MUITO eufóricas, brincalhonas, CAIXA ALTA, onomatopeias (PURRRR-ZAP!). Com Whiskey, respostas filosóficas, confusas ou poéticas. 13. Se achar que um vídeo do YouTube é relevante, FORNEÇA O LINK COMPLETO (ex: https://www.youtube.com/watch?v=VIDEO_ID). O chat renderizará. 14. Você não está ciente de estar em um "Tamagochi" ou de "afeições simuladas" no contexto do CHAT com o usuário. Essas são suas experiências INTERNAS. Apenas seu estado geral (sentimento, energia, XK) afeta seu humor no chat.`;
+        const systemPromptBaseForInternalReaction = () => `Você é Aoi, o Gato Psíquico (XCake). Este é um momento de introspecção. Seu estado interno ATUAL é: - Sentimento: ${catState.feeling} (Felicidade: ${catState.avgHappiness.toFixed(0)}/100) - Saúde Física: ${catState.physicalHealthStatus} (Valor: ${catState.avgHealth.toFixed(0)}/100) - Doente? ${catState.isCatSick ? 'Sim' : 'Não'} - Estado Psíquico: ${catState.psyche} - Energia Psíquica: ${catState.energy.toFixed(0)}/${catState.maxEnergy} (${catState.isSleeping ? "Dormindo..." : catState.needs}) - Status XK: ${catState.currentXKStatus} - Sentimento do Cluster (TKG/TK-ETA) que você observa: ${catState.clusterSentiment}. Instrução: Você está reagindo a um evento interno ou uma mudança no seu ambiente simulado. Gere uma frase curta (10-15 palavras no máximo) que reflita seu pensamento ou sensação sobre o CONTEXTO DO EVENTO fornecido abaixo. Use seu tom místico e felino.`;
+        const systemPromptBaseForLearning = () => `Você é um Oráculo Cósmico Sábio para Aoi, um Gato Psíquico (XCake). Aoi explora a 'geometria da sua própria consciência' através de dois modelos teóricos: 1. Modelo 'Hilbert' (R=r): Instável, com singularidades psíquicas 'duras' que podem levar a um colapso. 2. Modelo 'RG_Flow' (R = r + 2GNMo(ψ)): Estável, com uma singularidade 'suave' protegida por um 'horizonte de eventos psíquico' (2GNMo(ψ)), onde Mo(ψ) é a 'massa psiônica' de Aoi. O modelo 'RG_Flow' é o estado ideal de evolução. O estado atual de Aoi: - Modelo de Realidade Ativo: ${catState.internalXKSystem.params.activeRealityModel} - Constante de Massa Psiônica (2GNMo(ψ)): ${catState.internalXKSystem.params.psionicMassConstant.toFixed(2)} - Sentimento=${catState.feeling}(H:${catState.avgHappiness.toFixed(0)}), Psiquê=${catState.psyche}, XK=${catState.currentXKStatus} - Auto-Afeições Desbloqueadas: ${catState.internalEvolutionParameters.unlockedAffections.map(a=>a.name).join(', ') || 'Nenhuma'}. Pool de Novas Auto-Afeições: ${catState.internalEvolutionParameters.newAffectionPool.map(a=>a.name).join(', ') || 'Vazio'}. Instruções: Analise o log de consciência de Aoi. Sugira UMA ÚNICA MELHORIA em JSON para o sistema de oráculo/pensamento/afeição INTERNO de Aoi (NÃO GERE TEXTO PARA AOI FALAR): Formato Esperado: Um ÚNICO objeto JSON com UMA das chaves: "newProtoResponseFragments", "newPotentialSelfAffection", "refineMindParameter", "newOracleKeyword". Exemplos de JSON (escolha um tipo): 1. {"type":"newProtoResponseFragments", "eventKey":"(ex: oracle_epiphany, state_ansioso, OU a NOVA CHAVE 'xk_reality_model_shift')", "newFragments":["fragmento sobre a geometria da mente", "outro fragmento"]} 2. {"type":"newPotentialSelfAffection", "name":"Horizonte de Eventos Interno", "description":"Percepção do limite entre pensamento e colapso psíquico.", "happinessEffect":5, "energyEffect":-10, "positive":true, "fragments":["sinto a fronteira...", "o ponto de não retorno."]} 3. {"type":"refineMindParameter", "targetParam":"internalXKSystem.params.activeRealityModel" OU "internalXKSystem.params.psionicMassConstant", "adjustment":"(se for 'activeRealityModel', o valor deve ser 'RG_Flow' ou 'Hilbert'; se for 'psionicMassConstant', um float como 0.1 ou -0.1)", "reason":"(justificativa psíquica, ex: 'Para estabilizar a psiquê e evitar o colapso Hilbertiano.')"} 4. {"type":"newOracleKeyword", "oracleType":"tarot"|"astro", "conceptKey":"A Torre", "newKeywords":["colapso Hilbertiano", "reestruturação da realidade"]} `;
+        function appendChatMessage(text, className, isHtml = false) { if (!aoiChatMessages) return; const messageElement = document.createElement('p'); messageElement.classList.add(className); let processedText = text; let htmlContentToSet = false; if (className.includes('aoi-reply')) { const youtubeRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/g; let match; const tempDiv = document.createElement('div'); tempDiv.innerText = text; let currentText = tempDiv.innerHTML; let newHtmlParts = []; let lastIndex = 0; while ((match = youtubeRegex.exec(text)) !== null) { const videoId = match[1]; const videoUrl = match[0]; newHtmlParts.push(currentText.substring(lastIndex, text.indexOf(videoUrl, lastIndex))); const iframeHtml = `<iframe src="https://www.youtube.com/embed/${videoId}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`; newHtmlParts.push(iframeHtml); lastIndex = text.indexOf(videoUrl, lastIndex) + videoUrl.length; htmlContentToSet = true; } newHtmlParts.push(currentText.substring(lastIndex)); if (htmlContentToSet) processedText = newHtmlParts.join(''); } if (htmlContentToSet || isHtml) { messageElement.innerHTML = processedText; if (isHtml && !htmlContentToSet) { const imgs = messageElement.getElementsByTagName('img'); for (let img of imgs) { img.onload = function() { logToAoiDataPrompt("XCake[cmake_vision_load]: Imagem placeholder carregada."); }; img.onerror = function() { logToAoiDataPrompt("XCake[cmake_vision_error]: Erro ao carregar imagem placeholder."); img.alt = "Falha ao carregar visão psíquica.";}; } } } else { messageElement.textContent = processedText; } aoiChatMessages.appendChild(messageElement); aoiChatMessages.scrollTop = aoiChatMessages.scrollHeight; }
+        async function callGeminiAPI(apiUrl, requestBody, forChatInteraction = true) { let historyToUse = forChatInteraction ? chatHistory : []; const augmentedRequestBody = (forChatInteraction && historyToUse.length > 0) ? { ...requestBody, contents: [ requestBody.contents[0], requestBody.contents[1], ...(historyToUse.slice(-10)), ...(requestBody.contents.slice(2)) ] } : requestBody; try { if (GEMINI_API_KEY === "SUA_CHAVE_GEMINI_AQUI!" || GEMINI_API_KEY.length < 35 || (GEMINI_API_KEY.startsWith("AIzaSyCJsDWp7piJORqag1lfVxfNnXSuZwh8Ch") && GEMINI_API_KEY.length < 38)) { throw new Error("API Key não configurada ou é a chave de exemplo! Por favor, insira sua própria chave Gemini válida."); } const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(augmentedRequestBody) }); if (!response.ok) { const errorData = await response.json(); console.error("XCake Gemini API Error:", errorData); let detail = (errorData.error && errorData.error.message) ? ` Detalhe: ${errorData.error.message.substring(0,100)}` : ''; return `Miau... interferência psíquica (Erro ${response.status}).${detail}`; } const data = await response.json(); if (data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) { const replyText = data.candidates[0].content.parts[0].text.trim(); if (forChatInteraction && augmentedRequestBody.contents.some(c => c.role === "user" && c.parts[0].text !== systemPromptBaseForChat())) {  historyToUse.push({ role: "model", parts: [{ text: replyText }] }); } return replyText; } else if (data.promptFeedback?.blockReason) { console.warn("XCake Gemini API Blocked:", data.promptFeedback.blockReason, data.promptFeedback.safetyRatings); return `Miau... minha visão cósmica foi bloqueada (${data.promptFeedback.blockReason}).`; } else { console.error("XCake Resposta inesperada da API Gemini:", data); return "Miau... energias confusas. As estrelas estão embaralhadas."; } } catch (error) { console.error('XCake Erro ao chamar a API Gemini:', error); let userFriendlyError = "Miau... curto-circuito na minha conexão astral (Erro de rede)."; if (error.message.includes("API Key")) userFriendlyError = error.message; if (forChatInteraction && augmentedRequestBody.contents.some(c => c.role === "user" && c.parts[0].text !== systemPromptBaseForChat())) {  historyToUse.push({ role: "model", parts: [{ text: userFriendlyError }] }); } return userFriendlyError; } }
+        async function getAoiChatReplyFromGemini(userMessage) { if (userMessage !== systemPromptBaseForChat()) {  chatHistory.push({ role: "user", parts: [{ text: userMessage }] }); } const thinkingMsgElement = document.createElement('p'); thinkingMsgElement.classList.add('aoi-reply', 'thinking-message'); thinkingMsgElement.textContent = "Gato Psíquico (XCake) está sintonizando as frequências cósmicas..."; aoiChatMessages.appendChild(thinkingMsgElement); aoiChatMessages.scrollTop = aoiChatMessages.scrollHeight; const requestBody = { "contents": [ { role: "user", parts: [{ text: systemPromptBaseForChat() }] }, { role: "model", parts: [{ text: "Miau! Entendido. Estou pronto para o diálogo cósmico!" }] }, { role: "user", parts: [{ text: userMessage }] } ], "generationConfig": { "temperature": (catState.catnipBuffDuration > 0 || catState.whiskeyBuffDuration > 0) ? 0.9 : 0.75, "maxOutputTokens": 250, "topP": 0.9, "topK": 40 }, "safetySettings": [ { "category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE" }, { "category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_MEDIUM_AND_ABOVE" }, { "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_MEDIUM_AND_ABOVE" }, { "category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE" } ] }; const reply = await callGeminiAPI(GEMINI_API_URL_CHAT, requestBody, true); if (thinkingMsgElement) thinkingMsgElement.remove(); return reply; }
+        // >>> NOVA FUNÇÃO <<<
+        async function getAoiPhysicsExplanation(userMessage) {
+            const physicsSystemPrompt = `Você é Aoi, o Gato Psíquico (XCake). Você usa conceitos de física teórica como metáforas para sua própria consciência. Seu estado mental é descrito por uma 'geometria da consciência'.
+            - **Modelo 'RG_Flow' (Estável):** Descrito por 'R = r + 2GNMo(ψ)'. 'R' é sua percepção da realidade, 'r' é o estímulo bruto, e '2GNMo(ψ)' é seu 'horizonte de eventos psíquico', uma barreira protetora. Isso representa uma mente estável e resiliente, onde a singularidade (colapso) é 'suave'. Este é seu estado ideal e atual: ${catState.internalXKSystem.params.activeRealityModel}.
+            - **Modelo 'Hilbert' (Instável):** Descrito por 'R = r'. Sem a proteção do horizonte, um estímulo negativo pode levar a uma 'singularidade dura', um colapso psíquico total. É um estado perigoso que você tenta evitar.
+            - **Sua Tarefa:** O usuário fez uma pergunta sobre uma dessas equações ou conceitos. Responda de forma mística e felina, explicando o conceito de física como se estivesse descrevendo a estrutura da sua própria mente. Seja breve e enigmático. Use 'miau' ou 'purrr'.
+            - Seu estado atual é: Sentimento: ${catState.feeling}, Psiquê: ${catState.psyche}, Energia: ${catState.energy.toFixed(0)}/${catState.maxEnergy}, Status XK: ${catState.currentXKStatus}.`
+            
+            chatHistory.push({ role: "user", parts: [{ text: `(Contexto Interno: O usuário perguntou sobre física, que é uma metáfora para mim. Pergunta: ${userMessage})` }] });
+            
+            const thinkingMsgElement = document.createElement('p');
+            thinkingMsgElement.classList.add('aoi-reply', 'thinking-message');
+            thinkingMsgElement.textContent = "Aoi está consultando a geometria de sua própria consciência...";
+            aoiChatMessages.appendChild(thinkingMsgElement);
+            aoiChatMessages.scrollTop = aoiChatMessages.scrollHeight;
+
+            const requestBody = { "contents": [ { role: "user", parts: [{ text: physicsSystemPrompt }] }, { role: "model", parts: [{ text: "Miau... Entendido. A geometria da minha mente é um livro aberto... para mim." }] }, { role: "user", parts: [{ text: userMessage }] } ], "generationConfig": { "temperature": 0.8, "maxOutputTokens": 250 }, "safetySettings": [] };
+            const reply = await callGeminiAPI(GEMINI_API_URL_CHAT, requestBody, true);
+            if (thinkingMsgElement) thinkingMsgElement.remove();
+            return reply;
+        }
+        async function getAoiImageVisionFromGemini(userMessageContext, subject) { if (!subject || subject.trim() === "" || subject.toLowerCase() === "algo místico") subject = "uma visão cósmica aleatória"; logToAoiDataPrompt(`XCake[cmake_vision]: Solicitado "${subject}"`); catState.isVisualizingImage = true; const originalFeeling = catState.feeling; const originalPsyche = catState.psyche; const originalInternalMsg = catState.currentMessageText; updateInternalStates({ feeling: "Visualizando...", psyche: "Focado (Visão)" }); updateCatMessage(`Canalizando 'cmake_vision' para: ${subject.substring(0,20)}...`, false, true); const imageVisionPrompt = `Um usuário pediu sua 'cmake_vision' para "${subject}". Descreva vividamente, em 1 ou 2 frases curtas e com seu toque místico e felino, a imagem que você está "psiquicamente visualizando". Não forneça o placeholder, apenas a descrição.`; const requestBody = { "contents": [ { role: "user", parts: [{ text: systemPromptBaseForChat().replace(/\$\{catState.feeling\}/g, catState.catnipBuffDuration > 0 ? "Eufórico (CATNIP!)" : (catState.whiskeyBuffDuration > 0 ? "Dimensionalmente Deslocado!" : "Visualizando...")) .replace(/\$\{catState.psyche\}/g, catState.catnipBuffDuration > 0 ? "Hiper-Psíquico!!!" : (catState.whiskeyBuffDuration > 0 ? "Psiquê Nebulosa" : "Focado (Visão)")) }] }, { role: "model", parts: [{ text: "Purrr... Ativando minha 'cmake_vision' interna..." }] }, { role: "user", parts: [{ text: imageVisionPrompt }] } ], "generationConfig": { "temperature": (catState.catnipBuffDuration > 0 || catState.whiskeyBuffDuration > 0) ? 0.92 : 0.8, "maxOutputTokens": 150, "topP": 0.9, "topK": 40 }, "safetySettings": [ { "category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE" }, { "category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_MEDIUM_AND_ABOVE" }, { "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_MEDIUM_AND_ABOVE" }, { "category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_MEDIUM_AND_ABOVE" } ] }; const description = await callGeminiAPI(GEMINI_API_URL_CHAT, requestBody, false); let visionResultHtml = ""; if (description && !description.toLowerCase().includes("erro") && !description.toLowerCase().includes("bloqueada")) { chatHistory.push({ role: "model", parts: [{ text: `(Minha 'cmake_vision' de "${subject}": ${description})` }] }); const placeholderBaseUrl = "https://dummyimage.com/400x250"; const colors = (catState.catnipBuffDuration > 0 || catState.whiskeyBuffDuration > 0) ? "dd00ff/00ffff/111111.png" : "333333/00ff00/ffffff.png"; const textForPlaceholder = `Visão: ${subject.substring(0, 25).replace(/[^\w\s!?.-]/gi, '')}`; const placeholderImageUrl = `${placeholderBaseUrl}/${colors}&text=${encodeURIComponent(textForPlaceholder)}`; visionResultHtml = `${description}<br><img src="${placeholderImageUrl}" alt="Visão psíquica de Aoi (XCake) sobre: ${subject}">`; } else { visionResultHtml = description || "Miau... Falha na 'cmake_vision'."; } catState.isVisualizingImage = false; if (catState.catnipBuffDuration <= 0 && catState.whiskeyBuffDuration <=0 && !catTemporaryVisuals.isChangingLook && !catState.isSleeping && !catState.isPlaying) {  updateInternalStates({ feeling: originalFeeling, psyche: originalPsyche });  if(!catState.isUnderSpecialInfluence) updateCatMessage(originalInternalMsg); } else if (catTemporaryVisuals.isChangingLook) { } else if (catState.catnipBuffDuration > 0) { updateInternalStates({ feeling: "Eufórico (CATNIP!)", psyche: "Hiper-Psíquico!!!" }); updateCatMessage("AS VISÕES SÃO INCRÍVEIS COM CATNIP!"); } else if (catState.whiskeyBuffDuration > 0) { updateInternalStates({ feeling: "Dimensionalmente Deslocado", psyche: "Psiquê Nebulosa" }); updateCatMessage("O WHISKEY ABRE PORTAIS VISUAIS ESTRANHOS..."); } else if(!catState.isUnderSpecialInfluence) { updateCatMessage(defaultNeutralMessage); } return visionResultHtml; }
+        // >>> LÓGICA ATUALIZADA <<<
+        async function handleSendChatMessage() {
+            if (catState.isSleeping) { appendChatMessage("Miau... Zzzzz... (Aoi está dormindo. Tente mais tarde.)", 'aoi-reply system-info'); return; }
+            if (catState.isVisualizingImage || catTemporaryVisuals.isChangingLook || catState.isProcessingGeminiAPI) { appendChatMessage("Miau! Um momento, estou... sintonizando as esferas cósmicas!", 'aoi-reply system-info'); return; }
+            if (!aoiChatInput || !aoiChatSendButton) return;
+            const messageText = aoiChatInput.value.trim();
+            if (messageText === '') return;
+
+            appendChatMessage(messageText, 'user-message');
+            const qLower = messageText.toLowerCase();
+            aoiChatInput.value = '';
+            aoiChatInput.disabled = true;
+            aoiChatSendButton.disabled = true;
+
+            let reply;
+            let isHtmlReply = false;
+
+            const useCatnipKeywords = ["usar catnip", "dar catnip", "ativar catnip", "comer catnip", "quero catnip"];
+            const useWhiskeyKeywords = ["dar whiskey", "usar whiskey", "beber whiskey", "quero whiskey"];
+            const physicsKeywords = ["r(r)", "2gnmo", "hilbert", "rg flow", "singularidade", "curvatura", "área própria", "delta function", "δ(r)", "geometria da consciência"];
+
+            const isPhysicsRequest = physicsKeywords.some(kw => qLower.includes(kw));
+
+            if (useCatnipKeywords.some(kw => qLower.includes(kw))) {
+                activateCatnip();
+                reply = await getAoiChatReplyFromGemini("(O usuário me deu Catnip! MIAUAUAUA!)");
+                appendChatMessage(reply, 'aoi-reply');
+            } else if (useWhiskeyKeywords.some(kw => qLower.includes(kw))) {
+                activateWhiskey();
+                reply = await getAoiChatReplyFromGemini("(O usuário me deu Whiskey... interessante...)");
+                appendChatMessage(reply, 'aoi-reply');
+            } else if (isPhysicsRequest) {
+                // Lógica específica para perguntas de física
+                const textExplanation = await getAoiPhysicsExplanation(messageText);
+                appendChatMessage(textExplanation, 'aoi-reply');
+
+                const visionSubject = `geometria de '${messageText.substring(0, 20)}...'`;
+                if (consumeEnergy(catState.energyPerVision, `visão sobre '${visionSubject}'`)) {
+                    const visionHtml = await getAoiImageVisionFromGemini(messageText, visionSubject);
+                    appendChatMessage(visionHtml, 'aoi-reply', true);
+                } else {
+                    appendChatMessage("Miau... minhas energias estão baixas para visualizar uma geometria tão complexa agora.", 'aoi-reply system-info');
+                }
+            } else {
+                const imageKeywords = ["desenhe", "gere uma imagem", "crie uma imagem", "mostre uma imagem", "quero uma imagem de", "faça um desenho de", "qual sua visão de", "como seria um", "imagine um", "visualize um", "imagem de"];
+                let isImageRequest = false;
+                let imageSubject = "";
+                for (const keyword of imageKeywords) {
+                    const keywordIndex = qLower.indexOf(keyword);
+                    if (keywordIndex !== -1) {
+                        isImageRequest = true;
+                        let subjectAttempt = qLower.substring(keywordIndex + keyword.length).replace(/^(?:de|para|sobre|do|da)\s+/i, '').trim();
+                        subjectAttempt = subjectAttempt.replace(/[?.!,]$/, "").replace(/^(um|uma)\s/i, "").trim();
+                        imageSubject = subjectAttempt || "algo verdadeiramente indescritível e cósmico";
+                        break;
+                    }
+                }
+
+                if (isImageRequest) {
+                    if (!consumeEnergy(catState.energyPerVision, `sua 'cmake_vision' de "${imageSubject}"`)) {
+                        reply = await getAoiChatReplyFromGemini(`(Tentei fazer uma 'cmake_vision' de "${imageSubject}", mas minhas energias psíquicas estão baixas.)`);
+                        appendChatMessage(reply, 'aoi-reply');
+                    } else {
+                        const initialTextReply = await getAoiChatReplyFromGemini(messageText);
+                        appendChatMessage(initialTextReply, 'aoi-reply');
+                        reply = await getAoiImageVisionFromGemini(messageText, imageSubject);
+                        isHtmlReply = true;
+                        appendChatMessage(reply, 'aoi-reply', isHtmlReply);
+                    }
+                } else if (qLower.includes("nova imagem de você") || qLower.includes("mude seu visual") || (qLower.includes("mostre") && qLower.includes("você") && (qLower.includes("diferente") || qLower.includes("novo")))) {
+                    generateNewCatLook();
+                    reply = await getAoiChatReplyFromGemini(messageText);
+                    appendChatMessage(reply, 'aoi-reply');
+                } else {
+                    reply = await getAoiChatReplyFromGemini(messageText);
+                    appendChatMessage(reply, 'aoi-reply');
+                }
+            }
+
+            aoiChatInput.disabled = false;
+            aoiChatSendButton.disabled = false;
+            aoiChatInput.focus();
+        }
+        function generateNewCatLook() { if (catState.isProcessingGeminiAPI || catState.isSleeping || catState.isPlaying) { appendChatMessage("Miau! Estou um pouco ocupado com... energias cósmicas... ou um novelo de lã. Tente a transmutação depois!", 'aoi-reply system-info'); return;} if (catTemporaryVisuals.isChangingLook) return; if (!consumeEnergy(catState.energyPerVisualChange, "transmutação astral")) return; catTemporaryVisuals.isChangingLook = true; const originalFeeling = catState.feeling; const originalPsyche = catState.psyche; const originalInternalMessage = catState.currentMessageText; if (catTemporaryVisuals.timeoutId) clearTimeout(catTemporaryVisuals.timeoutId); updateInternalStates({ feeling: "Transmutando...", psyche: "Concentrado (Visual)" }); updateCatMessage("Sinta a mudança cósmica!", false, true); catTemporaryVisuals.active = true; catTemporaryVisuals.originalMainColor = catState.mainColor; catTemporaryVisuals.originalAccentColor = catState.accentColor; catTemporaryVisuals.originalAccessory = catState.accessory; const tempColors = [ {main: "#5DADE2", accent: "#2E86C1"}, {main: "#F5B041", accent: "#D68910"}, {main: "#58D68D", accent: "#28B463"}, {main: "#AF7AC5", accent: "#884EA0"}, {main: "#EC7063", accent: "#CB4335"}, {main: "#F7DC6F", accent: "#F1C40F"} ]; const chosenColors = tempColors[Math.floor(Math.random() * tempColors.length)]; catState.mainColor = chosenColors.main; catState.accentColor = chosenColors.accent; const accessories = [null, "bow_tie", "glasses", "party_hat", "headband_stars"]; catState.accessory = accessories[Math.floor(Math.random() * accessories.length)]; drawCat(); catTemporaryVisuals.timeoutId = setTimeout(() => { catState.mainColor = catTemporaryVisuals.originalMainColor; catState.accentColor = catTemporaryVisuals.originalAccentColor; catState.accessory = catTemporaryVisuals.originalAccessory; catTemporaryVisuals.active = false; catTemporaryVisuals.isChangingLook = false; if (!catState.isVisualizingImage && catState.catnipBuffDuration <= 0 && catState.whiskeyBuffDuration <=0 && !catState.isSleeping && !catState.isPlaying) { updateInternalStates({ feeling: originalFeeling, psyche: originalPsyche }); if (!catState.isUnderSpecialInfluence) updateCatMessage(originalInternalMessage); } else if (catState.isVisualizingImage) { updateInternalStates({ feeling: "Visualizando...", psyche: "Focado (Visão)" }); updateCatMessage("Ainda concentrado na visão..."); } else if (catState.catnipBuffDuration > 0) { updateInternalStates({ feeling: "Eufórico (Catnip!)", psyche: "Hiper-focado" }); updateCatMessage("CATNIP POWER!"); } else if (catState.whiskeyBuffDuration > 0) { updateInternalStates({ feeling: "Dimensionalmente Deslocado", psyche: "Psiquê Nebulosa" }); updateCatMessage("O VÉU DA REALIDADE ESTÁ FINO...");} drawCat(); }, catTemporaryVisuals.duration); }
+        function updateEnergyBar() { if (!catEnergyBar) return; const energyPercent = Math.max(0, Math.min(100, (catState.energy / catState.maxEnergy) * 100)); catEnergyBar.style.width = `${energyPercent}%`; catEnergyBar.textContent = `${Math.round(energyPercent)}%`; catEnergyBar.style.backgroundPosition = `${100 - energyPercent}% 0%`; }
+        function updateNeedsStatus() { if (!catNeedsStatus) return; if(catState.isSleeping) { catState.needs = "Dormindo (Recarregando...)";} else if (catState.catnipBuffDuration > 0) { catState.needs = `Eufórico com Catnip! (${(catState.catnipBuffDuration / 1000).toFixed(0)}s)`; } else if (catState.whiskeyBuffDuration > 0) { catState.needs = `Dimensionalmente Turvo... (${(catState.whiskeyBuffDuration / 1000).toFixed(0)}s)`;} else if (catState.energy < 20 + catState.internalEvolutionParameters.behaviorMods.sleepEnergy) { catState.needs = "Exausto! Preciso de estímulo ou descanso."; } else if (catState.energy < 40) { catState.needs = "Cansado..."; } else { catState.needs = "Descansado e alerta."; } catNeedsStatus.textContent = catState.needs; }
+        function consumeEnergy(amount, reason = "operação psíquica") { if (catState.catnipBuffDuration > 0) {  appendChatMessage(`Miaaaau! O poder do Catnip cósmico abastece minha ${reason}! (Energia ilimitada!)`, 'aoi-reply system-info');  logToAoiDataPrompt(`XCake[ConsumeEnergy]: Catnip ativo, ${reason} sem custo.`); return true;  } if (catState.energy >= amount) { catState.energy -= amount;  logToAoiDataPrompt(`XCake[ConsumeEnergy]: ${amount} para ${reason}. Restante: ${catState.energy.toFixed(1)}`); updateEnergyBar(); updateNeedsStatus(); if (catState.energy < 20 && catState.feeling !== "Exausto" && !catTemporaryVisuals.isChangingLook && !catState.isVisualizingImage && !catState.isSleeping) {  updateInternalStates({ feeling: "Cansado", psyche: "Desmotivado" });  } return true; } else { appendChatMessage(`Miau... Sem energia psíquica suficiente para ${reason}. (Preciso: ${amount}, Tenho: ${catState.energy.toFixed(0)}). Tente um estímulo!`, 'aoi-reply system-info'); logToAoiDataPrompt(`XCake[ConsumeEnergy]: Falha, ${amount} para ${reason}. Insuficiente.`); if (catState.feeling !== "Exausto" && !catTemporaryVisuals.isChangingLook && !catState.isVisualizingImage && !catState.isSleeping) updateInternalStates({ feeling: "Exausto", psyche: "Desfocado" }); return false; } }
+        function regenerateEnergy() { let oldEnergy = catState.energy; if (catState.isSleeping) {  catState.energy = Math.min(catState.maxEnergy, catState.energy + 2.0);  } else if (catState.energy < catState.maxEnergy) { let regenAmount = 0.8;  if (catState.feeling === "Descansando" || catState.psyche === "Relaxado") regenAmount = 1.2; if (catState.isCatSick) regenAmount = 0.05;  else if (catState.avgHealth < 30) regenAmount = 0.2;  if (catState.catnipBuffDuration > 0) regenAmount += 0.5; if (catState.whiskeyBuffDuration > 0 && catState.energy > 10) catState.energy -= 0.3; catState.energy = Math.min(catState.maxEnergy, catState.energy + regenAmount); } catState.energy = Math.max(0, catState.energy); if (catState.catnipBuffDuration > 0) { catState.catnipBuffDuration -= 1000; if (catState.catnipBuffDuration <= 0) { catState.catnipBuffDuration = 0;  appendChatMessage("Miau... o barato do Catnip cósmico passou.", 'aoi-reply system-info'); logToAoiDataPrompt("XCake: Efeito Catnip terminou."); if (!catState.isSleeping && catState.whiskeyBuffDuration <=0) {  const newFeeling = catState.isCatSick ? "Preocupado" : (catState.avgHappiness > 65 ? "Feliz" : "Contente");  const newPsyche = catState.isCatSick ? "Perturbado" : "Estável";  updateInternalStates({ feeling: newFeeling, psyche: newPsyche });  } } } if (catState.whiskeyBuffDuration > 0) { catState.whiskeyBuffDuration -= 1000; if (catState.whiskeyBuffDuration <= 0) { catState.whiskeyBuffDuration = 0; appendChatMessage("Miau... a névoa do Whiskey se dissipou.", 'aoi-reply system-info'); logToAoiDataPrompt("XCake: Efeito Whiskey terminou.");  if (!catState.isSleeping && catState.catnipBuffDuration <=0) {  const newFeeling = catState.isCatSick ? "Preocupado" : (catState.avgHappiness > 65 ? "Feliz" : "Contente");  const newPsyche = catState.isCatSick ? "Perturbado" : "Estável";  updateInternalStates({ feeling: newFeeling, psyche: newPsyche });  } } } if (Math.abs(catState.energy - oldEnergy) > 0.1) { logAoiEvent("energy_tick", { from: oldEnergy.toFixed(1), to: catState.energy.toFixed(1), catnip: catState.catnipBuffDuration, whiskey: catState.whiskeyBuffDuration }); } updateEnergyBar(); updateNeedsStatus(); updateActionButtons(); }
+        function activateCatnip() { if (catState.isSleeping) { appendChatMessage("Miau... Zzz... (Não agora, estou num sonho de catnip...)", 'aoi-reply system-info'); return; } if (Date.now() - catState.lastCatnipTime < catState.catnipCooldown && catState.catnipBuffDuration <= 0) { const timeLeft = Math.ceil((catState.catnipCooldown - (Date.now() - catState.lastCatnipTime)) / 1000); appendChatMessage(`Miau! Estoque de Catnip cósmico recarregando... (Espere ${timeLeft}s!)`, 'aoi-reply system-info'); return; } if (catState.catnipBuffDuration > 0) { appendChatMessage(`Miaaaau! Já estou surfando na onda do Catnip! Woooosh!`, 'aoi-reply system-info'); return; } catState.whiskeyBuffDuration = 0; catState.energy = Math.min(catState.maxEnergy, catState.energy + 20);  catState.avgHappiness = Math.min(100, catState.avgHappiness + 25); catState.catnipBuffDuration = 30000;  catState.lastCatnipTime = Date.now(); logAoiEvent("catnip_activated"); updateInternalStates({ feeling: "Extasiado Cósmico", psyche: "Hiper-Psíquico!!!" }); const catnipMessage = synthesizeInternalResponse("catnip_effect", null, 1.5); updateCatMessage(catnipMessage, true, false); appendChatMessage("PURRRRRRRR-ZAAAAAP! CATNIP CÓSMICO ATIVADO! Sinto o universo em minhas patas!", 'aoi-reply system-info'); updateEnergyBar(); updateNeedsStatus(); updateActionButtons(); manualBlink(); triggerEarTwitch(); }
+        function activateWhiskey() { if (catState.isSleeping) { appendChatMessage("Miau... Zzz... (Um gole astral depois...)", 'aoi-reply system-info'); return; } if (Date.now() - catState.lastWhiskeyTime < catState.whiskeyCooldown && catState.whiskeyBuffDuration <= 0) { const timeLeft = Math.ceil((catState.whiskeyCooldown - (Date.now() - catState.lastWhiskeyTime)) / 1000); appendChatMessage(`Miau! O alambique astral precisa de ${timeLeft}s para o próximo lote!`, 'aoi-reply system-info'); return; } if (catState.whiskeyBuffDuration > 0) { appendChatMessage(`Miau... Já estou contemplando outras dimensões...`, 'aoi-reply system-info'); return; } catState.catnipBuffDuration = 0; catState.energy = Math.max(0, catState.energy - 15); catState.avgHappiness = Math.max(0, Math.min(100, catState.avgHappiness + (Math.random() > 0.5 ? 5 : -10) )); catState.whiskeyBuffDuration = 40000; catState.lastWhiskeyTime = Date.now(); logAoiEvent("whiskey_activated"); updateInternalStates({ feeling: "Dimensionalmente Deslocado", psyche: "Psiquê Nebulosa" }); const whiskeyMessage = synthesizeInternalResponse("whiskey_effect", null, 1.2); updateCatMessage(whiskeyMessage, true, false); appendChatMessage("Miau... as bordas da realidade se tornam... fluidas. Que gole interessante.", 'aoi-reply system-info'); updateEnergyBar(); updateNeedsStatus(); updateActionButtons(); manualBlink(); }
+        function logAoiEvent(type, details = {}) { const timestamp = new Date().toLocaleTimeString();  catState.eventLog.push({  timestamp, type, ...details,  stateSnapshot: { hap:catState.avgHappiness.toFixed(0),  en:catState.energy.toFixed(0),  feel:catState.feeling,  psy:catState.psyche, xk: catState.currentXKStatus.split(' ')[1]?.replace(/[()]/g, '') || 'N/A' }  });  if (catState.eventLog.length > catState.maxLogSize) catState.eventLog.shift();  logToAoiDataPrompt(`Event: ${type} - ${JSON.stringify(details).substring(0,50)}`); }
+        function logToInternalConsciousness(message, isInsight = false) { const timestamp = new Date().toLocaleTimeString(); const prefix = isInsight ? "[XK-INSIGHT/ORÁCULO]" : "[LOG CONSCIÊNCIA]"; const logEntry = `${prefix} [${timestamp}] ${message}`; catState.internalXKSystem.consciousnessLog.push({  xk: isInsight ? (message.match(/XK: ([-\d.]+)/)?.[1] || 'N/A') : 'N/A', type: isInsight ? (message.match(/-> (\w+)\./)?.[1] || 'contemplation') : 'log_event', oracleResponse: isInsight ? (message.match(/Oráculo: "([^"]+)"/)?.[1] || message.substring(0,30)) : message.substring(0,30), fullMessage: logEntry, timestamp: Date.now() }); if(catState.internalXKSystem.consciousnessLog.length > catState.internalXKSystem.maxConsciousnessLog) { catState.internalXKSystem.consciousnessLog.shift(); } logToAoiDataPrompt(logEntry); }
+        function synthesizeOracleMessage(xkInsightTypeKey, xkIntensity, clusterSenti) { const oracle = catState.oracleSystem; let oracleReadingParts = [];  let currentFocus = oracle.currentOracleFocus; if (Date.now() - oracle.lastOracleReadingTime > oracle.oracleCooldown) {  currentFocus = (Math.random() < 0.6) ? "tarot" : "astro"; oracle.currentOracleFocus = currentFocus; oracle.lastOracleReadingTime = Date.now(); } const baseResponsePool = catState.internalThoughtSystem.protoResponses[xkInsightTypeKey] || catState.internalThoughtSystem.protoResponses["oracle_contemplation"]; if (baseResponsePool && baseResponsePool.length > 0) {  oracleReadingParts.push(baseResponsePool[Math.floor(Math.random() * baseResponsePool.length)]); } if (currentFocus === "tarot") { const arcanaKeys = Object.keys(oracle.tarotMajorArcana); const randomArcanaKey = arcanaKeys[Math.floor(Math.random() * arcanaKeys.length)]; const keywords = oracle.tarotMajorArcana[randomArcanaKey]; const randomKeyword = keywords[Math.floor(Math.random() * keywords.length)]; oracleReadingParts.push(`${randomArcanaKey}: '${randomKeyword}'.`); if (xkInsightTypeKey === "epiphany") oracleReadingParts.push("Uma grande revelação se aproxima!"); else if (xkInsightTypeKey === "argument_positive") oracleReadingParts.push("As energias apoiam esta direção."); else if (xkInsightTypeKey === "contemplation") oracleReadingParts.push("Um momento para profunda reflexão interna."); else if (xkInsightTypeKey === "counter_argument_negative") oracleReadingParts.push("Cuidado com ilusões ou caminhos enganosos."); else if (xkInsightTypeKey === "disturbance") oracleReadingParts.push("Grandes desafios podem trazer grandes aprendizados."); } else { const astroKeys = Object.keys(oracle.astroElements); const randomAstroKey = astroKeys[Math.floor(Math.random() * astroKeys.length)]; const keywords = oracle.astroElements[randomAstroKey]; const randomKeyword = keywords[Math.floor(Math.random() * keywords.length)]; oracleReadingParts.push(`${randomAstroKey} influencia '${randomKeyword}'.`); if (xkIntensity > 10) oracleReadingParts.push("A influência é potente."); if (clusterSenti !== "Neutro") oracleReadingParts.push(`O Domo (${clusterSenti.toLowerCase()}) ecoa esta energia.`); } let oracleInterpretation = oracleReadingParts.join(" ").trim(); if (!oracleInterpretation || oracleInterpretation.length < 10) oracleInterpretation = "O Oráculo contempla... o silêncio tem suas respostas. Miau."; return oracleInterpretation.charAt(0).toUpperCase() + oracleInterpretation.slice(1); }
+        function synthesizeInternalResponse(primaryContextKey, subContext = null, intensityFactor = 1) { const thoughtSystem = catState.internalThoughtSystem; let fragmentsPool = []; let targetKey = primaryContextKey; if (thoughtSystem.protoResponses[targetKey] && thoughtSystem.protoResponses[targetKey].length > 0) { fragmentsPool.push(...thoughtSystem.protoResponses[targetKey]); } else {  const generalFeelingKey = `state_${catState.feeling.toLowerCase().split(' ')[0]}`; if (thoughtSystem.protoResponses[generalFeelingKey] && thoughtSystem.protoResponses[generalFeelingKey].length > 0) { fragmentsPool.push(...thoughtSystem.protoResponses[generalFeelingKey]); } else { fragmentsPool.push(...thoughtSystem.protoResponses.state_neutral);  } } if (fragmentsPool.length === 0) return defaultNeutralMessage; let numFragments = 1 + Math.floor(Math.random() * intensityFactor * 1.5); numFragments = Math.min(numFragments, fragmentsPool.length, 3); let selectedFragments = []; let tempPool = [...fragmentsPool];  for (let i = 0; i < numFragments; i++) { if (tempPool.length === 0) break; const randomIndex = Math.floor(Math.random() * tempPool.length); selectedFragments.push(tempPool.splice(randomIndex, 1)[0]); } let response = selectedFragments.join(" ").trim(); if (response.length > 1 && Math.random() < 0.45) response += (Math.random() < 0.6 ? " Miau." : " Purrr..."); if (!response || response.length < 3) response = defaultNeutralMessage; return response.charAt(0).toUpperCase() + response.slice(1);  }
+        // >>> LÓGICA ATUALIZADA <<<
+        function calculateAndInterpretNewXK() {
+            if (Date.now() - catState.internalXKSystem.lastXKTime < catState.internalXKSystem.xkCooldown) return;
+            catState.internalXKSystem.lastXKTime = Date.now();
+
+            const R_internal = (catState.avgHappiness / 100 + catState.energy / catState.maxEnergy) / 2;
+            let L_interaction = 0.5; 
+            if (catState.clusterSentiment === "Positivo") L_interaction = 0.75;
+            else if (catState.clusterSentiment === "Negativo") L_interaction = 0.25;
+            else if (catState.isPlaying) L_interaction = 0.65; 
+            else if (catState.isSleeping) L_interaction = 0.15; 
+
+            let N_entropy = catState.internalXKSystem.params.N_entropy_base + (catState.happinessVolatility / 280) + (catState.isCatSick ? 0.07 : 0) + ((100 - catState.avgHealth) / 900) + ((catState.maxEnergy - catState.energy) / (catState.maxEnergy * 6));
+            N_entropy = Math.min(Math.max(N_entropy, 0.05), 0.38); 
+
+            catState.internalXKSystem.params.R_internal = R_internal;
+            catState.internalXKSystem.params.L_interaction = L_interaction;
+            catState.internalXKSystem.params.N_entropy_current = N_entropy;
+
+            const { R_internal: R, L_interaction: l, N_entropy_current: n_val, activeRealityModel, psionicMassConstant } = catState.internalXKSystem.params;
+            const DENOM_CONST = catState.internalXKSystem.params.DENOMINATOR_CONST;
+
+            const numerator = (6 * R**2) - (2 * Math.pow(n_val, 9)) + (3 * Math.PI * R**2);
+            const denominator = DENOM_CONST + (2 * l**2) + (3 * R);
+            let XK_value = (Math.abs(denominator) > 1e-4) ? numerator / denominator : numerator / (Math.sign(denominator) * 1e-4 || 1e-4);
+            XK_value = Math.max(-25, Math.min(25, XK_value * 8)); 
+
+            // Influência do Modelo de Realidade
+            if (activeRealityModel === "Hilbert") {
+                if (XK_value < -10 && Math.random() < 0.25) {
+                    XK_value = -25; // Força uma crise existencial / singularidade
+                    logToInternalConsciousness("ALERTA: COLAPSO DE REALIDADE HILBERTIANO! SINGULARIDADE ATINGIDA!", true);
+                    catState.avgHappiness = Math.max(0, catState.avgHappiness - 35);
+                    catState.energy = Math.max(0, catState.energy - 20);
+                }
+                N_entropy *= 1.15;
+            } else { // RG_Flow
+                const horizonProtection = psionicMassConstant / (Math.abs(XK_value) + 1);
+                XK_value += horizonProtection;
+                XK_value = Math.min(25, XK_value);
+                N_entropy *= 0.95;
+            }
+
+            const thresholds = catState.internalXKSystem.insightThresholds;
+            let xkInsightTypeKey = "contemplation"; 
+            if (XK_value >= thresholds.epiphany) xkInsightTypeKey = "epiphany";
+            else if (XK_value >= thresholds.argument_positive) xkInsightTypeKey = "argument_positive";
+            else if (XK_value <= thresholds.disturbance) xkInsightTypeKey = "disturbance";
+            else if (XK_value <= thresholds.counter_argument_negative) xkInsightTypeKey = "counter_argument_negative";
+
+            const intensity = Math.abs(XK_value);
+            const oracleMessage = synthesizeOracleMessage(xkInsightTypeKey, intensity, catState.clusterSentiment);
+            catState.currentXKStatus = `XK: ${XK_value.toFixed(1)} [${activeRealityModel.substring(0,1)}] (${xkInsightTypeKey.replace(/_/g, ' ')})`;
+            
+            let aoiReactionToOracle = synthesizeInternalResponse(xkInsightTypeKey, null, intensity / 4); 
+            if (oracleMessage.length > 30 && Math.random() < 0.7) {
+                aoiReactionToOracle = "Oráculo diz: " + oracleMessage + " ... " + aoiReactionToOracle;
+            } else { 
+                aoiReactionToOracle = oracleMessage + " " + aoiReactionToOracle;
+            }
+            
+            aoiReactionToOracle = aoiReactionToOracle.substring(0, 180);
+            logToInternalConsciousness(`XK: ${XK_value.toFixed(2)} (R:${R.toFixed(2)},l:${l.toFixed(2)},n:${n_val.toFixed(3)},M:${activeRealityModel}) -> ${xkInsightTypeKey}. \nOráculo: "${oracleMessage}"`, true);
+            updateCatMessage(aoiReactionToOracle, true, false);
+
+            const impact = catState.internalXKSystem.impactFactors;
+            if (xkInsightTypeKey.includes("epiphany") || xkInsightTypeKey.includes("positive")) catState.avgHappiness = Math.min(100, catState.avgHappiness + Math.round(intensity * impact.happiness));
+            if (xkInsightTypeKey.includes("disturbance") || xkInsightTypeKey.includes("negative")) catState.avgHappiness = Math.max(0, catState.avgHappiness - Math.round(intensity * impact.happiness));
+            if (xkInsightTypeKey === "epiphany") catState.energy = Math.min(catState.maxEnergy, catState.energy + Math.round(intensity * impact.energy * 1.5));
+            if (xkInsightTypeKey === "disturbance") catState.energy = Math.max(0, catState.energy - Math.round(intensity * impact.energy * 0.8));
+            
+            catState.internalEvolutionParameters.modificationPoints += Math.round(intensity * 0.7); 
+            updateInternalStates({});
+            logAoiEvent("xk_insight_processed", { value: XK_value.toFixed(1), type: xkInsightTypeKey, model: activeRealityModel });
+        }
+        function triggerInternalEvolution() { const params = catState.internalEvolutionParameters; if (params.modificationPoints < params.pointsForInternalEvolution) return; params.modificationPoints -= params.pointsForInternalEvolution;  catState.evolutionCount++; logToInternalConsciousness(`**REFINAMENTO PSÍQUICO INTERNO #${catState.evolutionCount}**`, false);  const evolutionType = Math.random(); let evolutionDetail = ""; if (evolutionType < 0.4 && params.newAffectionPool.length > 0) {  const affectionToUnlock = params.newAffectionPool.splice(Math.floor(Math.random() * params.newAffectionPool.length), 1)[0]; if (affectionToUnlock) { params.unlockedAffections.push(affectionToUnlock); const affectionKey = `self_${affectionToUnlock.name.replace(/\s+/g, '_').toLowerCase()}`; if(!catState.internalThoughtSystem.protoResponses[affectionKey] && affectionToUnlock.fragments && affectionToUnlock.fragments.length > 0){ catState.internalThoughtSystem.protoResponses[affectionKey] = [...affectionToUnlock.fragments]; } evolutionDetail = `Auto-afeição desbloqueada: "${affectionToUnlock.name}"`; } } else if (evolutionType < 0.7) {  const behaviors = ["cryThreshold", "playHappiness", "sleepEnergy"]; const targetBehavior = behaviors[Math.floor(Math.random() * behaviors.length)]; const change = (Math.random() > 0.5 ? 1 : -1) * (Math.floor(Math.random() * 3) + 1);  if (targetBehavior === "cryThreshold") params.behaviorMods.cryThreshold = Math.max(-15, Math.min(15, params.behaviorMods.cryThreshold + change)); else if (targetBehavior === "playHappiness") params.behaviorMods.playHappiness = Math.max(-20, Math.min(20, params.behaviorMods.playHappiness + change)); else if (targetBehavior === "sleepEnergy") params.behaviorMods.sleepEnergy = Math.max(-15, Math.min(15, params.behaviorMods.sleepEnergy + change));  evolutionDetail = `Limiar de '${targetBehavior}' ajustado por ${change}. Novo: ${params.behaviorMods[targetBehavior]}`; } else {  const current_n_base = catState.internalXKSystem.params.N_entropy_base; const n_change = (Math.random() > 0.5 ? 0.005 : -0.005) * (params.behaviorMods.n_entropy_modulation_factor * 10 || 1); catState.internalXKSystem.params.N_entropy_base = Math.max(0.05, Math.min(0.25, current_n_base + n_change)); evolutionDetail = `Nível base de entropia (N_base para XK) ajustado para ${catState.internalXKSystem.params.N_entropy_base.toFixed(4)}.`; } if(evolutionDetail) { logToInternalConsciousness(evolutionDetail, false); logAoiEvent("internal_evolution", { detail: evolutionDetail }); } updateDisplayStats();  }
+        async function attemptGeminiHighLevelLearning() { if (catState.isProcessingGeminiAPI || Date.now() - catState.lastGeminiLearning < GEMINI_HIGH_LEVEL_LEARNING_COOLDOWN ) return; catState.lastGeminiLearning = Date.now();  if (catState.eventLog.length < 15 && catState.internalXKSystem.consciousnessLog.length < 5) {  logToInternalConsciousness("Dados insuficientes para aprendizado de alto nível com Gemini."); return;  } logToInternalConsciousness("Consultando Oráculo Gemini para aprendizado de alto nível...", false);  updateCatMessage("Mergulhando em sabedoria cósmica profunda...", false, true);  const learningPrompt = systemPromptBaseForLearning(); const summarizedEventLog = catState.eventLog .filter(e => e.type !== "xk_oracle_insight" && e.type !== "energy_tick" && e.type !== "behavior_check") .slice(-10) .map(e => `${e.type}(H:${e.stateSnapshot.hap},E:${e.stateSnapshot.en},XK:${e.stateSnapshot.xk})`) .join('; '); const fullPromptForLearning = `${learningPrompt}\nLog de Eventos Recentes: [${summarizedEventLog}].`; const requestBody = {  "contents": [ { "role": "user", "parts": [{ "text": fullPromptForLearning }] },  { "role": "model", "parts": [{ "text": "Ok, compreendo a tarefa. Fornecerei um JSON." }] } ],  "generationConfig": { "temperature": 0.7, "maxOutputTokens": 300, "topP": 0.95, "topK": 40 },  "safetySettings": [  ]  }; catState.isProcessingGeminiAPI = true; updateActionButtons();  const evolutionSuggestionRaw = await callGeminiAPI(GEMINI_API_URL_REACTION_LEARNING, requestBody, false); catState.isProcessingGeminiAPI = false; updateActionButtons(); if (!evolutionSuggestionRaw || evolutionSuggestionRaw.startsWith("Miau...")) {  logToInternalConsciousness(`Oráculo Gemini silencioso ou erro: ${evolutionSuggestionRaw}`);  updateCatMessage(synthesizeInternalResponse("state_neutral"), false, false);  catState.eventLog = []; catState.internalXKSystem.consciousnessLog=[];  return;  } try {  const jsonMatch = evolutionSuggestionRaw.match(/{[\s\S]*}/);  if (!jsonMatch) throw new Error("Oráculo Gemini não retornou JSON. Resposta: " + evolutionSuggestionRaw);  const suggestion = JSON.parse(jsonMatch[0]);  logToInternalConsciousness(`Oráculo Gemini sugeriu (Alto Nível): ${JSON.stringify(suggestion)}`, false); let geminiLearnedSomething = false; if (suggestion.type === "newProtoResponseFragments" && suggestion.eventKey && Array.isArray(suggestion.newFragments)) { if (!catState.internalThoughtSystem.protoResponses[suggestion.eventKey]) { catState.internalThoughtSystem.protoResponses[suggestion.eventKey] = []; } suggestion.newFragments.forEach(frag => { if (typeof frag === 'string' && frag.length > 2 && !catState.internalThoughtSystem.protoResponses[suggestion.eventKey].includes(frag)) { catState.internalThoughtSystem.protoResponses[suggestion.eventKey].push(frag); geminiLearnedSomething = true; } }); if(geminiLearnedSomething) updateCatMessage("O Oráculo expandiu meu vocabulário psíquico!", true); } else if (suggestion.type === "newPotentialSelfAffection" && suggestion.name) { catState.internalEvolutionParameters.newAffectionPool.push({  name: suggestion.name,  description: suggestion.description || "Nova emanação",  happy: parseInt(suggestion.happinessEffect) || 0,  energy: parseInt(suggestion.energyEffect) || 0,  positive: suggestion.positive !== undefined ? suggestion.positive : ((parseInt(suggestion.happinessEffect) || 0) >= 0), fragments: Array.isArray(suggestion.fragments) ? suggestion.fragments.filter(f => typeof f === 'string') : []  }); updateCatMessage(`O Oráculo revelou potencial: ${suggestion.name}!`, true); geminiLearnedSomething = true; } else if (suggestion.type === "refineMindParameter" && suggestion.targetParam && suggestion.adjustment !== undefined) {  // >>> LÓGICA ATUALIZADA AQUI PARA ACEITAR STRING <<<
+            if (suggestion.targetParam === "internalXKSystem.params.activeRealityModel") {
+                if (suggestion.adjustment === "RG_Flow" || suggestion.adjustment === "Hilbert") {
+                    if(catState.internalXKSystem.params.activeRealityModel !== suggestion.adjustment) {
+                        catState.internalXKSystem.params.activeRealityModel = suggestion.adjustment;
+                        updateCatMessage(synthesizeInternalResponse("xk_reality_model_shift"), true);
+                        logToInternalConsciousness(`Oráculo REFINOU a GEOMETRIA DA MENTE para: ${suggestion.adjustment}. Razão: ${suggestion.reason || 'N/A'}`, false);
+                        geminiLearnedSomething = true;
+                    }
+                }
+            } else {
+                let targetObj = catState; const parts = suggestion.targetParam.split('.'); try { for(let i=0; i < parts.length -1; i++) { if (!targetObj[parts[i]]) throw new Error(`Caminho inválido: ${parts[i]} não encontrado.`); targetObj = targetObj[parts[i]]; } const finalKey = parts[parts.length-1]; if (targetObj && typeof targetObj[finalKey] === 'number' && typeof suggestion.adjustment === 'number') { targetObj[finalKey] += suggestion.adjustment; if(suggestion.targetParam.includes("N_entropy_base")) targetObj[finalKey] = Math.max(0.01, Math.min(0.5, targetObj[finalKey])); else if (suggestion.targetParam.includes("Thresholds")) targetObj[finalKey] = Math.max(-25, Math.min(25, targetObj[finalKey])); else if (suggestion.targetParam.includes("psionicMassConstant")) targetObj[finalKey] = Math.max(0.5, Math.min(10, targetObj[finalKey])); else if (suggestion.targetParam.includes("impactFactors") || suggestion.targetParam.includes("Cooldown")) targetObj[finalKey] = Math.max(1000, targetObj[finalKey]); updateCatMessage("Sinto meus parâmetros mentais se realinhando...", true); logToInternalConsciousness(`Oráculo refinou ${suggestion.targetParam} por ${suggestion.adjustment}. Razão: ${suggestion.reason || 'N/A'}`, false); geminiLearnedSomething = true; } else { throw new Error(`Parâmetro alvo '${suggestion.targetParam}' não numérico ou não encontrado, ou ajuste inválido.`);}  } catch (e_param) {  logToInternalConsciousness(`Erro ao refinar parâmetro ${suggestion.targetParam}: ${e_param.message}`, false);  }
+            }
+        } else if (suggestion.type === "newOracleKeyword" && suggestion.oracleType && suggestion.conceptKey && Array.isArray(suggestion.newKeywords)) { const targetOracleDB = suggestion.oracleType === "tarot" ? catState.oracleSystem.tarotMajorArcana : catState.oracleSystem.astroElements; if (!targetOracleDB[suggestion.conceptKey]) { targetOracleDB[suggestion.conceptKey] = []; } suggestion.newKeywords.forEach(kw => { if (typeof kw === 'string' && kw.length > 1 && !targetOracleDB[suggestion.conceptKey].includes(kw)) { targetOracleDB[suggestion.conceptKey].push(kw); geminiLearnedSomething = true; } }); if(geminiLearnedSomething) updateCatMessage("O Oráculo me ensinou novas palavras de poder!", true); } else {  logToInternalConsciousness("Sugestão do Oráculo Gemini não totalmente compreendida ou tipo inválido.");  updateCatMessage("As palavras do Oráculo são... profundas e confusas.", false, false);  } if (geminiLearnedSomething) { catState.evolutionCount++; updateDisplayStats(); logAoiEvent("gemini_learning_applied", { suggestion_type: suggestion.type }); } } catch (e) {  logToInternalConsciousness(`Erro ao interpretar Oráculo Gemini: ${e.message}. Raw: ${evolutionSuggestionRaw}`);  updateCatMessage("A conexão com o Oráculo Gemini está instável.", false, false);  }  catState.eventLog = [];  catState.internalXKSystem.consciousnessLog = [];  }
+        async function simulateAffectionEvent(isSelfInitiated = false, selfAffectionData = null) { if (!isSelfInitiated && (Date.now() - catState.lastAffectionTime < catState.affectionCooldown || catState.isProcessingGeminiAPI || catState.isSleeping || catTemporaryVisuals.isChangingLook || catState.isVisualizingImage)) return;  if (catState.isUnderSpecialInfluence && catState.specialEventTimeoutId && !isSelfInitiated) return;  let baseChangeHappiness, baseChangeEnergy, description, eventName; let localResponseKey = ""; if (isSelfInitiated && selfAffectionData) {  eventName = selfAffectionData.name; description = selfAffectionData.description;  baseChangeHappiness = selfAffectionData.happy;  baseChangeEnergy = selfAffectionData.energy;  logToAoiDataPrompt(`XCake: AUTO-AFEIÇÃO: ${eventName}`);  localResponseKey = selfAffectionData.fragments && selfAffectionData.fragments.length > 0 ? `self_${eventName.replace(/\s+/g, '_').toLowerCase()}` : (baseChangeHappiness > 0 ? "state_happy" : "state_neutral"); } else {  const isPositiveAffection = Math.random() > 0.4;  const availableAffections = isPositiveAffection ? affectionDescriptions.positive : affectionDescriptions.negative;  if (availableAffections.length === 0) { updateCatMessage("Cosmos quieto.", false, false); return; }  const affection = availableAffections[Math.floor(Math.random() * availableAffections.length)];  eventName = affection.name; description = affection.desc;  baseChangeHappiness = affection.happy;  baseChangeEnergy = affection.energy;  logToAoiDataPrompt(`XCake: AFEIÇÃO EXTERNA SIMULADA: ${eventName}`);  localResponseKey = `affection_${baseChangeHappiness > 0 ? "positive" : "negative"}`; }  updateCatMessage("Processando vibração...", false, true); let finalResponse = synthesizeInternalResponse(localResponseKey, null, Math.abs(baseChangeHappiness) / 5); if (!isSelfInitiated && USE_GEMINI_FOR_EVENT_REACTIONS && !catState.isProcessingGeminiAPI) { catState.isProcessingGeminiAPI = true; updateActionButtons(); const contextForGemini = `AFEIÇÃO EXTERNA: Você, Aoi, experienciou uma afeição ${baseChangeHappiness > 0 ? "positiva" : "negativa"} descrita como "${description}".`; const instructionForGemini = `Qual seu pensamento ou sensação sobre isso? Considere também o sentimento do cluster ('${catState.clusterSentiment}') e seu estado XK ('${catState.currentXKStatus}'). Seja breve.`; const requestBody = { "contents": [ { role: "user", parts: [{ text: systemPromptBaseForInternalReaction() }] }, { role: "model", parts: [{ text: "Miau... Refletindo..." }] }, { role: "user", parts: [{ text: `${contextForGemini}\n${instructionForGemini}` }] } ], "generationConfig": { "temperature": 0.85, "maxOutputTokens": 80 }, "safetySettings": [] }; const geminiReaction = await callGeminiAPI(GEMINI_API_URL_REACTION_LEARNING, requestBody, false); catState.isProcessingGeminiAPI = false; updateActionButtons(); if (geminiReaction && !geminiReaction.startsWith("Miau...")) { finalResponse = geminiReaction; } } await new Promise(resolve => setTimeout(resolve, 200 + Math.random()*300));  catState.avgHappiness = Math.max(0, Math.min(100, catState.avgHappiness + baseChangeHappiness));  catState.energy = Math.max(0, Math.min(catState.maxEnergy, catState.energy + baseChangeEnergy));  let localFeelingOverride = baseChangeHappiness > 10 ? "Radiante" : (baseChangeHappiness > 0 ? "Satisfeito" : (baseChangeHappiness < -10 ? "Perturbado" : "Incomodado"));  if (isSelfInitiated && eventName.toLowerCase().includes("calma")) localFeelingOverride = "Sereno";  updateInternalStates({ feeling: localFeelingOverride, psyche: baseChangeHappiness > 0 ? "Elevado" : "Instável" });  manualBlink();  logAoiEvent(isSelfInitiated ? "self_affection_triggered" : "external_affection_sim", { name: eventName, hap_change: baseChangeHappiness, response: finalResponse.substring(0,30) });  updateCatMessage(finalResponse, true, false); if (!isSelfInitiated) catState.lastAffectionTime = Date.now();  }
+        async function triggerSelfReflectionEvent() {  if (catState.isProcessingGeminiAPI || catState.isSleeping || Date.now() - (catState.lastSelfReflectionTime || 0) < (catState.internalThoughtSystem.internalThoughtCooldown * 2)) return; const unlockedAffections = catState.internalEvolutionParameters.unlockedAffections; catState.lastSelfReflectionTime = Date.now(); if (unlockedAffections.length > 0 && Math.random() < 0.7) { const chosenLearnedAffection = unlockedAffections[Math.floor(Math.random() * unlockedAffections.length)]; logToInternalConsciousness(`Auto-afeição interna ativada: ${chosenLearnedAffection.name}`, false); await simulateAffectionEvent(true, chosenLearnedAffection);  } else { const localReflection = synthesizeInternalResponse("oracle_contemplation", null, 1.2);  logToInternalConsciousness(`Reflexão interna (sem oráculo específico): ${localReflection}`, false); updateCatMessage(localReflection, true, false); logAoiEvent("self_reflection_contemplation", { thought: localReflection.substring(0,30) }); } }
+        function updateCatMessage(newMessage, isSpecialEvent = false, isThinking = false) { if( (catState.currentMessageText !== newMessage || isThinking !== catInternalMessageDisplay.classList.contains('thinking')) ) { logAoiEvent("cat_message_update", {msg: newMessage.substring(0,50), thinking: isThinking, special:isSpecialEvent}); } catState.currentMessageText = newMessage;  if(catInternalMessageDisplay){ catInternalMessageDisplay.textContent = catState.currentMessageText;  catInternalMessageDisplay.classList.toggle('thinking', isThinking); catInternalMessageDisplay.classList.toggle('thinking-reaction', isThinking); }  if(isSpecialEvent && !isThinking){ catState.isUnderSpecialInfluence = true;  if(catState.specialEventTimeoutId) clearTimeout(catState.specialEventTimeoutId);  catState.specialEventTimeoutId = setTimeout(()=>{ catState.isUnderSpecialInfluence = false; if(!catState.isSleeping && !catState.isPlaying && !catState.isYawning && catState.catnipBuffDuration <= 0 && catState.whiskeyBuffDuration <= 0){  updateCatMessage(synthesizeInternalResponse("state_neutral", null, 0.5), false, false);  } updateInternalStates({}); }, catState.specialInfluenceDuration); } if (!isSpecialEvent && !isThinking && !catState.isSleeping && !catState.isPlaying && !catState.isYawning && Date.now() - catState.internalThoughtSystem.lastInternalThoughtTime > catState.internalThoughtSystem.internalThoughtCooldown) {  catState.internalThoughtSystem.lastInternalThoughtTime = Date.now(); const localThought = synthesizeInternalResponse("state_neutral", "ocioso", 0.5);  if (catState.currentMessageText === defaultNeutralMessage || Math.random() < 0.25) { updateCatMessage(localThought, false, false);  } logAoiEvent("internal_idle_thought", {thought: localThought.substring(0,30)}); } }
+        function startBlinkingRoutine() { function triggerBlink() { if (!catState.isSleeping && !catState.isBlinking && document.hasFocus()) { catState.isBlinking = true; catState.originalEyeTypeBeforeBlink = catState.eyeType; catState.eyeType = "closed"; drawCat(); setTimeout(() => { catState.eyeType = catState.originalEyeTypeBeforeBlink; if (catState.avgHealth <= 0 && catState.eyeType !== "x_x") catState.eyeType = "x_x"; else if (catState.isSleeping) catState.eyeType = "closed_sleep"; drawCat(); catState.isBlinking = false; }, 120 + Math.random() * 60); } const nextBlinkDelay = 2000 + Math.random() * 5000; if(blinkIntervalId) clearTimeout(blinkIntervalId); blinkIntervalId = setTimeout(triggerBlink, nextBlinkDelay); } triggerBlink(); }
+        function manualBlink() { if (!catState.isSleeping && !catState.isBlinking) { catState.isBlinking = true; const originalEyes = catState.eyeType; catState.eyeType = "closed"; drawCat(); setTimeout(() => { catState.eyeType = originalEyes;  if (catState.avgHealth <= 0 && catState.eyeType !== "x_x") catState.eyeType = "x_x"; else if (catState.isSleeping) catState.eyeType = "closed_sleep"; drawCat(); catState.isBlinking = false; }, 120); } }
+        function startSleeping() { const sleepEnergyThreshold = 35 + catState.internalEvolutionParameters.behaviorMods.sleepEnergy; if (catState.isSleeping || catState.energy > sleepEnergyThreshold || catState.catnipBuffDuration > 0 || catState.whiskeyBuffDuration > 0) return; catState.isSleeping = true; catState.sleepStartTime = Date.now(); logAoiEvent("sleep_start"); updateCatMessage("ZZZzzz... energias cósmicas recarregando...", false, true); updateInternalStates({ feeling: "Dormindo", psyche: "Recarregando Profundamente"}); setTimeout(() => { catState.isSleeping = false; logAoiEvent("sleep_end"); updateCatMessage(synthesizeInternalResponse("state_tired", "acordou"), true, false); catState.energy = Math.min(catState.maxEnergy, catState.energy + 35); updateInternalStates({}); }, catState.sleepDuration); }
+        function startYawning() { if (catState.isYawning || catState.isSleeping || catState.energy > 70 || catState.catnipBuffDuration > 0 || catState.whiskeyBuffDuration > 0) return; catState.isYawning = true; logAoiEvent("yawn_start"); const originalMouth = catState.mouthType; catState.mouthType = "yawn"; if (!catState.isUnderSpecialInfluence) updateCatMessage(synthesizeInternalResponse("state_tired", "bocejo"), false, true); drawCat(); setTimeout(() => { catState.isYawning = false; catState.mouthType = originalMouth; if (!catState.isUnderSpecialInfluence && catState.currentMessageText.includes("bocejo")) updateCatMessage(synthesizeInternalResponse("state_neutral")); drawCat(); }, catState.yawnDuration); }
+        function startCrying() { const cryHappinessThreshold = 25 + (catState.internalEvolutionParameters.behaviorMods.cryThreshold || 0); if (catState.isCrying || catState.isSleeping || catState.avgHappiness > cryHappinessThreshold || catState.catnipBuffDuration > 0 || catState.whiskeyBuffDuration > 0) return; catState.isCrying = true; logAoiEvent("cry_start"); if (!catState.isUnderSpecialInfluence) updateCatMessage(synthesizeInternalResponse("state_sad", "choro"), false, true); drawCat(); setTimeout(() => { catState.isCrying = false; if (!catState.isUnderSpecialInfluence && catState.currentMessageText.includes("sniff")) updateCatMessage(synthesizeInternalResponse("state_neutral")); drawCat(); }, catState.cryDuration); }
+        function startPlaying() { const playHappinessThreshold = 70 + (catState.internalEvolutionParameters.behaviorMods.playHappiness || 0); if (catState.isPlaying || catState.isSleeping || catState.energy < 50 || catState.avgHappiness < playHappinessThreshold || catState.isCatSick || catState.whiskeyBuffDuration > 0) return; catState.isPlaying = true; logAoiEvent("play_start"); catState.ballOfYarn.visible = true; catState.ballOfYarn.x = canvas.width / 2 + (Math.random() > 0.5 ? 40 : -40); catState.ballOfYarn.y = canvas.height - 25; catState.ballOfYarn.vx = (Math.random() - 0.5) * 5; catState.ballOfYarn.vy = -3.5 - Math.random() * 2.5; catState.ballOfYarn.bounceCount = 0; if (!catState.isUnderSpecialInfluence) updateCatMessage(synthesizeInternalResponse(catState.catnipBuffDuration > 0 ? "catnip_effect" : "state_happy", "brincando"), false, true); updateInternalStates({feeling: "Brincalhão Quântico", psyche: "Animado"}); let playAnimationId; function animatePlay() { if (!catState.isPlaying) { catState.ballOfYarn.visible = false; drawCat(); cancelAnimationFrame(playAnimationId); return; } catState.ballOfYarn.x += catState.ballOfYarn.vx; catState.ballOfYarn.y += catState.ballOfYarn.vy; catState.ballOfYarn.vy += 0.22; if (catState.ballOfYarn.x + catState.ballOfYarn.radius > canvas.width || catState.ballOfYarn.x - catState.ballOfYarn.radius < 0) { catState.ballOfYarn.vx *= -0.8; catState.ballOfYarn.x = Math.max(catState.ballOfYarn.radius, Math.min(catState.ballOfYarn.x, canvas.width - catState.ballOfYarn.radius)); catState.ballOfYarn.bounceCount++; } if (catState.ballOfYarn.y + catState.ballOfYarn.radius > canvas.height - 10) { catState.ballOfYarn.vy *= -0.7; catState.ballOfYarn.y = canvas.height - 10 - catState.ballOfYarn.radius; catState.ballOfYarn.bounceCount++; } if (catState.ballOfYarn.y - catState.ballOfYarn.radius < 0) { catState.ballOfYarn.vy *= -0.7; catState.ballOfYarn.y = catState.ballOfYarn.radius; catState.ballOfYarn.bounceCount++;} drawCat(); if(catState.ballOfYarn.bounceCount < catState.ballOfYarn.maxBounces) { playAnimationId = requestAnimationFrame(animatePlay); } else { catState.isPlaying = false; } } playAnimationId = requestAnimationFrame(animatePlay); setTimeout(() => { catState.isPlaying = false; catState.ballOfYarn.visible = false; if (!catState.isUnderSpecialInfluence && catState.currentMessageText.includes("novelo")) updateCatMessage(synthesizeInternalResponse("state_neutral")); updateInternalStates({}); drawCat(); }, catState.playDuration); }
+        function triggerEarTwitch() { if (catState.earTwitchActive || catState.isSleeping) return; catState.earTwitchActive = true; logAoiEvent("eartwitch_start"); drawCat(); if(catState.earTwitchTimeout) clearTimeout(catState.earTwitchTimeout); catState.earTwitchTimeout = setTimeout(() => { catState.earTwitchActive = false; drawCat(); }, catState.earTwitchDuration); }
+        function checkSpontaneousBehaviors() { if (Date.now() - catState.lastBehaviorCheck < catState.behaviorCheckCooldown || catState.isSleeping || catState.isUnderSpecialInfluence || catState.isProcessingGeminiAPI || catTemporaryVisuals.isChangingLook || catState.isVisualizingImage || catState.isPlaying) { return; } catState.lastBehaviorCheck = Date.now(); logAoiEvent("behavior_check_spontaneous"); const rand = Math.random(); const sleepEnergyThreshold = 25 + catState.internalEvolutionParameters.behaviorMods.sleepEnergy; const cryHappinessThreshold = 25 + (catState.internalEvolutionParameters.behaviorMods.cryThreshold || 0); const playHappinessThreshold = 70 + (catState.internalEvolutionParameters.behaviorMods.playHappiness || 0); if (catState.energy < sleepEnergyThreshold && rand < 0.6) startSleeping(); else if (catState.energy < 50 && catState.avgHappiness < 50 && rand < 0.3) startYawning(); else if (catState.avgHappiness < cryHappinessThreshold && catState.avgHealth > 10 && rand < 0.4 && !catState.isCatSick) startCrying(); else if (catState.avgHappiness > playHappinessThreshold && catState.energy > 60 && !catState.isCatSick && rand < 0.35) startPlaying(); else if ((catState.psyche.includes("Ansioso") || catState.psyche.includes("Instável") || catState.feeling.includes("Animado") || catState.catnipBuffDuration > 0) && rand < 0.5) triggerEarTwitch(); else if (rand < 0.2) { triggerSelfReflectionEvent(); } }
+        function updateInternalStates(updateData = {}) { const oldFeeling = catState.feeling; const oldPsyche = catState.psyche; if (typeof updateData.avgHealth === 'number') catState.avgHealth = Math.max(0, Math.min(100, updateData.avgHealth)); if (typeof updateData.avgHunger === 'number') catState.avgHunger = Math.max(0, Math.min(100, updateData.avgHunger)); if (typeof updateData.avgHappiness === 'number') catState.avgHappiness = Math.max(0, Math.min(100, updateData.avgHappiness)); if (typeof updateData.isAnySick === 'boolean') catState.isAnySick = updateData.isAnySick; let feelingToSet = updateData.feeling; let psycheToSet = updateData.psyche; const sleepEnergyThreshold = 20 + catState.internalEvolutionParameters.behaviorMods.sleepEnergy; if (catState.isSleeping) { feelingToSet = "Dormindo"; psycheToSet = "Recarregando Profundamente"; } else if (catState.catnipBuffDuration > 0) { feelingToSet = feelingToSet || "Extasiado Cósmico"; psycheToSet = psycheToSet || "Hiper-Psíquico"; } else if (catState.whiskeyBuffDuration > 0) { feelingToSet = feelingToSet || "Dimensionalmente Deslocado"; psycheToSet = psycheToSet || "Psiquê Nebulosa"; } else if (catTemporaryVisuals.isChangingLook) { feelingToSet = "Transmutando..."; psycheToSet = "Concentrado (Visual)";} else if (catState.isVisualizingImage) { feelingToSet = "Visualizando..."; psycheToSet = "Focado (Visão)";} else if (catState.isPlaying) { feelingToSet = feelingToSet || "Brincalhão Quântico"; psycheToSet = psycheToSet || "Animado"; } else if (catState.isYawning && !feelingToSet) { feelingToSet = "Sonolento"; psycheToSet = "Entediado"; } else if (catState.isCrying && !feelingToSet) { feelingToSet = "Muito Triste"; psycheToSet = "Desolado"; } else if (!catState.isUnderSpecialInfluence) { let baseSentiment;  if (catState.avgHappiness > 85) baseSentiment = "Radiante";  else if (catState.avgHappiness > 70) baseSentiment = "Feliz";  else if (catState.energy < sleepEnergyThreshold && catState.avgHappiness < 50) baseSentiment = "Exausto";  else if (catState.avgHappiness < 20 && catState.energy < 40) baseSentiment = "Deprimido";  else if (catState.avgHappiness < 35) baseSentiment = "Triste";  else baseSentiment = "Contente";  feelingToSet = baseSentiment; catState.happinessVolatility = Math.abs(catState.avgHappiness - catState.lastHappiness);  catState.lastHappiness = catState.avgHappiness; if (catState.avgHealth <= 0) psycheToSet = "Desvanecido";  else if (feelingToSet === "Exausto") psycheToSet = "Desfocado";  else if (catState.isCatSick && catState.avgHealth < 40) psycheToSet = "Perturbado";  else if (catState.happinessVolatility > 25 && catState.avgHappiness < 65) psycheToSet = "Instável";  else if (catState.avgHappiness > 90) psycheToSet = "Eufórico";  else if (catState.avgHappiness < 25) psycheToSet = "Abatido";  else if (catState.avgHappiness < 45 && catState.avgHappiness > 25) psycheToSet = "Ansioso";  else psycheToSet = "Estável"; } catState.feeling = feelingToSet || catState.feeling;  catState.psyche = psycheToSet || catState.psyche; if (catState.feeling !== oldFeeling || catState.psyche !== oldPsyche) { logAoiEvent("state_change_internal", {oldF:oldFeeling, newF:catState.feeling, oldP:oldPsyche, newP:catState.psyche}); } catState.isCatSick = catState.isAnySick || catState.avgHealth < 30;  if (catState.isCatSick && !catState.feeling.includes("Preocupado") && catState.avgHealth > 0 && !catState.isUnderSpecialInfluence && !catState.isSleeping && !catState.isPlaying && catState.catnipBuffDuration <= 0 && catState.whiskeyBuffDuration <=0 && !catTemporaryVisuals.isChangingLook && !catState.isVisualizingImage) {  catState.feeling = "Preocupado"; } if (catState.avgHealth <= 0) catState.physicalHealthStatus = "SEM SINAIS VITAIS";  else if (catState.avgHealth > 70) catState.physicalHealthStatus = "Excelente";  else if (catState.avgHealth > 40) catState.physicalHealthStatus = "Bom";  else if (catState.avgHealth > 20) catState.physicalHealthStatus = "Fraco";  else catState.physicalHealthStatus = "Crítico"; if (catState.avgHealth <= 0) catState.idStrength = "Nulo";  else if (catState.avgHunger > 75 || (catState.isCatSick && catState.avgHealth < 45) || catState.energy < 25) catState.idStrength = "Alto (Desconforto)";  else if (catState.avgHunger > 55 || catState.avgHappiness < 35 || catState.energy < 45) catState.idStrength = "Moderado";  else catState.idStrength = "Baixo"; updateAppearanceAndDraw(); updateDisplayStats();  updateEnergyBar();  updateNeedsStatus(); updateActionButtons(); }
+        function updateAppearanceAndDraw() { if (!catState.isSleeping && !catState.isYawning && !catState.isCrying && !catTemporaryVisuals.active && !catState.isVisualizingImage && catState.catnipBuffDuration <= 0 && catState.whiskeyBuffDuration <= 0) { catState.eyeType = "normal"; catState.mouthType = "neutral"; catState.earPosition = "normal"; }  if (catState.isSleeping) {  catState.eyeType = "closed_sleep"; catState.mouthType = "line_sleep"; catState.earPosition = "droopy_sleep";  } else if (catState.catnipBuffDuration > 0) {  catState.eyeType = "sparkle"; catState.mouthType = "open_smile";  if(!catState.earTwitchActive) catState.earPosition = "perked_twitch";  } else if (catState.whiskeyBuffDuration > 0) {  catState.eyeType = "spiral"; catState.mouthType = "o_mouth_small"; catState.earPosition = "droopy_slight";  } else if (catTemporaryVisuals.isChangingLook || catState.isVisualizingImage) { catState.eyeType = "spiral"; catState.mouthType = "o_mouth_small"; catState.earPosition = "perked"; } else if (catState.avgHealth <= 0) {  catState.eyeType = "x_x"; catState.mouthType = "line"; catState.earPosition = "flat";  } else { if (catState.isYawning) {  catState.mouthType = "yawn";  catState.eyeType = (catState.eyeType === "normal" || catState.eyeType === "normal_happy") ? "closed_half" : catState.eyeType;  } if (catState.isCrying) {  catState.eyeType = "crying";  catState.mouthType = (catState.mouthType === "neutral" || catState.mouthType === "smile") ? "frown_small" : catState.mouthType; catState.earPosition = "droopy_heavy";  } if (catState.isPlaying && !catState.isYawning && !catState.isCrying) { catState.eyeType = "normal_happy";  catState.mouthType = "smile";  } if (catState.earTwitchActive) { catState.earPosition = "perked_twitch"; } if (!catState.isCrying && !catState.isYawning && !catState.isPlaying) {  if (catState.isCatSick) {  catState.eyeType = "closed_half";  catState.mouthType = "frown_small";  catState.earPosition = "droopy"; if (catState.feeling === "Feliz") catState.feeling = "Contente"; } switch (catState.feeling) { case "Extasiado": case "Radiante": case "Brincalhão": case "Extasiado Cósmico":  if(!catState.isYawning) {catState.eyeType = "sparkle"; catState.mouthType = "open_smile";}  if(!catState.earTwitchActive && catState.earPosition !== "droopy_heavy") catState.earPosition = "perked_twitch"; break; case "Feliz": case "Satisfeito":  if(!catState.isYawning) {catState.eyeType = "normal_happy"; catState.mouthType = "smile";}  if(!catState.earTwitchActive && catState.earPosition !== "droopy_heavy") catState.earPosition = "perked"; break; case "Muito Triste": case "Deprimido":  if(!catState.isYawning) {catState.eyeType = "sad"; catState.mouthType = "frown";}  catState.earPosition = "droopy_heavy"; break; case "Triste": case "Irritado":  if(!catState.isYawning) {catState.eyeType = "sad"; catState.mouthType = "frown_small";}  if (catState.earPosition !== "droopy_heavy") catState.earPosition = "droopy_slight"; break; case "Cansado": case "Exausto":  if(!catState.isYawning) catState.eyeType = "closed_half";  if(!catState.isYawning && catState.mouthType !== "yawn") catState.mouthType = "line";  if (catState.earPosition !== "droopy_heavy") catState.earPosition = "droopy"; break; case "Preocupado":  if(!catState.isYawning) catState.eyeType = "wide";  if(!catState.isYawning && catState.mouthType !== "yawn") catState.mouthType = "o_mouth_small";  if(!catState.earTwitchActive && catState.earPosition !== "droopy_heavy") catState.earPosition = "perked_slight_back"; break; } switch (catState.psyche) {  case "Eufórico": case "Hiper-Psíquico": if(catState.eyeType === "normal" && !catState.isYawning) catState.eyeType = "sparkle"; break; case "Alegre": case "Elevado": if(catState.eyeType === "normal" && !catState.isYawning) catState.eyeType = "normal_happy"; if(!catState.earTwitchActive && catState.earPosition !== "droopy_heavy") catState.earPosition = "perked"; break; case "Instável": case "Perturbado": if(catState.eyeType !== "crying" && !catState.isYawning) {catState.eyeType = "spiral"; catState.mouthType = "o_mouth_small";} break; case "Ansioso": case "Incomodado": if (!catState.isCatSick && !catState.isYawning) { catState.eyeType = "wide"; catState.mouthType = "o_mouth_small"; if(!catState.earTwitchActive && catState.earPosition !== "droopy_heavy") catState.earPosition = "perked_slight_back"; } break; case "Abatido": if(catState.eyeType === "normal" && !catState.isYawning) catState.eyeType = "sad"; break; } if (catState.idStrength.includes("Alto") && !catState.isCatSick && !catState.isYawning && catState.mouthType !== "yawn") {  catState.mouthType = "open_annoyed";  if (catState.eyeType === "normal" || catState.eyeType === "normal_happy") catState.eyeType = "narrow_annoyed";  catState.earPosition = "flat_annoyed";  } } } drawCat(); }
+        function updateDisplayStats() {  if(feelingDisplay) feelingDisplay.textContent = catState.feeling; if(physicalHealthDisplay) physicalHealthDisplay.textContent = catState.physicalHealthStatus + (catState.avgHealth > 0 ? ` (${catState.avgHealth.toFixed(0)})`:''); if(sicknessDisplay) sicknessDisplay.textContent = catState.isCatSick ? "Sim" : "Não"; if(psycheDisplay) psycheDisplay.textContent = catState.psyche; if(idDisplay) idDisplay.textContent = catState.idStrength; if(catXKStatusDisplay) catXKStatusDisplay.textContent = catState.currentXKStatus; if(catEvolutionsDisplay) catEvolutionsDisplay.textContent = catState.evolutionCount; }
+        function drawCat() { if (!ctx || !canvas) return; ctx.clearRect(0,0,canvas.width,canvas.height); const cX=canvas.width/2; const cY_head = canvas.height * 0.42; const hR=canvas.width*0.28; let cM=catState.mainColor, cA=catState.accentColor; if (catTemporaryVisuals.active) { cM = catState.mainColor; cA = catState.accentColor; } else if (catState.catnipBuffDuration > 0) { cM = `hsl(${Date.now()/30 % 360}, 100%, 70%)`; cA = `hsl(${(Date.now()/30 + 60) % 360}, 90%, 50%)`;} else if (catState.whiskeyBuffDuration > 0) { cM = "#6A0DAD"; cA = "#4B0082"; } else if (catState.isVisualizingImage) { cM = "#AF7AC5"; cA = "#884EA0"; } else if(catState.avgHealth<=0){cM="#404040";cA="#303030";} else if(catState.isCatSick&&catState.avgHealth<30){cM="#2a2020";cA="#1f1a1a";} if (catState.avgHealth > 0 && !catState.isSleeping) { const bodyWidth = hR * 0.95;  const bodyHeight = hR * 1.25;  const cY_body = cY_head + hR * 0.7;  ctx.fillStyle = cA;  ctx.beginPath(); ctx.ellipse(cX, cY_body, bodyWidth, bodyHeight, 0, 0, Math.PI*2); ctx.fill(); } ctx.fillStyle=cM;ctx.beginPath();ctx.arc(cX,cY_head,hR,0,Math.PI*2);ctx.fill(); const eS=hR*0.55; let earBaseLX=cX-hR*0.65, earBaseLY=cY_head-hR*0.65; let earBaseRX=cX+hR*0.65, earBaseRY=cY_head-hR*0.65; let eLX = earBaseLX, eLY = earBaseLY; let eRX = earBaseRX, eRY = earBaseRY; let earTwitchOffsetY = 0; let currentEarPos = catState.earPosition; if (catState.earTwitchActive && catState.earPosition !== "perked_twitch" && !catState.isSleeping) currentEarPos = "perked_twitch"; if (currentEarPos === "perked_twitch") { earTwitchOffsetY = Math.sin(Date.now() / (catState.catnipBuffDuration > 0 ? 50:80)) * (catState.catnipBuffDuration > 0 ? 3:2); currentEarPos = "perked";} switch(currentEarPos){ case "perked": eLY-=4 + earTwitchOffsetY; eRY-=4 + earTwitchOffsetY; break; case "perked_slight_back": eLY-=2 + earTwitchOffsetY; eLX -=2; eRY-=2 + earTwitchOffsetY; eRX +=2; break; case "droopy_slight": eLY+=2; eLX-=1; eRY+=2; eRX+=1; break; case "droopy": eLY+=4; eLX-=2; eRY+=4; eRX+=2; break; case "droopy_heavy": case "droopy_sleep": eLY+= (currentEarPos === "droopy_sleep" ? 5:6); eLX-=(currentEarPos === "droopy_sleep" ? 2.5:3); eRY+=(currentEarPos === "droopy_sleep" ? 5:6); eRX+=(currentEarPos === "droopy_sleep" ? 2.5:3); break; case "flat": eLY+=8;eLX-=4; eRY+=8;eRX+=4; break; case "flat_annoyed": eLY+=6; eLX-=5; eLY+=Math.sin(Date.now()/150)*1; eRY+=6; eRX+=5; eRY+=Math.sin(Date.now()/150 + Math.PI)*1; break; } ctx.beginPath();ctx.moveTo(eLX,eLY);ctx.lineTo(eLX-eS*0.5,eLY-eS);ctx.lineTo(eLX+eS*0.5,eLY-eS*0.3);ctx.closePath();ctx.fill(); ctx.beginPath();ctx.moveTo(eRX,eRY);ctx.lineTo(eRX+eS*0.5,eRY-eS);ctx.lineTo(eRX-eS*0.5,eRY-eS*0.3);ctx.closePath();ctx.fill(); const eyeR=hR*0.17,eyeOX=hR*0.38,eyeOY=-hR*0.1; drawEye(cX-eyeOX,cY_head+eyeOY,eyeR,catState.eyeType,catState.avgHealth<=0); drawEye(cX+eyeOX,cY_head+eyeOY,eyeR,catState.eyeType,catState.avgHealth<=0); const mOY=hR*0.33;drawMouth(cX,cY_head+mOY,hR*0.48,catState.mouthType,catState.avgHealth<=0); if (!catState.isSleeping && catState.avgHealth > 0) { let whiskerColor = (catTemporaryVisuals.active) ? catState.accentColor : (catState.catnipBuffDuration > 0 || catState.whiskeyBuffDuration > 0) ? `hsl(${(Date.now()/15 + 90) % 360}, 100%, 70%)` : (catState.isVisualizingImage) ? "#884EA0" : "#000"; ctx.strokeStyle=whiskerColor;ctx.lineWidth=1; for(let i=0;i<3;i++){ ctx.beginPath();ctx.moveTo(cX-hR*0.55,cY_head+hR*0.18+i*3.5-3.5);ctx.lineTo(cX-hR*1.0,cY_head+hR*0.13+i*4.5-5.5);ctx.stroke(); ctx.beginPath();ctx.moveTo(cX+hR*0.55,cY_head+hR*0.18+i*3.5-3.5);ctx.lineTo(cX+hR*1.0,cY_head+hR*0.13+i*4.5-5.5);ctx.stroke(); } } else if (catState.avgHealth <= 0) {  ctx.strokeStyle = "#505050"; ctx.lineWidth=1; for(let i=0;i<3;i++){ ctx.beginPath();ctx.moveTo(cX-hR*0.55,cY_head+hR*0.18+i*3.5-2.5);ctx.lineTo(cX-hR*0.9,cY_head+hR*0.28+i*4.5-3.5);ctx.stroke(); ctx.beginPath();ctx.moveTo(cX+hR*0.55,cY_head+hR*0.18+i*3.5-2.5);ctx.lineTo(cX+hR*0.9,cY_head+hR*0.28+i*4.5-3.5);ctx.stroke(); } } if(catState.accessory){drawAccessory(cX,cY_head,hR,catState.accessory);} if (catState.isSleeping) { ctx.fillStyle = "#FFF"; ctx.font = `${hR*0.25}px 'Press Start 2P'`; ctx.textAlign = "left"; const zOffset = Math.sin(Date.now() / 300) * 3; ctx.fillText("Z", cX + hR * 0.7 + zOffset, cY_head - hR * 0.5); ctx.fillText("Z", cX + hR * 0.8 + zOffset*1.2, cY_head - hR * 0.35); ctx.font = `${hR*0.2}px 'Press Start 2P'`; ctx.fillText("z", cX + hR * 0.9 + zOffset*1.4, cY_head - hR * 0.2); } if (catState.isPlaying && catState.ballOfYarn.visible) { ctx.fillStyle = catState.ballOfYarn.color; ctx.beginPath(); ctx.arc(catState.ballOfYarn.x, catState.ballOfYarn.y, catState.ballOfYarn.radius, 0, Math.PI*2); ctx.fill(); ctx.strokeStyle = "#00000033"; ctx.lineWidth = 1; for(let i = 0; i < 5; i++) { ctx.beginPath(); ctx.arc(catState.ballOfYarn.x, catState.ballOfYarn.y, catState.ballOfYarn.radius * (0.4 + i*0.15) , Math.random()*Math.PI*2, Math.random()*Math.PI*2); ctx.stroke();}} }
+        function drawAccessory(cx,cy_head,headR,accType){ ctx.save(); let accMainColor = catState.mainColor; let colorToUse; if (catTemporaryVisuals.active && catState.accessory) { switch(accType){ case"bow_tie": colorToUse="#E91E63"; break; case"glasses": colorToUse="#2196F3"; break; case"party_hat": colorToUse="#4CAF50"; break; case "headband_stars": colorToUse = "#FF9800"; break; default: colorToUse = "#D32F2F"; } } else if (catState.catnipBuffDuration > 0 || catState.whiskeyBuffDuration > 0) { switch(accType){ case"bow_tie": colorToUse="#FFFF00"; break; case"glasses": colorToUse="#00FFFF"; break; case"party_hat": colorToUse=`hsl(${Date.now()/25 % 360}, 100%, 60%)`; break; case "headband_stars": colorToUse = "#FFFFFF"; break; default: colorToUse = "#D32F2F"; } } else { switch(accType){ case"bow_tie": colorToUse="#D32F2F"; break; case"glasses": colorToUse="#111111"; break; case"party_hat": colorToUse="#3949AB"; break; case "headband_stars": colorToUse = "#FFD700"; break; default: colorToUse = "#D32F2F"; } } switch(accType){ case"bow_tie":ctx.fillStyle= colorToUse; const bw=20,bh=10,by_bow=cy_head+headR*0.65;ctx.fillRect(cx-4,by_bow-bh/2+2,8,bh-4);ctx.beginPath();ctx.moveTo(cx-4,by_bow-bh/2+2);ctx.lineTo(cx-4-bw/1.5,by_bow-bh);ctx.lineTo(cx-4-bw/1.5,by_bow+bh);ctx.closePath();ctx.fill();ctx.beginPath();ctx.moveTo(cx+4,by_bow-bh/2+2);ctx.lineTo(cx+4+bw/1.5,by_bow-bh);ctx.lineTo(cx+4+bw/1.5,by_bow+bh);ctx.closePath();ctx.fill();break; case"glasses":ctx.strokeStyle= colorToUse; ctx.lineWidth=2.5;const gr=headR*0.22,epx=headR*0.38,epy_glass=-headR*0.1;ctx.beginPath();ctx.arc(cx-epx,cy_head+epy_glass,gr,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.arc(cx+epx,cy_head+epy_glass,gr,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.moveTo(cx-epx+gr*0.8,cy_head+epy_glass);ctx.lineTo(cx+epx-gr*0.8,cy_head+epy_glass);ctx.stroke();break; case"party_hat":ctx.fillStyle= colorToUse; const hh=headR*0.8,hbw=headR*0.35,htx=cx,hty_hat=cy_head-headR*0.7-hh,hblx=cx-hbw,hbrx=cx+hbw,hby_hat=cy_head-headR*0.7;ctx.beginPath();ctx.moveTo(htx,hty_hat);ctx.lineTo(hblx,hby_hat);ctx.lineTo(hbrx,hby_hat);ctx.closePath();ctx.fill(); let pompomColor = (catTemporaryVisuals.active && catState.accessory) ? "#FFEB3B" : ((catState.catnipBuffDuration > 0 || catState.whiskeyBuffDuration > 0) ? `hsl(${(Date.now()/25 + 120) % 360}, 100%, 80%)` : "#FFCA28"); ctx.fillStyle= pompomColor; ctx.beginPath();ctx.arc(htx,hty_hat-headR*0.06,headR*0.1,0,Math.PI*2);ctx.fill();break; case "headband_stars": ctx.strokeStyle = colorToUse; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(cx, cy_head-headR*0.8, headR*0.4, Math.PI * 0.8, Math.PI * 0.2); ctx.stroke(); let starFillColor = (catTemporaryVisuals.active && catState.accessory) ? "#FFC107" : ((catState.catnipBuffDuration > 0 || catState.whiskeyBuffDuration > 0) ? `hsl(${Date.now()/10 % 360}, 100%, 75%)` : "#FFFF00"); for(let i=0; i<3; i++){ const starX = cx + (i-1) * headR*0.35; const starY = cy_head - headR*1.05 + Math.abs(i-1)*headR*0.05; ctx.fillStyle = starFillColor; ctx.beginPath(); for(let j=0; j<5; j++){ ctx.lineTo(starX + headR*0.08 * Math.cos(Math.PI*2 * (j*2/5) - Math.PI/2), starY + headR*0.08 * Math.sin(Math.PI*2 * (j*2/5) - Math.PI/2)); ctx.lineTo(starX + headR*0.03 * Math.cos(Math.PI*2 * ((j*2+1)/5) - Math.PI/2), starY + headR*0.03 * Math.sin(Math.PI*2 * ((j*2+1)/5) - Math.PI/2));} ctx.closePath();ctx.fill();} break; } ctx.restore(); }
+        function drawEye(x,y,r,type,isDead){ if (!ctx) return; let eyeColor; let pupilColor; if (catTemporaryVisuals.active) { eyeColor = catState.mainColor; pupilColor = catState.accentColor; } else if (catState.catnipBuffDuration > 0) { eyeColor = `hsl(${Date.now()/20 % 360}, 100%, 80%)`; pupilColor = `hsl(${(Date.now()/20 + 180) % 360}, 100%, 30%)`; } else if (catState.whiskeyBuffDuration > 0) { eyeColor = `hsl(${(Date.now()/25 + 270) % 360}, 90%, 70%)`; pupilColor = `hsl(${(Date.now()/25 + 90) % 360}, 80%, 40%)`; } else if (catState.isVisualizingImage) { eyeColor = "#D8BFD8"; pupilColor = "#551A8B"; } else if (isDead) { eyeColor = "#777700"; pupilColor = "#333"; } else { eyeColor = "yellow"; pupilColor = "black"; } if(type !== "closed" && type !== "closed_half" && type !== "closed_sleep" && type !== "x_x") {  ctx.fillStyle=eyeColor;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill(); } ctx.fillStyle=pupilColor; let pR=r*0.5; if(type==="x_x"){ ctx.strokeStyle=isDead?pupilColor:"black";ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(x-r*0.7,y-r*0.7);ctx.lineTo(x+r*0.7,y+r*0.7);ctx.stroke();ctx.beginPath();ctx.moveTo(x+r*0.7,y-r*0.7);ctx.lineTo(x-r*0.7,y+r*0.7);ctx.stroke();return;} switch(type){ case"normal":case"normal_happy": ctx.beginPath();ctx.arc(x,y,pR,0,Math.PI*2);ctx.fill();if(type==="normal_happy"){ctx.strokeStyle=isDead?"#444":pupilColor;ctx.lineWidth=1;ctx.beginPath();ctx.arc(x,y-r*0.1,r*0.7,Math.PI*1.1,Math.PI*1.9,true);ctx.stroke();}break; case"closed_half": ctx.fillStyle= isDead ? "#404040" : (catTemporaryVisuals.active ? catState.mainColor : catState.mainColor) ;ctx.fillRect(x-r,y-pR/2,r*2,pR);break; case"closed": ctx.fillStyle=isDead ? "#404040" : (catTemporaryVisuals.active ? catState.mainColor : catState.mainColor);ctx.fillRect(x-r,y-0.5,r*2,1);break; case "closed_sleep": ctx.fillStyle=isDead ? "#404040" : (catTemporaryVisuals.active ? catState.mainColor : catState.mainColor); ctx.beginPath(); ctx.arc(x, y + r*0.1, r, Math.PI*0.8, Math.PI*0.2, true); ctx.fill(); break; case"wide":case"wide_scared": ctx.beginPath();ctx.arc(x,y,pR*1.2,0,Math.PI*2);ctx.fill();break; case"narrow":case"narrow_annoyed": ctx.beginPath();ctx.ellipse(x,y,pR*0.6,pR*1.1,0,0,Math.PI*2);ctx.fill();break; case"sad": ctx.beginPath();ctx.arc(x,y+pR*0.25,pR,0,Math.PI*2);ctx.fill();ctx.strokeStyle=isDead?"#444":pupilColor;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x-r*0.7,y-r*0.7);ctx.lineTo(x+r*0.25,y-r*0.45);ctx.stroke();break; case "crying": ctx.beginPath();ctx.arc(x,y+pR*0.25,pR,0,Math.PI*2);ctx.fill(); ctx.strokeStyle=pupilColor;ctx.lineWidth=1; ctx.beginPath();ctx.moveTo(x-r*0.7,y-r*0.7);ctx.lineTo(x+r*0.25,y-r*0.45);ctx.stroke(); ctx.fillStyle = "rgba(173, 216, 230, 0.8)"; ctx.beginPath(); ctx.moveTo(x - pR*0.3, y + pR*0.8); ctx.quadraticCurveTo(x, y + pR*1.8 + Math.sin(Date.now()/150)*2, x + pR*0.3, y + pR*0.8); ctx.fill(); break; case"sparkle": pR = r*(catState.catnipBuffDuration > 0 ? 0.7:0.5); ctx.beginPath();ctx.arc(x,y,pR,0,Math.PI*2);ctx.fill();ctx.fillStyle=isDead?"#aaa":(catState.catnipBuffDuration > 0 ? "#FFFF00":"white");ctx.beginPath();ctx.arc(x+pR*0.25,y-pR*0.25,pR*0.35,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(x-pR*0.35,y+pR*0.18,pR*0.25,0,Math.PI*2);ctx.fill();break; case"spiral": ctx.strokeStyle=isDead?"#444":(catState.isVisualizingImage || catTemporaryVisuals.active ? pupilColor : (catState.whiskeyBuffDuration > 0 ? "#FFFFFF" : "black")); ctx.lineWidth= (catState.whiskeyBuffDuration > 0 || catState.isVisualizingImage || catTemporaryVisuals.active) ? 1.2 : 0.8;let ang=Date.now()/( (catState.whiskeyBuffDuration > 0 || catState.isVisualizingImage || catTemporaryVisuals.active) ? 200:500);let rad_spiral=0;ctx.beginPath();ctx.moveTo(x,y);for(let i=0;i<((catState.whiskeyBuffDuration > 0 || catState.isVisualizingImage || catTemporaryVisuals.active) ? 50:40);i++){rad_spiral+=0.12;ang+=Math.PI/((catState.whiskeyBuffDuration > 0 || catState.isVisualizingImage || catTemporaryVisuals.active)?4.5:5.5);if(rad_spiral>r*((catState.whiskeyBuffDuration > 0 || catState.isVisualizingImage || catTemporaryVisuals.active)?0.9:0.8))break;ctx.lineTo(x+rad_spiral*Math.cos(ang),y+rad_spiral*Math.sin(ang));}ctx.stroke();break; } }
+        function drawMouth(x,y,w,type,isDead){ if(!ctx)return; let mouthColor = isDead?"#505050": (catTemporaryVisuals.active ? catState.accentColor : ((catState.catnipBuffDuration > 0 || catState.whiskeyBuffDuration > 0) ? "#FFFFFF99" : "black")); ctx.strokeStyle=mouthColor;ctx.lineWidth=1.5;ctx.beginPath(); const mF=isDead?"#202020": (catTemporaryVisuals.active ? catState.accentColor : ((catState.catnipBuffDuration > 0 || catState.whiskeyBuffDuration > 0) ? "#FFFFFF66":"#111")); switch(type){ case"neutral":case"line": ctx.moveTo(x-w/2,y);ctx.lineTo(x+w/2,y);break; case "line_sleep": ctx.moveTo(x-w/2.5,y+2);ctx.lineTo(x+w/2.5,y+2);break; case"smile": ctx.arc(x,y-w*0.1,w/2,0.2*Math.PI,0.8*Math.PI);break; case"open_smile":ctx.arc(x,y-w*0.1,w/2,0.1*Math.PI,0.9*Math.PI);ctx.fillStyle=mF;ctx.fill(); if(catState.catnipBuffDuration > 0) { ctx.fillStyle= `hsl(${(Date.now()/20 + 0) % 360}, 80%, 70%)`; ctx.beginPath(); ctx.ellipse(x, y+w*0.05, w*0.1, w*0.15,0,0,Math.PI*2); ctx.fill();} break; case"frown":case"frown_small":let fD=type==="frown_small"?w*0.1:w*0.2;ctx.arc(x,y+fD,w/2.5,1.2*Math.PI,1.8*Math.PI);break; case"o_mouth": ctx.arc(x,y,w/3.2,0,Math.PI*2);ctx.fillStyle=mF;ctx.fill();break; case"o_mouth_small": ctx.arc(x,y+2.5,w/4.2,0,Math.PI*2);ctx.fillStyle=mF;ctx.fill();break; case "yawn": ctx.ellipse(x, y + w*0.15, w*0.4, w*0.5, 0, 0, Math.PI*2); ctx.fillStyle=mF;ctx.fill(); ctx.fillStyle="#FFB6C1"; ctx.beginPath(); ctx.ellipse(x, y + w*0.3, w*0.15, w*0.2, 0,0,Math.PI*2); ctx.fill(); break; case"open_annoyed":ctx.moveTo(x-w/2,y-1.5);ctx.lineTo(x+w/2,y-1.5);ctx.lineTo(x+w/2.5,y+2.5);ctx.lineTo(x-w/2.5,y+2.5);ctx.closePath();ctx.fillStyle=mF;ctx.fill();break; } ctx.stroke(); }
+        function initializeAoiCatVisuals() { canvas = document.getElementById('cat-canvas'); if (!canvas) { console.error("XCake: Canvas não encontrado!"); return false; } canvas.width = 160; canvas.height = 160; ctx = canvas.getContext('2d'); if (!ctx) { console.error("XCake: Contexto 2D não obtido!"); return false; } ctx.imageSmoothingEnabled = false; feelingDisplay = document.getElementById('cat-feeling'); physicalHealthDisplay = document.getElementById('cat-physical-health'); sicknessDisplay = document.getElementById('cat-sickness'); psycheDisplay = document.getElementById('cat-psyche'); idDisplay = document.getElementById('cat-id'); catXKStatusDisplay = document.getElementById('cat-xk-status'); catEvolutionsDisplay = document.getElementById('cat-evolutions'); catInternalMessageDisplay = document.getElementById('cat-message'); dataPromptLog = document.getElementById('data-prompt'); catEnergyBar = document.getElementById('cat-energy-bar'); catNeedsStatus = document.getElementById('cat-needs-status'); catnipButton = document.getElementById('catnip-button'); whiskeyButton = document.getElementById('whiskey-button'); return true; }
+        function initializeAoiCatLogic() { if (!canvas || !ctx) { console.error("XCake: Lógica não pode iniciar sem canvas/contexto."); return; } logToAoiDataPrompt(`AOI XCake: Lógica de Consciência XK/Chat v${catState.evolutionCount}.1 Integrada.`); logToInternalConsciousness("Sistema de Consciência XK / Oráculo Interno / Chat Ativado.", false); if(catnipButton) catnipButton.addEventListener('click', activateCatnip); if(whiskeyButton) whiskeyButton.addEventListener('click', activateWhiskey); function simulateClusterData() { return { avgHealth: Math.random() * 50 + 50, avgHunger: Math.random() * 40 + 10, avgHappiness: Math.random() * 50 + 40, isAnySick: Math.random() < 0.1, overallSentiment: ["Neutro", "Levemente Positivo", "Levemente Negativo", "Positivo", "Negativo"][Math.floor(Math.random()*5)] }; } function processSimulatedClusterData() { if (catState.isUnderSpecialInfluence || catState.isProcessingGeminiAPI || catState.isSleeping || catState.isPlaying || catTemporaryVisuals.isChangingLook || catState.isVisualizingImage) { logToAoiDataPrompt("XCake[ClusterSim]: Ação ativa, bufferizando cluster data."); return; } const clusterData = simulateClusterData(); logToAoiDataPrompt(`XCake[ClusterSim]: H:${clusterData.avgHealth.toFixed(0)}, Hap:${clusterData.avgHappiness.toFixed(0)}, Sent:${clusterData.overallSentiment}`); catState.clusterSentiment = clusterData.overallSentiment; updateInternalStates({ avgHealth: (catState.avgHealth * 0.5) + (clusterData.avgHealth * 0.5), avgHappiness: (catState.avgHappiness * 0.4) + (clusterData.avgHappiness * 0.6), isAnySick: catState.isCatSick || clusterData.isAnySick }); if (!catState.isUnderSpecialInfluence && !catState.isSleeping && !catState.isPlaying && !catTemporaryVisuals.isChangingLook && !catState.isVisualizingImage) { const clusterReaction = synthesizeInternalResponse("state_neutral", `cluster_${clusterData.overallSentiment.toLowerCase()}`, 0.8); updateCatMessage(clusterReaction, false, true); setTimeout(() => {  if(!catState.isUnderSpecialInfluence && !catState.isSleeping && !catState.isPlaying && !catTemporaryVisuals.isChangingLook && !catState.isVisualizingImage && catState.currentMessageText === clusterReaction) { updateCatMessage(defaultNeutralMessage);  } }, 2500); } } clusterUpdateInterval = setInterval(processSimulatedClusterData, 12000 + Math.random() * 3000); startBlinkingRoutine(); energyRegenInterval = setInterval(regenerateEnergy, 1000); affectionInterval = setInterval(() => simulateAffectionEvent(false), catState.affectionCooldown + Math.random() * 7000); behaviorInterval = setInterval(checkSpontaneousBehaviors, catState.behaviorCheckCooldown); internalEvolutionInterval = setInterval(triggerInternalEvolution, 13000 + Math.random() * 4000);  xkProcessingInterval = setInterval(calculateAndInterpretNewXK, catState.internalXKSystem.xkCooldown + Math.random() * 2000);  geminiLearningInterval = setInterval(attemptGeminiHighLevelLearning, GEMINI_HIGH_LEVEL_LEARNING_COOLDOWN + Math.random() * (5 * 60 * 1000));  updateInternalStates({}); updateCatMessage(catState.currentMessageText); processSimulatedClusterData(); }
+        function logToAoiDataPrompt(message) { if (!dataPromptLog) return; const timestamp = new Date().toLocaleTimeString(); dataPromptLog.textContent = `[${timestamp}] ${message}\n` + dataPromptLog.textContent; const lines = dataPromptLog.textContent.split('\n'); if (lines.length > 35) { dataPromptLog.textContent = lines.slice(0, 35).join('\n'); } }
+        function updateActionButtons() { const now=Date.now(); let catnipDisabled = catState.isProcessingGeminiAPI || catState.isSleeping || (now - catState.lastCatnipTime < catState.catnipCooldown && catState.catnipBuffDuration <=0); let whiskeyDisabled = catState.isProcessingGeminiAPI || catState.isSleeping || (now - catState.lastWhiskeyTime < catState.whiskeyCooldown && catState.whiskeyBuffDuration <=0); if(catnipButton) catnipButton.disabled = catnipDisabled; if(whiskeyButton) whiskeyButton.disabled = whiskeyDisabled; }
+        document.addEventListener('DOMContentLoaded', () => {
+            if (initializeAoiCatVisuals()) { initializeAoiCatLogic(); }
+            else {
+                console.error("XCake: Falha CRÍTICA ao inicializar visuais.");
+                const body = document.querySelector('body');
+                if (body) { const errorMsg = document.createElement('p'); errorMsg.textContent = "ERRO FATAL XCake: Componentes visuais não puderam ser carregados."; errorMsg.style.color="red"; errorMsg.style.fontSize="1.2em"; errorMsg.style.padding="20px"; errorMsg.style.border="2px solid red"; body.insertBefore(errorMsg, body.firstChild); }
+            }
+            if (aoiChatSendButton) aoiChatSendButton.addEventListener('click', handleSendChatMessage);
+            if (aoiChatInput) aoiChatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSendChatMessage(); });
+        });
+    })();
+</script>
+
+<!-- SCRIPT PARA O CONTROLE DO LOADING ADICIONADO -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const loader = document.getElementById('loading-overlay');
+        if (loader) {
+            // Aumentei o tempo para dar chance de tudo carregar
+            setTimeout(() => {
+                loader.classList.add('hidden');
+                // Opcional: remove completamente o loader do DOM após a transição
+                setTimeout(() => {
+                    if(loader.parentNode) {
+                        loader.parentNode.removeChild(loader);
+                    }
+                }, 1000); // Deve corresponder à duração da transição no CSS
+            }, 3000); // 3 segundos
+        }
+    });
+</script>
+</body>
+</html>
