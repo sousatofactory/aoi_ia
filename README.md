@@ -32,6 +32,7 @@ Access the Demo
 Experience Cosmic AOI directly in your mobile browser:
 
 Web App Link: https://studio.firebase.google.com/studio-8567818376
+
 Cosmic Aoi : http://draw.pagina-oficial.com/cosmic.html
 
 Quick Mobile Installation (Add to Home Screen):
