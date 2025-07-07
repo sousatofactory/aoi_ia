@@ -31,7 +31,8 @@ Modular Architecture: The TK-ETA, TKG, and KX modules ensure a clean, scalable, 
 Access the Demo
 Experience Cosmic AOI directly in your mobile browser:
 
-Web App Link: https://9000-firebase-studio-1749174940293.cluster-duylic2g3fbzerqpzxxbw6helm.cloudworkstations.dev/
+Web App Link: https://studio.firebase.google.com/studio-8567818376
+Cosmic Aoi : http://draw.pagina-oficial.com/cosmic.html
 
 Quick Mobile Installation (Add to Home Screen):
 
